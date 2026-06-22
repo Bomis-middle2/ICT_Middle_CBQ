@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>App Development Quiz - Grade 7</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; min-height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); 
+            overflow-y: auto; 
+            padding: 10px;
+        }
+        
+        /* Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); } 100% { transform: translateY(-110vh); } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #logo-screen img { max-width: 80%; height: auto; }
+        
+        #quiz-container, #intro-screen { 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 100%; max-width: 600px; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .hidden { display: none !important; }
+        .option-btn { border: 2px solid #3498db; border-radius: 10px; padding: 12px; margin: 8px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: 600; transition: 0.3s; font-size: 1rem; }
+        .option-btn:hover { background: #3498db; color: white; }
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; font-size: 0.9rem; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #q-text { font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+
+        @media (max-width: 480px) { h1 { font-size: 1.4rem; } }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo" onerror="this.style.display='none'; setTimeout(transition, 500);"></div>
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>App Development Quiz</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade:</strong> 7 | <strong>Subject:</strong> ICT</p>
+        <p><strong>Topic:</strong> App Development</p> 
+        <p><strong>Questions:</strong> 10</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Rohan wants to build an app to help his local community report potholes. Before he starts coding, he needs to decide whether he is building for Android, iOS, or both, and select his tools. Which step of the 'Guidelines to Develop an App' is he currently in?", a: "C. Development", options: ["A. Define Your Idea", "B. Research and Plan", "C. Development", "D. Testing"], hint: "Think about the phase where the actual building and assembly of the product takes place." },
+        { q: "You are using MIT App Inventor to design the screen of a game. You want to change the color of a button from grey to blue and make the text bold. Which part of the Designer Window will you use?", a: "D. Properties Panel", options: ["A. Components Palette", "B. Viewer", "C. Component Tree", "D. Properties Panel"], hint: "Consider where you go to modify the specific characteristics of an item you have selected." },
+        { q: "A student is creating a drawing app. She needs a specific area where she can move an 'Image Sprite' (like a football) around. Which component should she drag from the 'Drawing and Animation' tab?", a: "B. Canvas", options: ["A. Label", "B. Canvas", "C. Button", "D. Layout Container"], hint: "Imagine a blank surface designed specifically for visual interactions and movement." },
+        { q: "After finishing the visual design of his app, Kabir needs to make the 'Up' button actually move the character. He needs to switch from the 'Designer' view to which view to add logic?", a: "C. Blocks", options: ["A. Viewer", "B. Palette", "C. Blocks", "D. Properties"], hint: "Look for the environment where you piece together the behavior of your application." },
+        { q: "Anika does not have an Android smartphone but wants to see how her app looks and functions while she is building it on her computer. Which tool should she use?", a: "C. Emulator", options: ["A. AI Companion", "B. USB Cable", "C. Emulator", "D. APK Packager"], hint: "Recall the tool that mimics a mobile device interface directly on your desktop." },
+        { q: "You have completed your app and want to give it to your friend to install on their Android phone permanently. However, you are not currently connected to the MIT App Inventor website. What must you do first?", a: "B. 'Package' the app to produce an .apk file", options: ["A. Use the AI Companion", "B. 'Package' the app to produce an .apk file", "C. Use the Emulator", "D. Screenshot the design"], hint: "Consider the process of transforming your project into a standalone, distributable format." },
+        { q: "In the Designer window, you see a hierarchical list of every button, image, and label you have added to your project. This panel is known as the:", a: "D. Component Tree", options: ["A. Components Palette", "B. Design Editor Toolbar", "C. Viewer", "D. Component Tree"], hint: "Visualize a structure that maps out the relationship and nesting of all items in your workspace." },
+        { q: "Which of the following is the correct first step to start building an app on MIT App Inventor?", a: "B. Open the address www.appinventor.mit.edu", options: ["A. Download the .apk file", "B. Open the address www.appinventor.mit.edu", "C. Connect a USB cable", "D. Open the Blocks editor"], hint: "Consider how you first access the online platform required for this work." },
+        { q: "While building a 'Flung' event for a ball in the Blocks editor, you want the ball to move at the same speed it was flicked. You should mouse over the 'speed' parameter to grab which specific block?", a: "B. get speed", options: ["A. set Ball1.Speed", "B. get speed", "C. Ball1.Bounce", "D. when Ball1.EdgeReached"], hint: "Reflect on how you retrieve current data values to apply them elsewhere in your logic." },
+        { q: "Which platform was MIT App Inventor specifically developed for, according to the text?", a: "C. Android devices", options: ["A. iOS devices only", "B. Windows Phones", "C. Android devices", "D. Only Desktop computers"], hint: "Think about the operating system that this tool has historically targeted for app deployment." }
+    ];
+
+    function transition() {
+        document.getElementById('logo-screen').classList.add('hidden');
+        document.getElementById('intro-screen').classList.remove('hidden');
+    }
+
+    // Logo transition with fallback
+    window.addEventListener('load', () => setTimeout(transition, 3000));
+    
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct answer was: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
