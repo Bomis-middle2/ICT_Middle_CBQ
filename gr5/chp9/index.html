@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Quiz - Grade 5</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; min-height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); 
+            overflow-y: auto; 
+            padding: 10px;
+        }
+        
+        /* Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); } 100% { transform: translateY(-110vh); } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #logo-screen img { max-width: 80%; height: auto; }
+        
+        #quiz-container, #intro-screen { 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 100%; max-width: 600px; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .hidden { display: none !important; }
+        
+        .option-btn { 
+            border: 2px solid #3498db; border-radius: 10px; padding: 12px; margin: 8px 0; 
+            background: white; cursor: pointer; display: block; width: 100%; 
+            font-weight: 600; transition: 0.3s; font-size: 1rem;
+        }
+        .option-btn:hover { background: #3498db; color: white; }
+        
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; font-size: 0.9rem; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        
+        #q-text { font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+
+        @media (max-width: 480px) {
+            h1 { font-size: 1.5rem; }
+            #quiz-container { padding: 15px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>Chapter 9 Quiz</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade:</strong> 5 | <strong>Subject:</strong> ICT</p>
+        <p><strong>Topic:</strong> Algorithms & Flowcharts</p> 
+        <p><strong>Questions:</strong> 13</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "Reena wants to write down instructions for her younger brother on how to make a sandwich step-by-step. What is this step-by-step procedure called in computer programming?", a: "(C) An Algorithm", options: ["(A) A Loop", "(B) A Flowchart", "(C) An Algorithm", "(D) A Process Box"], hint: "Consider the term for a precise sequence of actions designed to complete a specific task." },
+        { q: "Amit wants to show his team a visual diagram of how their new software works. Which tool should he use to diagrammatically represent the logic?", a: "(D) A Flowchart", options: ["(A) Pseudo code", "(B) Plain text", "(C) An Algorithm", "(D) A Flowchart"], hint: "Think of a graphical way to illustrate the progression of steps in a process." },
+        { q: "A recipe book has cooking instructions that eventually finish after the dish is cooked. In computer algorithms, the feature that ensures the procedure terminates after a specific number of steps is called:", a: "(B) Finiteness", options: ["(A) Definiteness", "(B) Finiteness", "(C) Input", "(D) Effectiveness"], hint: "Think about the concept that describes a process having a clear end point." },
+        { q: "If an instruction in a program says 'add a little bit of sugar', the computer won't understand exactly how much to add because it is not precise. Which feature of a good algorithm does this violate?", a: "(C) Definiteness", options: ["(A) Output", "(B) Finiteness", "(C) Definiteness", "(D) Effectiveness"], hint: "Consider what is missing when instructions are too vague for a machine to follow." },
+        { q: "A programmer is beginning to draw a flowchart for a new game. Which symbol must be used at the very beginning and at the very end of the flowchart?", a: "(A) Start/Stop Box (Oval)", options: ["(A) Start/Stop Box (Oval)", "(B) Process Box (Rectangle)", "(C) Input/Output Box (Parallelogram)", "(D) Decision Box (Diamond)"], hint: "Visualize the shape used to signify the boundary where a process initiates or concludes." },
+        { q: "A program requires a user to enter the marks of two subjects. Which flowchart symbol should be used to represent this 'Input' operation?", a: "(C) Parallelogram", options: ["(A) Rectangle", "(B) Diamond", "(C) Parallelogram", "(D) Circle"], hint: "Think of the specific geometric shape dedicated to receiving data from the user." },
+        { q: "In a math application, the computer calculates the total cost by adding the prices of three items (Total = A + B + C). Which flowchart box represents this action or calculation?", a: "(B) Process Box", options: ["(A) Decision Box", "(B) Process Box", "(C) Start Box", "(D) Input Box"], hint: "Identify the shape used to perform data manipulation or arithmetic operations." },
+        { q: "Riya is designing a program that checks whether a student has passed or failed. If marks are greater than 40, they pass; otherwise, they fail. Which symbol is needed to choose between these Yes/No options?", a: "(D) Decision Box", options: ["(A) Process Box", "(B) Input/Output Box", "(C) Flow lines", "(D) Decision Box"], hint: "Look for the shape that acts as a fork in the road, forcing a choice based on a condition." },
+        { q: "While drawing a flowchart, Kabir needs to show the exact direction of logic from one step to the next. What should he use?", a: "(A) Arrowheads/Connectors", options: ["(A) Arrowheads/Connectors", "(B) Parallel lines", "(C) Diamonds", "(D) Rectangles"], hint: "Consider how we visually indicate the path of movement between different symbols." },
+        { q: "A teacher asks a program to print the word 'Hello' exactly 10 times. Instead of drawing 10 separate print boxes, what structure can the programmer use in the flowchart?", a: "(A) A Loop with a counter", options: ["(A) A Loop with a counter", "(B) Ten Start Boxes", "(C) A single Process Box", "(D) Ten Decision Boxes"], hint: "Reflect on how to efficiently repeat a task without manually duplicating every step." },
+        { q: "In a flowchart loop designed to repeat a task 5 times, a 'count' variable starts at 1. What condition will most likely be checked in the Decision Box to keep repeating the loop?", a: "(B) Is count <= 5?", options: ["(A) Is count = 0?", "(B) Is count <= 5?", "(C) Is count > 5?", "(D) Is count == 10?"], hint: "Think about the logic required to determine if the iteration limit has been reached." },
+        { q: "After calculating the area of a square, the computer displays the answer on the screen. Which flowchart symbol is used for this 'Output' action?", a: "(D) Input/Output Box", options: ["(A) Start/Stop Box", "(B) Process Box", "(C) Decision Box", "(D) Input/Output Box"], hint: "Recall the shape that handles presenting information back to the user." },
+        { q: "Which of the following statements represents a correct rule of flowcharting?", a: "(C) The general direction of flow is from top to bottom or left to right.", options: ["(A) A flowchart can have multiple Start boxes.", "(B) The general direction of flow is from bottom to top.", "(C) The general direction of flow is from top to bottom or left to right.", "(D) Arrowheads are optional and not required."], hint: "Consider the conventional path an eye follows when reading a standard diagram." }
+    ];
+
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    // Create bubbles
+    const bg = document.getElementById('bubbles');
+    for(let i=0; i<15; i++) {
+        let b = document.createElement('div');
+        b.className = 'bubble';
+        let size = Math.random() * 60 + 20 + 'px';
+        b.style.width = size; b.style.height = size;
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDelay = Math.random() * 5 + 's';
+        bg.appendChild(b);
+    }
+
+    // Logo screen transition
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            const logoScreen = document.getElementById('logo-screen');
+            const introScreen = document.getElementById('intro-screen');
+            if (logoScreen && introScreen) {
+                logoScreen.classList.add('hidden');
+                introScreen.classList.remove('hidden');
+            }
+        }, 3000);
+    });
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct answer was: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
