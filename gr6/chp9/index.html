@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DBMS Quiz - Grade 6</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e0eafc, #cfdef3); overflow: hidden; }
+        
+        /* Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); } 100% { transform: translateY(-110vh); } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #quiz-container, #intro-screen { background: rgba(255, 255, 255, 0.95); width: 95%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        .hidden { display: none !important; }
+        .option-btn { border: 2px solid #3498db; border-radius: 10px; padding: 15px; margin: 10px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: 600; transition: 0.3s; }
+        .option-btn:hover { background: #3498db; color: white; }
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #q-text { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
+
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>Database Management in MS Access Quiz</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade:</strong> 6 | <strong>Subject:</strong> ICT</p>
+        <p><strong>Topic:</strong>DBMS</p> 
+        <p><strong>Questions:</strong> 15</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "A librarian wants to keep track of books using their unique ISBN numbers to ensure no two entries are the same. Which database feature should they use for the ISBN field?", a: "B) Primary Key", options: ["A) AutoNumber", "B) Primary Key", "C) Foreign Key", "D) Data Filter"], hint: "Think about the mechanism used to ensure every entry in a database is uniquely identifiable." },
+        { q: "Sarah is creating a student database. She needs a field that automatically assigns a new ID number to every new student who is added to the list. Which data type is best for this?", a: "C) AutoNumber", options: ["A) Number", "B) Text", "C) AutoNumber", "D) Currency"], hint: "Consider the data type that increments itself whenever a new entry is created." },
+        { q: "An HR manager needs to see only the employees who live in 'Colaba' from a list of 5,000 people. Which tool should she use to hide everyone else temporarily?", a: "C) Filtering", options: ["A) Deleting", "B) Sorting", "C) Filtering", "D) Editing"], hint: "This tool is used to show only specific records based on criteria you define." },
+        { q: "In MS Access, if you want to define the structure of your table (like naming fields and choosing data types), which view should you use?", a: "C) Design View", options: ["A) Datasheet View", "B) PivotChart View", "C) Design View", "D) Layout View"], hint: "This view is specifically for structural configuration of the table." },
+        { q: "A shopkeeper is entering the price of items in US Dollars ($). Which data type should he choose to ensure the symbol appears automatically and shows two decimal places?", a: "B) Currency", options: ["A) Number", "B) Currency", "C) Text", "D) Yes/No"], hint: "Look for the data type designed specifically for financial values." },
+        { q: "While working on a school database, Rahul notices that 'Name', 'DOB', and 'Address' for one specific student are all grouped together in a single horizontal row. What is this row called?", a: "B) Record", options: ["A) Field", "B) Record", "C) Column", "D) Attribute"], hint: "A row in a database table represents the entire set of information for one entry." },
+        { q: "A hospital database needs to store whether a patient has been discharged or not. The only options are 'Yes' or 'No'. Which data type is most appropriate?", a: "C) Yes/No", options: ["A) Text", "B) Number", "C) Yes/No", "D) Date/Time"], hint: "Choose the data type that limits entries to binary logical choices." },
+        { q: "Which component of the MS Access window allows you to move back and forth between different records of a table while you are viewing them?", a: "C) Navigation Bar", options: ["A) Ribbon", "B) Navigation Pane", "C) Navigation Bar", "D) Quick Access Toolbar"], hint: "Look for the tool at the bottom of the window dedicated to moving through your data entries." },
+        { q: "If a bank clerk tries to enter the word 'Twelve' into a field configured with the 'Number' data type, what will happen?", a: "C) Access will restrict the entry as only numbers or decimals are allowed.", options: ["A) Access will convert it to 12.", "B) It will be accepted as text.", "C) Access will restrict the entry as only numbers or decimals are allowed.", "D) It will automatically format as Currency."], hint: "Consider the validation rules of a strict numeric data type." },
+        { q: "You have mistakenly deleted a record. Which toolbar contains the 'Undo' command to reverse your last action?", a: "C) Quick Access Toolbar", options: ["A) Status Bar", "B) Navigation Pane", "C) Quick Access Toolbar", "D) Ribbon"], hint: "This small, customizable toolbar is typically located at the top of the application window." },
+        { q: "A developer wants to create a 'Relational Database'. According to your ICT textbook, what does this mean?", a: "C) Data is stored in multiple tables.", options: ["A) Data is stored in plain text files.", "B) Data is stored in a single list.", "C) Data is stored in multiple tables.", "D) Data is stored on paper."], hint: "Think about the structure where information is organized across several interconnected tables." },
+        { q: "In the 'Navigation Pane', what would you expect to find?", a: "C) Entries for all tables, forms, queries, and reports created by the user.", options: ["A) Only the data inside a table.", "B) Shortcuts to Save and Undo.", "C) Entries for all tables, forms, queries, and reports created by the user.", "D) The name of the database file only."], hint: "This pane serves as the central hub for accessing all objects in your database file." },
+        { q: "Which of the following is considered a 'Field' in a student database?", a: "C) Roll Number", options: ["A) Rahul Srivastav", "B) 02/02/2000", "C) Roll Number", "D) 1001"], hint: "Distinguish between a specific piece of data (value) and the category label (column header)." },
+        { q: "When starting MS Access, what is unique about the 'Save' process compared to programs like MS Word?", a: "B) Databases are created and saved in the first step.", options: ["A) You don't need to save at all.", "B) Databases are created and saved in the first step.", "C) You can only save after finishing all records.", "D) Saving is only possible in Design View."], hint: "Consider the order of operations when first opening the software." },
+        { q: "A teacher wants to see the attendance for the 'Long Date' format. Which data type should she configure?", a: "B) Date/Time", options: ["A) Text", "B) Date/Time", "C) AutoNumber", "D) Number"], hint: "This data type allows for specific calendar and clock formatting options." }
+    ];
+
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    // Create bubbles
+    const bg = document.getElementById('bubbles');
+    for(let i=0; i<15; i++) {
+        let b = document.createElement('div');
+        b.className = 'bubble';
+        let size = Math.random() * 60 + 20 + 'px';
+        b.style.width = size; b.style.height = size;
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDelay = Math.random() * 5 + 's';
+        bg.appendChild(b);
+    }
+
+    window.addEventListener('load', () => setTimeout(() => { document.getElementById('logo-screen').classList.add('hidden'); document.getElementById('intro-screen').classList.remove('hidden'); }, 3000));
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct answer was: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
