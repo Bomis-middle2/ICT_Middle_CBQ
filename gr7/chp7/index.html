@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Understanding Apps Quiz - Grade 7</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; min-height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); 
+            overflow-y: auto; 
+            padding: 10px;
+        }
+        
+        /* Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); } 100% { transform: translateY(-110vh); } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #logo-screen img { max-width: 80%; height: auto; }
+        
+        #quiz-container, #intro-screen { 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 100%; max-width: 600px; 
+            padding: 20px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .hidden { display: none !important; }
+        .option-btn { border: 2px solid #3498db; border-radius: 10px; padding: 12px; margin: 8px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: 600; transition: 0.3s; font-size: 1rem; }
+        .option-btn:hover { background: #3498db; color: white; }
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; font-size: 0.9rem; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #q-text { font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+
+        @media (max-width: 480px) { h1 { font-size: 1.4rem; } }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo" onerror="this.style.display='none'; setTimeout(transition, 500);"></div>
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>Quiz on Types of Apps</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade:</strong> 7 | <strong>Subject:</strong> ICT</p>
+        <p><strong>Topic:</strong> Understanding Apps</p> 
+        <p><strong>Questions:</strong> 10</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+const questions = [
+        { q: "Sarah wants to edit a high-resolution 4K video. She notices that her computer software is much faster and more responsive than the online editor she tried. This is because the software is installed on her hard drive as a:", a: "B. Desktop app", options: ["A. Web app", "B. Desktop app", "C. Hybrid app", "D. Progressive Web App"], hint: "Think about where software resides and how that impacts its performance during resource-intensive tasks." },
+        { q: "Rahul is traveling and has very little storage space left on his smartphone. He needs to check his social media but doesn't want to download an installation file. Which type of app is best for him to use?", a: "C. Web app", options: ["A. Native app", "B. Desktop app", "C. Web app", "D. Custom app"], hint: "Consider the app category that operates within a browser environment." },
+        { q: "A developer is building an app specifically for the iPhone to ensure it can use the camera and GPS at maximum speed. She uses the Swift programming language. This is an example of a:", a: "A. Native app", options: ["A. Native app", "B. Hybrid app", "C. Web app", "D. Off-the-shelf app"], hint: "Reflect on how apps are categorized when they are built specifically for a single operating system's hardware." },
+        { q: "You are using an app that feels like a regular mobile app and can be added to your home screen, but it was actually built using web technologies like HTML and CSS and works offline. What is this called?", a: "B. Progressive Web App (PWA)", options: ["A. Desktop app", "B. Progressive Web App (PWA)", "C. Social Networking App", "D. Gaming app"], hint: "Consider the term for modern web applications that bridge the gap between websites and native mobile software." },
+        { q: "An international company uses Microsoft Teams so that employees can collaborate. This app uses web technologies but is 'wrapped' in a container to be available in the App Store. It is classified as a:", a: "C. Hybrid app", options: ["A. Native app", "B. Web app", "C. Hybrid app", "D. Productivity app only"], hint: "Think about an app that combines two different development approaches to function across platforms." },
+        { q: "While using a new photo-editing app, the app asks for permission to access your 'Contacts' and 'Microphone,' even though it only needs the 'Camera.' According to the safety precautions in the text, you should:", a: "B. Avoid granting access to sensitive data unless necessary", options: ["A. Grant all permissions to ensure the app works", "B. Avoid granting access to sensitive data unless necessary", "C. Delete your contacts before using the app", "D. Only use the app on public Wi-Fi"], hint: "Analyze the relationship between an app's requested permissions and its primary function." },
+        { q: "Mr. Gupta wants to manage his fixed deposits, transfer funds to his son, and pay his electricity bill using his smartphone. Which category of app is he most likely to use?", a: "B. Banking and Finance Apps", options: ["A. E-commerce Apps", "B. Banking and Finance Apps", "C. Productivity Apps", "D. Entertainment Apps"], hint: "Categorize the app based on the nature of the transaction it facilitates." },
+        { q: "Which of the following is a disadvantage of a Web App compared to a Desktop App?", a: "B. It cannot run without an internet connection", options: ["A. It takes up too much hard drive space", "B. It cannot run without an internet connection", "C. It needs to be manually updated via an .exe file", "D. It is developed specifically for Windows only"], hint: "Recall the fundamental requirement for accessing services that live entirely online." },
+        { q: "A school uses 'Google Docs' to allow students to create presentations and documents for their projects. Google Docs is categorized as a:", a: "C. Productivity app", options: ["A. Entertainment app", "B. E-commerce app", "C. Productivity app", "D. Health & Fitness app"], hint: "Consider the purpose of software tools used to manage tasks, writing, or organization." },
+        { q: "To ensure the highest level of security, where should a user download their mobile apps from?", a: "C. Official stores like Google Play or Apple App Store", options: ["A. Links sent via SMS", "B. Third-party websites", "C. Official stores like Google Play or Apple App Store", "D. Public Wi-Fi login pages"], hint: "Think about which distribution channels are verified and monitored for user safety." }
+    ];
+
+    function transition() {
+        document.getElementById('logo-screen').classList.add('hidden');
+        document.getElementById('intro-screen').classList.remove('hidden');
+    }
+
+    // Logo transition with fallback
+    window.addEventListener('load', () => setTimeout(transition, 3000));
+    
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct answer was: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
