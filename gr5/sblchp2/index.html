@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LED Circuit using Tinkercad - Grade 5</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; min-height: 100vh; 
+            display: flex; justify-content: center; align-items: center; 
+            background: linear-gradient(135deg, #e0eafc, #cfdef3); 
+            overflow: hidden;
+        }
+        
+        /* Animated Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; overflow: hidden; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.3); border-radius: 50%; animation: rise 15s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-110vh); opacity: 0; } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #quiz-container, #intro-screen { 
+            background: rgba(255, 255, 255, 0.95); 
+            width: 90%; max-width: 600px; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1); 
+            text-align: center;
+            box-sizing: border-box;
+        }
+        
+        .hidden { display: none !important; }
+        .option-btn { border: 2px solid #3498db; border-radius: 10px; padding: 12px; margin: 8px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: 600; transition: 0.3s; font-size: 1rem; }
+        .option-btn:hover { background: #3498db; color: white; }
+        .hint-box { background: #fff3cd; padding: 10px; border-radius: 8px; margin-top: 15px; color: #856404; font-weight: bold; font-size: 0.9rem; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #q-text { font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>LED Circuit using Tinkercad</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade: </strong> 5</p>
+<p><strong>Subject: </strong>ICT</p>
+
+        <p><strong>Topic: </strong>LED Circuit using Tinkercad</p>
+	<p><strong>No. of Questions: </strong>12</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+   const questions = [
+    { 
+        q: "You are designing a complex circuit with many components. You want to make sure you can find your project later in your Tinkercad dashboard. What is the best habit to develop right after creating a new file?", 
+        a: "C. Click the text box next to the logo and rename the file.", 
+        options: ["A. Click 'Start Simulation' immediately.", "B. Drag all components onto the workplane.", "C. Click the text box next to the logo and rename the file.", "D. Zoom to fit the workspace."],
+        hint: "Identify files so they don't get lost."
+    },
+    { 
+        q: "Meena is working on a breadboard. She needs to bridge the gap between her resistor and the LED. What tool should she use to create this path?", 
+        a: "B. Jumper wires", 
+        options: ["A. Battery", "B. Jumper wires", "C. Resistor", "D. Simulation button"],
+        hint: "Small cables used for electrical connections."
+    },
+    { 
+        q: "You are trying to place a resistor on the breadboard, but it is standing vertically and blocking other components. Which action will solve this problem?", 
+        a: "B. Use the Rotate button to place it horizontally.", 
+        options: ["A. Delete the resistor and add a new one.", "B. Use the Rotate button to place it horizontally.", "C. Use the Zoom to fit tool.", "D. Change the resistance value."],
+        hint: "Use the tool that turns an object around."
+    },
+    { 
+        q: "If you place a wire in row 1, column 'a', which other holes in row 1 are electrically connected to your wire?<br><img src='assets/breadboard-labels Q4.jpg' alt='Breadboard' style='max-width:100%; height:auto; margin-top:10px;'>", 
+        a: "C. All holes in row 1 (a, b, c, d, e).", 
+        options: ["A. Only row 1, column 'b'.", "B. All holes in column 'a' only.", "C. All holes in row 1 (a, b, c, d, e).", "D. None, they are all isolated."],
+        hint: "Breadboard rows carry electricity internally."
+    },
+    { 
+        q: "Why is it recommended to test your circuit in Tinkercad 'Simulation' mode before physically building it with a battery and real LED?", 
+        a: "B. You can test your logic without the risk of damaging components.", 
+        options: ["A. Simulation makes the LED glow brighter than a battery.", "B. You can test your logic without the risk of damaging components.", "C. The physical components will stop working after simulation.", "D. It is impossible to build the circuit physically."],
+        hint: "Avoid damaging real-world components."
+    },
+    { 
+        q: "You have successfully connected your battery to the breadboard. You are about to add an LED. Why do you need a resistor in this circuit?", 
+        a: "B. To prevent the LED from receiving too much current and burning out.", 
+        options: ["A. To make the circuit look professional.", "B. To prevent the LED from receiving too much current and burning out.", "C. To act as a switch for the battery.", "D. To increase the battery life."],
+        hint: "Limit electricity to keep LEDs safe."
+    },
+    { 
+        q: "You see a button that looks like a play icon (triangle). What is the purpose of this button?<br><img src='assets/Simulation Q7.png' alt='Tinkercad Interface' style='max-width:100%; height:auto; margin-top:10px;'>", 
+        a: "C. To start the virtual flow of electricity.", 
+        options: ["A. To rotate components.", "B. To rename your project.", "C. To start the virtual flow of electricity.", "D. To delete components."],
+        hint: "What does a 'play' button usually do?"
+    },
+    { 
+        q: "Shyam is trying to build a circuit but can only see a small part of his breadboard. Everything else is 'off-screen'. What should he do?", 
+        a: "A. Use the 'Zoom to fit' button.", 
+        options: ["A. Use the 'Zoom to fit' button.", "B. Start the simulation.", "C. Rename the file.", "D. Refresh the page."],
+        hint: "Adjust the view to see the whole project."
+    },
+    { 
+        q: "A breadboard is a 'prototyping tool'. What does this mean in a real-life school project context?", 
+        a: "B. It is a place to experiment and connect components without permanent soldering.", 
+        options: ["A. It is the final box for a robot.", "B. It is a place to experiment and connect components without permanent soldering.", "C. It is a battery storage device.", "D. It is an optional decoration."],
+        hint: "Test designs before making them permanent."
+    },
+    { 
+        q: "If your LED is not glowing during simulation, which of these troubleshooting steps is the most logical?", 
+        a: "B. Verify if the positive/negative wires are correctly connected to the LED legs.", 
+        options: ["A. Delete the project and restart.", "B. Verify if the positive/negative wires are correctly connected to the LED legs.", "C. Change the color of the Tinkercad logo.", "D. Rename the battery to 'New Battery'."],
+        hint: "Check for correct polarity."
+    },
+    { 
+        q: "You are making a list of components for your project. Which of these is NOT a standard component used to create the basic LED circuit mentioned in your chapter?", 
+        a: "D. Computer Mouse", 
+        options: ["A. Breadboard", "B. Jumper wires", "C. Resistor", "D. Computer Mouse"],
+        hint: "Identify the input device, not a circuit component."
+    },
+    { 
+        q: "The LED is a diode. In a real circuit, what happens if you plug the LED legs in backwards?<br><img src='assets/LED Q12.png' alt='LED Diode' style='max-width:100%; height:auto; margin-top:10px;'>", 
+        a: "B. It will not glow because electricity can only flow one way.", 
+        options: ["A. It glows twice as bright.", "B. It will not glow because electricity can only flow one way.", "C. It will explode instantly.", "D. It will change color."],
+        hint: "Diodes only allow one-way current flow."
+    }
+];
+
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    // Create bubbles
+    const bg = document.getElementById('bubbles');
+    for(let i=0; i<15; i++) {
+        let b = document.createElement('div');
+        b.className = 'bubble';
+        let size = Math.random() * 60 + 20 + 'px';
+        b.style.width = size; b.style.height = size;
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDelay = Math.random() * 10 + 's';
+        bg.appendChild(b);
+    }
+
+    window.addEventListener('load', () => setTimeout(() => { document.getElementById('logo-screen').classList.add('hidden'); document.getElementById('intro-screen').classList.remove('hidden'); }, 2000));
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer; margin-top:20px;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
