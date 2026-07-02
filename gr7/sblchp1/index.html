@@ -37,8 +37,11 @@ body{
   align-items:center;
   justify-content:center;
 }
-#logoScreen img{max-width:260px;width:70%;}
-#logoText{font-size:36px;font-weight:bold;color:#273b63;}
+#logoImage{
+  width:420px;
+  max-width:85%;
+  height:auto;
+}
 .card{
   position:relative;
   z-index:1;
@@ -157,8 +160,7 @@ button{font-family:Arial,sans-serif;}
 <body>
 
 <div id="logoScreen">
-  <img src="assets/innovine-logo.png" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
-  <div id="logoText" style="display:none;">INNOVINE</div>
+  <img id="logoImage" src="asset/innovine-logo.png" alt="Innovine Solutions Logo">
 </div>
 
 <div id="intro" class="card hidden">
@@ -194,9 +196,9 @@ button{font-family:Arial,sans-serif;}
   <button class="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
 </div>
 
-<audio id="correctAudio" src="assets/correct.mp3"></audio>
-<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
-<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
+<audio id="correctAudio" src="asset/correct.mp3"></audio>
+<audio id="wrongAudio" src="asset/wrong.mp3"></audio>
+<audio id="clapAudio" src="asset/freesound_community-claps-44774.mp3"></audio>
 
 <script>
 var originalQuestions=[
