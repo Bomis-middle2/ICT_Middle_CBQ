@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT - Chapter 3 Tinkercad Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #e53e3e;
+            --primary-hover: #c53030;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Branding Splash Screen Layout */
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Accessibility Audio Control */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        /* Header Layout Components */
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        /* Configuration Panels */
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        /* Evaluation Block Styling */
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--bg-color);
+            border-color: var(--text-muted);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #fff5f5;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fff5f5;
+            color: #742a2a;
+        }
+
+        /* Information Context Panels */
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #feebc8;
+            color: #c05621;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .feedback-box.solution {
+            background-color: #e2e8f0;
+            color: #2d3748;
+            border-left: 4px solid #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Global Execution Controls */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Evaluation View Display Layout */
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+        <h1>INNOVINE</h1>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
+
+        <div id="intro-screen" class="screen">
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 3: Tinkercad & 3D Modeling</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT / Computer Science</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Workplanes, Hole Options, Grouping/Ungrouping, Shortcuts & Dimensional Geometry</p>
+                <p><strong>Total Questions:</strong> 10</p>
+                <p><strong>Rules:</strong> Each screen runs a 45-second timer bar and contains a 2-stage submission setup with integrated learning hints.</p>
+            </div>
+
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/10</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="timer-wrapper">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question context text container?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/10</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data array directly compiled from the supplied text schema
+        const quizData = [
+            {
+                q: "Rohan is designing a house in Tinkercad. He places a rectangular box on the workplane, but when he tries to add a triangular roof, it keeps landing on the default workplane instead of the box. What tool should he use first to fix this?",
+                options: ["A. Align tool", "B. Workplane tool", "C. Group tool", "D. Hole option"],
+                answer: 1,
+                hint: "Think about shifting the active operational surface to sit right on top of a 3D shape instead of the grid floor.",
+                explanation: "Correct answer: B. Workplane tool. Changing the temporary workplane directly to the top face of the box allows new shapes to be dragged and dropped perfectly on that surface."
+            },
+            {
+                q: "A student wants to create a hollow container (like a cup) in Tinkercad. They have a solid cylinder. What is the correct sequence of actions to make it hollow?",
+                options: [
+                    "A. Insert a smaller shape, set it as 'Hole', and group both.",
+                    "B. Use the Rotate tool to turn the object upside down.",
+                    "C. Use the Align tool to center the cylinder.",
+                    "D. Use the Scale tool to reduce the size of the cylinder."
+                ],
+                answer: 0,
+                hint: "To carve out space inside an object, you place a sub-shape within it, convert that interior shape into a transparent negative cutout, and combine them.",
+                explanation: "Correct answer: A. Insert a smaller shape, set it as 'Hole', and group both. Combining a 'Hole' shape with a solid base object cuts out the shared intersection area."
+            },
+            {
+                q: "Look at the object property options. You have a cube on the workplane. Which part of the object should you click and drag to adjust its height?",
+                options: ["A. A white corner square", "B. The triangular point on top", "C. The center of the cube", "D. The Align tool"],
+                answer: 1,
+                hint: "Corner squares handle 2D footprint scaling, but an isolated directional node pointing straight up alters the vertical Z-dimension.",
+                explanation: "Correct answer: B. The triangular point on top. Pulling or pushing the upper triangular handle expands or compresses the object height independently."
+            },
+            {
+                q: "Sita has grouped three shapes together in Tinkercad. She realizes one of them is slightly misplaced and needs to edit it individually. What should she do?",
+                options: ["A. Delete the group and start over.", "B. Use the Align tool again.", "C. Click 'Ungroup' to separate the objects.", "D. Change the Workplane."],
+                answer: 2,
+                hint: "Look for an action that reverses a previous grouping command to break unified assemblies back into their discrete original entities.",
+                explanation: "Correct answer: C. Click 'Ungroup' to separate the objects. The Ungroup feature breaks a combined mass back into separate parts for individual tuning."
+            },
+            {
+                q: "Which of the following is NOT a true statement regarding 3-D shapes in the context of our physical environment?",
+                options: [
+                    "A. 3-D objects have width, height, and depth.",
+                    "B. 3-D shapes take up space.",
+                    "C. A cube has six faces.",
+                    "D. 3-D shapes only have two directions (width and height)."
+                ],
+                answer: 3,
+                hint: "Read carefully to spot the false statement. True 3-dimensional solid geometry always requires three distinct measurement axes.",
+                explanation: "Correct answer: D. 3-D shapes only have two directions (width and height). This statement is false because 3D objects inherently include depth/thickness alongside flat coordinates."
+            },
+            {
+                q: "A student needs to arrange two separate shapes to be perfectly centered with each other on the workplane. Which tool is the most efficient for this?",
+                options: ["A. Group tool", "B. Align tool", "C. Hole option", "D. Rotate tool"],
+                answer: 1,
+                hint: "Think of a tool that projects reference guidelines to clean up spatial tracking offsets along specific center axes.",
+                explanation: "Correct answer: B. Align tool. The Align feature creates standard reference target handles to position multiple items cleanly along uniform spatial lines."
+            },
+            {
+                q: "You are designing a mechanical part. You need to create a cylindrical opening inside a solid block. After placing the cylinder inside the block, what must you do to finalize the 'Hole' effect?",
+                options: ["A. Change the workplane", "B. Select both objects and click Group", "C. Duplicate the block", "D. Use the scale tool on the block"],
+                answer: 1,
+                hint: "A negative cutout shape remains temporary and editable until you join it to the adjacent solid material with a combining action.",
+                explanation: "Correct answer: B. Select both objects and click Group. A shape configured as a 'Hole' only cuts through material when combined with a solid body using the Group tool."
+            },
+            {
+                q: "When you are working in Tinkercad, you notice a blue border around the workplane. If you want to return to this original surface after working on a specific face of a shape, what should you do?",
+                options: [
+                    "A. Click the Workplane tool and then click the blue border",
+                    "B. Click the Align tool",
+                    "C. Select the object and press Ctrl+D",
+                    "D. Drag a new shape to the workplane"
+                ],
+                answer: 0,
+                hint: "To reset your active orientation back down to the ground level, activate the grid tool and tap an empty spot on the primary base.",
+                explanation: "Correct answer: A. Click the Workplane tool and then click the blue border. Tapping an open space on the original grid boundary resets the temporary workplane to the default base floor."
+            },
+            {
+                q: "If you want to create multiple identical windows on a ship cabin design quickly, what is the most efficient method?",
+                options: [
+                    "A. Insert each window one by one and resize manually",
+                    "B. Use the Ctrl + D shortcut to duplicate",
+                    "C. Use the Group tool repeatedly",
+                    "D. Change the Workplane for every window"
+                ],
+                answer: 1,
+                hint: "Think about an efficiency keyboard combination built specifically to instantly copy, clone, and remember layout transformations.",
+                explanation: "Correct answer: B. Use the Ctrl + D shortcut to duplicate. The Duplicate command clones an active shape and applies any structural step sequences automatically."
+            },
+            {
+                q: "Why is it necessary to change the Workplane while designing complex models like a house or a ship?",
+                options: [
+                    "A. To change the color of the shapes",
+                    "B. To make it easier to place objects on specific surfaces instead of the default base",
+                    "C. To automatically group all objects",
+                    "D. To increase the speed of the browser"
+                ],
+                answer: 1,
+                hint: "Consider how hard it would be to position details on angled sides or roofs if you could only snap items down to the ground grid.",
+                explanation: "Correct answer: B. To make it easier to place objects on specific surfaces instead of the default base. Re-aligning the grid face allows you to snap objects directly to any custom angle or vertical wall face easily."
+            }
+        ];
+
+        // Global State Tracker Scope
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+        }
+
+        // Web Audio Interfaces
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        // Core App Flow Routing
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Correct answer! Outstanding job.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                setNextState();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    setNextState();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function setNextState() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            const messageBox = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            
+            if (percent === 100) {
+                messageBox.innerText = "Perfect! You have completely mastered Tinkercad tools and 3D environment design paradigms.";
+                messageBox.style.backgroundColor = "#c6f6d5";
+                messageBox.style.color = "#22543d";
+            } else if (percent >= 70) {
+                messageBox.innerText = "Great result! You show a strong practical grasp of multi-axis solid geometry.";
+                messageBox.style.backgroundColor = "#ebf8ff";
+                messageBox.style.color = "#2b6cb0";
+            } else {
+                messageBox.innerText = "Good try! Review workplanes, alignment axes, and shape grouping features to improve your scores.";
+                messageBox.style.backgroundColor = "#feebc8";
+                messageBox.style.color = "#c05621";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
