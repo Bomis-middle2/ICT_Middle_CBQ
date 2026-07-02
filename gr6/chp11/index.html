@@ -3,210 +3,696 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Introduction to C - Interactive Quiz</title>
+    <title>Grade 6 ICT - Chapter 11 Interactive Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        #quiz-container { background: white; width: 95%; max-width: 600px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
-        #top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
-        .option-btn { border: 2px solid blue; border-radius: 15px; padding: 15px; margin: 10px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: bold; font-family: inherit; }
-        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; }
-        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
-        #logo-screen, #intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-hover: #1a436d;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            color: var(--primary-color);
+            font-size: 36px;
+            letter-spacing: 2px;
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.98); opacity: 0.8; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(0.98); opacity: 0.8; }
+        }
+
         .hidden { display: none !important; }
-        #q-text { font-weight: bold; font-size: 1.0rem; margin-bottom: 15px; text-align: left; }
+
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-color);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 16px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--bg-color);
+            border-color: var(--text-muted);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #ebf8ff;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fff5f5;
+            color: #742a2a;
+        }
+
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #feebc8;
+            color: #c05621;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .feedback-box.solution {
+            background-color: #e2e8f0;
+            color: #2d3748;
+            border-left: 4px solid #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
     </style>
 </head>
 <body>
 
-<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
-
-<div id="intro-screen" class="hidden">
-    <h1>Introduction to C</h1>
-    <p><strong>Grade:</strong> 6</p>
-    <p><strong>Subject:</strong> ICT</p>
-    <p><strong>Topic:</strong> Chapter 11 Scenario CBQs</p>
-    <p><strong>No. of Questions:</strong> 15</p>
-    <button onclick="startQuiz()" style="padding: 15px 30px; font-size: 18px; font-family: inherit; cursor: pointer;">Start Quiz</button>
-</div>
-
-<div id="quiz-container">
-    <div id="game-area" class="hidden">
-        <div id="top-bar">
-            <div id="timer">45s</div>
-            <div id="score-display">Score: 0</div>
-        </div>
-        <div id="q-text"></div>
-        <div id="options"></div>
-        <div id="feedback"></div>
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <h1 id="branding-text">INNOVINE</h1>
     </div>
-</div>
 
-<script>
-    const questions = [
-        {
-            q: "A student is creating a student grading system and needs to declare a variable to store the student's first name. According to the rules of C, which of the following is a valid variable name?",
-            a: "first_name",
-            options: ["1st_name", "first name", "first_name", "char"],
-            hint: "Variables cannot start with numbers, contain spaces, or use reserved keywords."
-        },
-        {
-            q: "A developer finishes writing the source code for a new C application. After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
-            a: "Linker",
-            options: ["Preprocessor", "Compiler", "Linker", "Interpreter"],
-            hint: "This tool connects scattered fragments into a unified executable package."
-        },
-        {
-            q: "You are building a weather application that reads temperature from a sensor. The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
-            a: "float",
-            options: ["int", "float", "double", "char"],
-            hint: "This single-precision type captures fractional values using exactly 4 bytes of storage."
-        },
-        {
-            q: "In a physics simulation program, you need to use the value of Pi (3.14159). To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
-            a: "As a constant",
-            options: ["As a standard float variable", "As a constant", "As an integer", "As a keyword"],
-            hint: "Using keywords like 'const' locks the assigned literal to guard against runtime mutations."
-        },
-        {
-            q: "A banking app is designed to deposit money into an account. However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
-            a: "Logical Error",
-            options: ["Syntax Error", "Logical Error", "Runtime Error", "Compilation Error"],
-            hint: "The environment runs smoothly, but the math formulas yield broken outputs."
-        },
-        {
-            q: "A user is writing a program and forgets to put a semicolon (;) at the end of a variable declaration line. When they try to build the program, the compiler refuses to compile it. What type of error did the programmer make?",
-            a: "Syntax Error",
-            options: ["Logical Error", "Linker Error", "Syntax Error", "Runtime Error"],
-            hint: "This is a direct violation of the foundational grammatical writing rules of C."
-        },
-        {
-            q: "A developer is writing a program in C and includes a header file using `#include <stdio.h>`. Which phase of the compilation process scans for this symbol and grabs the file contents before the core compilation begins?",
-            a: "Preprocessor",
-            options: ["Linker", "Assembler", "Preprocessor", "Output Generator"],
-            hint: "Commands starting with '#' are sorted out during this structural initialization step."
-        },
-        {
-            q: "A software application takes two integers, `A = 15` and `B = 4`. The programmer uses the modulus operator (`%`) in the statement: `result = A % B;`. What value is stored in the result variable?",
-            a: "3",
-            options: ["3.75", "3", "1", "0"],
-            hint: "This specific operator drops the quotient and extracts only the arithmetic remainder."
-        },
-        {
-            q: "A game engine monitors user coordinates. A character moves and the system processes the operation `score = score + 5;`. Which shorthand assignment operator writes this expression more compactly?",
-            a: "score += 5;",
-            options: ["score =+ 5;", "score == 5;", "score +:= 5;", "score += 5;"],
-            hint: "Combine the target math symbol with the standard assignment equality marker."
-        },
-        {
-            q: "You are setting up a validation filter where a user is allowed entry only if their input passcode matches the system master password exactly. Which relational operator checks for absolute equality in C?",
-            a: "==",
-            options: ["=", "==", "===", "!="],
-            hint: "Avoid single assignment signs; look for the double identity comparison indicator."
-        },
-        {
-            q: "You are writing a web verification program to check if a user is eligible for a teen discount. Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
-            a: "&&",
-            options: ["||", "!=", "&&", "=="],
-            hint: "This operator demands that both neighboring conditional checks evaluate as true."
-        },
-        {
-            q: "A programmer attempts to create a variable to hold the interest rate and names it `double`. The compiler immediately throws an error. Why is this variable name invalid?",
-            a: "'double' is a reserved keyword in C.",
-            options: [
-                "It exceeds 31 characters.",
-                "It contains a special symbol.",
-                "'double' is a reserved keyword in C.",
-                "It does not start with an underscore."
-            ],
-            hint: "You cannot assign system terminology earmarked for foundational types as names."
-        },
-        {
-            q: "You are reviewing a large C program consisting of multiple functions. To trace the flow of the program, you need to know where the execution begins. Which mandatory function should you look for?",
-            a: "main()",
-            options: ["start()", "printf()", "include()", "main()"],
-            hint: "Every standard execution engine enters a C program structure through this single primary node."
-        },
-        {
-            q: "In a ticketing queue system, the current ticket number is 10 (`ticket = 10;`). The system uses the pre-increment operator to assign the next ticket: `next_ticket = ++ticket;`. What is the value assigned to `next_ticket`?",
-            a: "11",
-            options: ["10", "11", "9", "12"],
-            hint: "The variable increases immediately *before* the value is transferred over."
-        },
-        {
-            q: "While debugging, you want to temporarily disable a block of 5 lines of code without deleting them. Which symbols should you use to enclose these lines?",
-            a: "/* and */",
-            options: ["// and //", "/* and */", "{ and }", "# and #"],
-            hint: "Double slashes work for single lines, but block comments span multiple rows cleanly."
-        }
-    ];
+    <audio id="audio-correct" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
+    <audio id="audio-wrong" src="https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring_in_distance.ogg" preload="auto"></audio>
 
-    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
 
-    window.addEventListener('load', () => setTimeout(() => {
-        document.getElementById('logo-screen').classList.add('hidden');
-        document.getElementById('intro-screen').classList.remove('hidden');
-    }, 5000));
+        <div id="intro-screen" class="screen">
+            <h1>Grade 6 ICT Quiz</h1>
+            <h2>Chapter 11: Introduction to C</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT</p>
+                <p><strong>Grade:</strong> 6</p>
+                <p><strong>Topic:</strong> Rules of C, Identifiers, Operators & Syntax Errors</p>
+                <p><strong>Number of Questions:</strong> 15</p>
+                <p><strong>Rules:</strong> You have 45 seconds per question and up to 2 attempts per question if you miss!</p>
+            </div>
 
-    function startQuiz() {
-        document.getElementById('intro-screen').classList.add('hidden');
-        document.getElementById('game-area').classList.remove('hidden');
-        renderQuestion();
-    }
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
 
-    function renderQuestion() {
-        clearInterval(timer);
-        attempts = 0; timeLeft = 45;
-        document.getElementById('timer').innerText = timeLeft + "s";
-        document.getElementById('feedback').className = "";
-        document.getElementById('feedback').innerText = "";
-        
-        const q = questions[currentQ];
-        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
-        const optDiv = document.getElementById('options');
-        optDiv.innerHTML = "";
-        q.options.forEach(o => {
-            const btn = document.createElement('button');
-            btn.className = "option-btn";
-            btn.innerText = o;
-            btn.onclick = () => checkAnswer(o);
-            optDiv.appendChild(btn);
-        });
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/15</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="timer-wrapper">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
 
-        timer = setInterval(() => {
-            timeLeft--;
-            document.getElementById('timer').innerText = timeLeft + "s";
-            if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); }
-        }, 1000);
-    }
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question content goes here?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
 
-    function checkAnswer(choice) {
-        const feedback = document.getElementById('feedback');
-        if(choice === questions[currentQ].a) {
-            score++;
-            document.getElementById('score-display').innerText = "Score: " + score;
-            feedback.className = 'feedback-correct';
-            feedback.innerText = "Correct!";
-            setTimeout(nextQuestion, 1000);
-        } else {
-            attempts++;
-            if(attempts < 2) {
-                feedback.className = 'hint-box';
-                feedback.innerText = "Hint: " + questions[currentQ].hint;
-            } else {
-                feedback.className = 'feedback-correct';
-                feedback.innerText = "Correct answer was: " + questions[currentQ].a;
-                setTimeout(nextQuestion, 2000);
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Quiz Completed!</h1>
+            <div class="score-display" id="final-score">0/15</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        const quizData = [
+            {
+                q: "A student is creating a student grading system and needs to declare a variable to store the student's first name. According to the rules of C, which of the following is a valid variable name?",
+                options: ["A) 1st_name", "B) first name", "C) first_name", "D) char"],
+                answer: 2, 
+                hint: "Variable names in C cannot begin with digits, cannot contain spaces, and cannot use reserved keywords like basic data types.",
+                explanation: "Correct answer is C) first_name. C variable names must begin with a letter or underscore and cannot contain spaces or match reserved keywords."
+            },
+            {
+                q: "A developer finishes writing the source code for a new C application. After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
+                options: ["A) Preprocessor", "B) Compiler", "C) Linker", "D) Interpreter"],
+                answer: 2, 
+                hint: "Think about the system step that links modules together and resolves external references to form the executable output.",
+                explanation: "Correct answer is C) Linker. The Linker combines object files produced by the compiler with standard system libraries to generate the .exe file."
+            },
+            {
+                q: "You are building a weather application that reads temperature from a sensor. The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
+                options: ["A) int", "B) float", "C) double", "D) char"],
+                answer: 1, 
+                hint: "While integers store whole numbers and 'double' takes 8 bytes of space, another option provides single-precision fractional math in exactly 4 bytes.",
+                explanation: "Correct answer is B) float. A float data type stores numbers with fractional decimal points and exactly consumes 4 bytes of system memory."
+            },
+            {
+                q: "In a physics simulation program, you need to use the value of Pi (3.14159). To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
+                options: ["A) As a standard float variable", "B) As a constant", "C) As an integer", "D) As a keyword"],
+                answer: 1, 
+                hint: "An element whose absolute value cannot change throughout program execution is handled as a read-only variable style.",
+                explanation: "Correct answer is B) As a constant. Defining values with the 'const' property makes them read-only and prevents accidental modifications."
+            },
+            {
+                q: "A banking app is designed to deposit money into an account. However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
+                options: ["A) Syntax error", "B) Compilation error", "C) Logical error", "D) Preprocessing error"],
+                answer: 2, 
+                hint: "If code contains valid grammar and structure but produces incorrect outcomes due to broken program logic, it is a human tracking issue.",
+                explanation: "Correct answer is C) Logical error. Logical errors occur when the syntax is perfect, but the logic produces unintended or incorrect computational results."
+            },
+            {
+                q: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon. When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
+                options: ["A) Syntax error", "B) Logical error", "C) Linking error", "D) Execution error"],
+                answer: 0, 
+                hint: "Violating structural rules or core grammatical requirements of language design triggers this evaluation flaw during collection phases.",
+                explanation: "Correct answer is A) Syntax error. Forgetting structural characters like punctuation or semicolons violates C grammar laws, resulting in a syntax error."
+            },
+            {
+                q: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero. Which operator is used specifically to find the remainder of an integer division?",
+                options: ["A) /", "B) &&", "C) %", "D) =="],
+                answer: 2, 
+                hint: "The slash (/) performs standard division. Another special symbol calculates the leftover remainder after integer divisions.",
+                explanation: "Correct answer is C) %. The modulus operator (%) extracts the remainder remaining after integer numerical division."
+            },
+            {
+                q: "A software company writes a C program to control smart home devices on a Windows machine. Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
+                options: ["A) It is a low-level language.", "B) It has 32 keywords.", "C) It is highly portable.", "D) It only uses 0s and 1s."],
+                answer: 2, 
+                hint: "This terms means code written for one system can easily be recompiled and run on another platform with minimal changes.",
+                explanation: "Correct answer is C) It is highly portable. High portability allows programmers to compile the same code baseline across diverse system frameworks easily."
+            },
+            {
+                q: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line. Which escape sequence must you insert into your printf() statement?",
+                options: ["A) \\t", "B) \\n", "C) \\a", "D) \\b"],
+                answer: 1, 
+                hint: "While '\\t' creates horizontal tab indexing gaps, another key sequence triggers a carriage-return newline drop.",
+                explanation: "Correct answer is B) \\n. The newline character escape code sequence '\\n' forces output to descend directly to the subsequent line."
+            },
+            {
+                q: "A teacher wants to display a student's grade stored in the variable 'char grade = 'A';'. Which format specifier is required in the printf() function to print this specific data type?",
+                options: ["A) %d", "B) %f", "C) %s", "D) %c"],
+                answer: 3, 
+                hint: "%d outputs basic base integers and %f formats decimal float blocks. Look for the variant representing single characters.",
+                explanation: "Correct answer is D) %c. The '%c' formatting placeholder tells printf to expect and print single character metrics."
+            },
+            {
+                q: "You are writing a program to check if a user is eligible for a teen discount. Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
+                options: ["A) ||", "B) !=", "C) &&", "D) =="],
+                answer: 2, 
+                hint: "The double pipe (||) operates as a logical OR. To check if *both* operations evaluate true concurrently, choose the symbol configuration for logical AND.",
+                explanation: "Correct answer is C) &&. The continuous logic evaluation AND syntax operator ensures conditional checks pass only when both statements hold true."
+            },
+            {
+                q: "A programmer attempts to create a variable to hold the interest rate and names it 'double'. The compiler immediately throws an error. Why is this variable name invalid?",
+                options: ["A) It exceeds 31 characters.", "B) It contains a special symbol.", "C) 'double' is a reserved keyword in C.", "D) It does not start with an underscore."],
+                answer: 2, 
+                hint: "Core reserved commands used internally to declare fundamental types cannot serve double functions as custom labels.",
+                explanation: "Correct answer is C) 'double' is a reserved keyword in C. Keywords are strictly reserved for defining structures and data types; they cannot serve as variable names."
+            },
+            {
+                q: "You are reviewing a large C program consisting of multiple functions. To trace the flow of the program, you need to know where the execution begins. Which mandatory function should you look for?",
+                options: ["A) start()", "B) printf()", "C) include()", "D) main()"],
+                answer: 3, 
+                hint: "Every standalone operational engine in C looks for this exact name baseline layout to identify the entry point of execution.",
+                explanation: "Correct answer is D) main(). Program routing entry tracking begins processing inside the primary 'main()' operation script sequence."
+            },
+            {
+                q: "In a ticketing queue system, the current ticket number is 10 ('ticket = 10;'). The system uses the pre-increment operator to assign the next ticket: 'next_ticket = ++ticket;'. What is the value assigned to next_ticket?",
+                options: ["A) 10", "B) 11", "C) 9", "D) 12"],
+                answer: 1, 
+                hint: "Pre-increment means the system adds one to the variable *before* assigning its value to the next target.",
+                explanation: "Correct answer is B) 11. Pre-increment adds 1 to 'ticket' immediately (making it 11) before passing that updated evaluation downward."
+            },
+            {
+                q: "While debugging, you want to temporarily disable a block of 5 lines of code without deleting them. Which symbols should you use to enclose these lines?",
+                options: ["A) // and //", "B) /* and */", "C) { and }", "D) # and #"],
+                answer: 1, 
+                hint: "Double slash lines (//) block single tracks. Multi-line segments utilize an asterisk bookend encapsulation framework.",
+                explanation: "Correct answer is B) /* and */. Wrapping sections within block comment stars avoids executing wide blocks of lines simultaneously."
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        let brandingTimer = setTimeout(dismissBranding, 3000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
             }
         }
-    }
 
-    function nextQuestion() {
-        currentQ++;
-        if(currentQ < questions.length) renderQuestion();
-        else {
-            document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()">Restart Quiz</button>`;
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(e => console.log("Audio play blocked until user interaction."));
+            }
         }
-    }
-</script>
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                loadNextQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) {
+                    timerBar.classList.add('timer-warn');
+                }
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Next Question" || submitBtn.innerText === "View Results") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                if (i === index) {
+                    btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
+                }
+            });
+            submitBtn.disabled = false;
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Excellent! You got it right.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                prepareNextStep();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    prepareNextStep();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            prepareNextStep();
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function prepareNextStep() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function loadNextQuestion() {
+            currentQuestionIndex++;
+            loadQuestion();
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            const scorePercent = (score / quizData.length) * 100;
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            
+            const msgBox = document.getElementById('result-message');
+            if (scorePercent >= 80) {
+                msgBox.innerText = "🌟 Fantastic Job! You have mastered Introduction to C Programming!";
+                msgBox.style.backgroundColor = "#e6fffa";
+                msgBox.style.color = "#234e52";
+            } else if (scorePercent >= 50) {
+                msgBox.innerText = "👍 Good Effort! Keep practicing to get an even higher score next time.";
+                msgBox.style.backgroundColor = "#feebc8";
+                msgBox.style.color = "#744210";
+            } else {
+                msgBox.innerText = "📚 Don't give up! Review Chapter 11 documentation and try running the module again.";
+                msgBox.style.backgroundColor = "#fff5f5";
+                msgBox.style.color = "#742a2a";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
 </body>
 </html>
