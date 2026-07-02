@@ -48,7 +48,7 @@
             overflow: hidden;
         }
 
-        /* Branding Splash Screen */
+        /* Branding Splash Screen Layout */
         #branding-overlay {
             position: fixed;
             top: 0;
@@ -57,6 +57,7 @@
             height: 100%;
             background: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -65,21 +66,22 @@
         }
 
         #branding-overlay h1 {
-            font-size: 32px;
-            letter-spacing: 2px;
-            color: var(--primary-color);
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #2b6cb0;
             animation: pulse 1.5s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.8; }
-            50% { transform: scale(1.02); opacity: 1; }
-            100% { transform: scale(0.98); opacity: 0.8; }
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
         }
 
         .hidden { display: none !important; }
 
-        /* Audio Accessibility */
+        /* Audio Controls */
         .audio-control {
             position: absolute;
             top: 15px;
@@ -133,7 +135,7 @@
             background-color: var(--error-color);
         }
 
-        /* Screens Layout */
+        /* Main Screens Configurations */
         .screen h1 {
             font-size: 26px;
             color: var(--primary-color);
@@ -161,7 +163,7 @@
         }
         .meta-info p:last-child { margin-bottom: 0; }
 
-        /* Question Layout & Styling */
+        /* Question and Options Configurations */
         .question-text {
             font-size: 18px;
             font-weight: 600;
@@ -224,7 +226,7 @@
             color: #742a2a;
         }
 
-        /* Contextual Feedback Panels */
+        /* Adaptive Context Panels */
         .feedback-box {
             padding: 15px;
             border-radius: 8px;
@@ -251,7 +253,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Submission Interfaces */
+        /* Action Targets */
         .action-btn {
             display: block;
             width: 100%;
@@ -277,7 +279,7 @@
             cursor: not-allowed;
         }
 
-        /* End Screen Formatting */
+        /* Scoring Metrics Displays */
         .result-msg {
             font-size: 20px;
             font-weight: bold;
@@ -308,6 +310,7 @@
 <body>
 
     <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
         <h1>INNOVINE</h1>
     </div>
 
@@ -346,7 +349,7 @@
             </div>
 
             <div id="question-container">
-                <p class="question-text" id="question-text">Question template text?</p>
+                <p class="question-text" id="question-text">Question text template context?</p>
                 <div id="code-window" class="code-block hidden"></div>
                 <div class="options-list" id="options-list"></div>
             </div>
@@ -366,7 +369,7 @@
     </div>
 
     <script>
-        // Data Structure mapped completely from text metadata
+        // Data Schema fully populated from Chapter 12 criteria
         const quizData = [
             {
                 q: "A programmer is writing code and needs to insert a newline character to format the output on the terminal. Which escape sequence should be used?",
@@ -441,7 +444,7 @@
             }
         ];
 
-        // Core App Variables
+        // Global State Tracker Scope
         let currentQuestionIndex = 0;
         let score = 0;
         let attemptCount = 0;
@@ -450,7 +453,8 @@
         let timeLeft = 45; 
         let isMuted = false;
 
-        let brandingTimer = setTimeout(dismissBranding, 5000);
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
 
         function dismissBranding() {
             if (brandingTimer) clearTimeout(brandingTimer);
@@ -461,6 +465,7 @@
             }
         }
 
+        // Web Audio Interfaces
         function playSound(type) {
             if (isMuted) return;
             const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
@@ -476,6 +481,7 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
+        // Core App Routing Loops
         function startQuiz() {
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
@@ -584,7 +590,7 @@
                     feedbackBox.className = "feedback-box hint";
                     feedbackBox.classList.remove('hidden');
                     document.getElementById('submit-next-btn').disabled = true;
-                    startTimer(); // Restart timer for second attempt
+                    startTimer(); 
                 } else {
                     buttons[currentQ.answer].classList.add('correct');
                     feedbackBox.innerText = currentQ.explanation;
