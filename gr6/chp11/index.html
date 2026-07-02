@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grade 6 ICT - Chapter 11 Quiz</title>
+    <title>Grade 6 ICT - Chapter 11 Competency-Based Quiz</title>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -36,7 +36,7 @@
             min-height: 100vh;
         }
 
-        /* Splash Screen Rules */
+        /* Splash Screen Constraints */
         #splash-screen {
             position: fixed;
             top: 0;
@@ -53,18 +53,18 @@
         }
 
         #splash-screen img {
-            max-width: 200px;
+            max-width: 220px;
             height: auto;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
 
         #splash-screen p {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 600;
             color: #495057;
         }
 
-        /* Main Container */
+        /* Clean Layout Container */
         .quiz-container {
             width: 100%;
             max-width: 600px;
@@ -76,7 +76,7 @@
             position: relative;
         }
 
-        /* Top Header Items */
+        /* Header Navigation Info */
         .quiz-header {
             display: flex;
             justify-content: space-between;
@@ -91,6 +91,7 @@
             border: none;
             cursor: pointer;
             font-size: 1.5rem;
+            padding: 4px;
         }
 
         .hud-item {
@@ -101,21 +102,20 @@
             border-radius: 20px;
         }
 
-        /* Timer Alert Styles */
         .timer-warning {
             background-color: var(--warning) !important;
             color: #000 !important;
             animation: pulse 1s infinite alternate;
         }
 
-        /* Question Layout */
+        /* Non-scrolling Question Framework */
         .question-box {
-            margin-bottom: 24px;
+            margin-bottom: 20px;
         }
 
         .scenario {
             font-style: italic;
-            color: #6c757d;
+            color: #5c636a;
             margin-bottom: 8px;
             font-size: 0.95rem;
         }
@@ -126,7 +126,7 @@
             color: #1a1a1a;
         }
 
-        /* Large Tappable Option Buttons */
+        /* Large Touch/Tappable Targets */
         .options-list {
             display: flex;
             flex-direction: column;
@@ -144,8 +144,7 @@
             transition: all 0.2s ease;
             width: 100%;
             font-weight: 500;
-            display: flex;
-            align-items: center;
+            color: var(--text-color);
         }
 
         .option-btn:hover:not(:disabled) {
@@ -167,10 +166,10 @@
 
         .option-btn:disabled {
             cursor: not-allowed;
-            opacity: 0.8;
+            opacity: 0.85;
         }
 
-        /* Bottom Controls */
+        /* Action Panel Footer */
         .quiz-footer {
             margin-top: 24px;
             display: flex;
@@ -181,7 +180,7 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            padding: 12px 24px;
+            padding: 14px 28px;
             font-size: 1rem;
             font-weight: 600;
             border-radius: var(--border-radius);
@@ -193,7 +192,7 @@
             background-color: #0b5ed7;
         }
 
-        /* Results Screen */
+        /* Summary Evaluation Container */
         .results-box {
             text-align: center;
             padding: 20px 0;
@@ -205,7 +204,7 @@
         }
 
         .feedback-msg {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: bold;
             margin: 16px 0;
         }
@@ -219,14 +218,14 @@
             background-color: var(--success);
             color: white;
             border: none;
-            padding: 12px 28px;
+            padding: 14px 32px;
             font-size: 1.1rem;
             font-weight: 600;
             border-radius: var(--border-radius);
             cursor: pointer;
         }
 
-        /* Confetti / Canvas Animation Overlay */
+        /* Canvas Particle Layout overlay */
         #confetti-canvas {
             position: fixed;
             top: 0;
@@ -239,10 +238,10 @@
 
         @keyframes pulse {
             from { transform: scale(1); }
-            to { transform: scale(1.05); }
+            to { transform: scale(1.03); }
         }
 
-        /* Responsive Tweaks */
+        /* Screen Scaling Fixes */
         @media (max-width: 480px) {
             body { padding: 8px; }
             .quiz-container { padding: 16px; }
@@ -256,14 +255,15 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <p>Introduction to C - Chapter 11 Quiz</p>
     </div>
 
     <div class="quiz-container" id="quiz-container">
         
         <div class="quiz-header">
             <div class="audio-control">
-                <button id="mute-toggle" aria-label="Mute audio">🔊</button>
+                <button id="mute-toggle" aria-label="Toggle mute state">🔊</button>
             </div>
             <div class="hud-item" id="score-tracker">Score: 0/12</div>
             <div class="hud-item" id="timer">Time: 60s</div>
@@ -271,8 +271,8 @@
 
         <div id="quiz-gameplay">
             <div class="question-box">
-                <div class="scenario" id="question-scenario">Scenario goes here...</div>
-                <div class="question-text" id="question-main">Question prompt goes here?</div>
+                <div class="scenario" id="question-scenario">Scenario Loading...</div>
+                <div class="question-text" id="question-main">Question prompt loading...</div>
             </div>
 
             <div class="options-list" id="options-container">
@@ -284,109 +284,109 @@
         </div>
 
         <div id="quiz-results" style="display: none;" class="results-box">
-            <h2>Quiz Completed!</h2>
-            <div class="score-display" id="final-score">You scored: 0 / 12 (0%)</div>
-            <div class="feedback-msg" id="feedback-message">Message text</div>
+            <h2>Quiz Evaluation</h2>
+            <div class="score-display" id="final-score">Score: 0 / 12 (0%)</div>
+            <div class="feedback-msg" id="feedback-message">Message</div>
             <button class="restart-btn" id="restart-button">Try Again</button>
         </div>
     </div>
 
     <script>
-        // Quiz bank filtered down to exactly 12 total questions per technical constraint mapping
-        const originalQuestions = [
+        // Data Bank mapped strictly from 'G6_ICT_Chapter 11_MCQs.docx' to complete a 12-question quiz set [cite: 1, 2]
+        const rawQuestionData = [
             {
                 scenario: "A student is creating a student grading system and needs to declare a variable to store the student's first name.",
                 question: "According to the rules of C, which of the following is a valid variable name?",
                 options: ["1st_name", "first name", "first_name", "char"],
-                answer: 2 // Index matching 'first_name'
+                answer: 2 // Index of 'first_name' [cite: 7, 99]
             },
             {
                 scenario: "A developer finishes writing the source code for a new C application.",
                 question: "After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
                 options: ["Preprocessor", "Compiler", "Linker", "Interpreter"],
-                answer: 2 // Index matching 'Linker'
+                answer: 2 // Index of 'Linker' [cite: 13, 100]
             },
             {
                 scenario: "You are building a weather application that reads temperature from a sensor.",
                 question: "The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
                 options: ["int", "float", "double", "char"],
-                answer: 1 // Index matching 'float'
+                answer: 1 // Index of 'float' [cite: 19, 101]
             },
             {
                 scenario: "In a physics simulation program, you need to use the value of Pi (3.14159).",
                 question: "To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
                 options: ["As a standard float variable", "As a constant", "As an integer", "As a keyword"],
-                answer: 1 // Index matching 'As a constant'
+                answer: 1 // Index of 'As a constant' [cite: 25, 102]
             },
             {
                 scenario: "A banking app is designed to deposit money into an account.",
                 question: "However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
                 options: ["Syntax error", "Compilation error", "Logical error", "Preprocessing error"],
-                answer: 2 // Index matching 'Logical error'
+                answer: 2 // Index of 'Logical error' [cite: 33, 103]
             },
             {
-                scenario: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon.",
+                scenario: "A junior programmer writes int age = 15 at the end of a line but forgets to add a semicolon.",
                 question: "When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
                 options: ["Syntax error", "Logical error", "Linking error", "Execution error"],
-                answer: 0 // Index matching 'Syntax error'
+                answer: 0 // Index of 'Syntax error' [cite: 37, 104]
             },
             {
                 scenario: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero.",
                 question: "Which operator is used specifically to find the remainder of an integer division?",
                 options: ["/", "&&", "%", "=="],
-                answer: 2 // Index matching '%'
+                answer: 2 // Index of '%' [cite: 45, 105]
             },
             {
                 scenario: "A software company writes a C program to control smart home devices on a Windows machine.",
                 question: "Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
                 options: ["It is a low-level language.", "It has 32 keywords.", "It is highly portable.", "It only uses 0s and 1s."],
-                answer: 2 // Index matching 'It is highly portable.'
+                answer: 2 // Index of 'It is highly portable.' [cite: 52, 106]
             },
             {
                 scenario: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line.",
                 question: "Which escape sequence must you insert into your printf() statement?",
                 options: ["\\t", "\\n", "\\a", "\\b"],
-                answer: 1 // Index matching '\n'
+                answer: 1 // Index of '\n' [cite: 57, 107]
             },
             {
-                scenario: "A teacher wants to display a student's grade stored in the variable char grade = 'A';.",
+                scenario: "A teacher wants to display a student's grade stored in the variable char grade = 'A';",
                 question: "Which format specifier is required in the printf() function to print this specific data type?",
                 options: ["%d", "%f", "%s", "%c"],
-                answer: 3 // Index matching '%c'
+                answer: 3 // Index of '%c' [cite: 65, 108]
             },
             {
                 scenario: "You are writing a program to check if a user is eligible for a teen discount.",
                 question: "Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
                 options: ["||", "!=", "&&", "=="],
-                answer: 2 // Index matching '&&'
+                answer: 2 // Index of '&&' [cite: 70, 109]
             },
             {
                 scenario: "A programmer attempts to create a variable to hold the interest rate and names it 'double'.",
                 question: "The compiler immediately throws an error. Why is this variable name invalid?",
                 options: ["It exceeds 31 characters.", "It contains a special symbol.", "'double' is a reserved keyword in C.", "It does not start with an underscore."],
-                answer: 2 // Index matching ''double' is a reserved keyword in C.'
+                answer: 2 // Index of ''double' is a reserved keyword in C.' [cite: 76, 110]
             }
         ];
 
-        // Runtime State
-        let questions = [];
+        // Core App Context States
+        let questionSet = [];
         let currentIndex = 0;
-        let finalScoreValue = 0;
-        let timeRemaining = 60;
-        let countdownTimerId = null;
-        let isMuted = false;
-        let attemptCounter = 0; // Tracking allowance parameters for exact retry limits max 2 attempts
+        let scoreCounter = 0;
+        let timeRemaining = 60; // Forced timer limit tracking metric [cite: 1]
+        let intervalTimerId = null;
+        let isAudioMuted = false;
+        let currentAttempts = 0; // Tracking retries on error indices [cite: 1]
 
-        // Audio asset instantiations
-        const correctAudio = new Audio('assets/correct.mp3');
-        const wrongAudio = new Audio('assets/wrong.mp3');
+        // Sound Resources Setup [cite: 2, 4]
+        const audioSuccess = new Audio('assets/correct.mp3');
+        const audioFailure = new Audio('assets/wrong.mp3');
 
-        // Confetti tracking array
-        let confettiArray = [];
-        const canvas = document.getElementById('confetti-canvas');
-        const ctx = canvas.getContext('2d');
+        // Confetti Engine Assets
+        let particles = [];
+        const canvasElement = document.getElementById('confetti-canvas');
+        const contextObj = canvasElement.getContext('2d');
 
-        // Establish Splash Screen timeout constraints 
+        // Splash screen rendering timer initialization 
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -394,23 +394,23 @@
                 setTimeout(() => {
                     splash.style.display = 'none';
                     document.getElementById('quiz-container').style.display = 'block';
-                    initializeQuizModule();
+                    launchQuizModule();
                 }, 500);
-            }, 5000); // Enforce view requirement of 5 seconds
+            }, 5000); // Screen layout execution timeout precisely set at 5000ms 
         });
 
-        // Initialize/Reset system configurations
-        function initializeQuizModule() {
-            // High diversity implementation via randomized placement indexes
-            questions = shuffle([...originalQuestions]);
+        // Initialize / Restart Quiz Execution Loop
+        function launchQuizModule() {
+            // Apply localized high diversity shuffle routines
+            questionSet = shuffleArray([...rawQuestionData]);
             currentIndex = 0;
-            finalScoreValue = 0;
-            updateScoreUI();
-            displayQuestionItem();
+            scoreCounter = 0;
+            updateHudDisplay();
+            renderQuestion();
         }
 
-        // Standard modern array shuffling mechanics
-        function shuffle(arr) {
+        // Shuffle logic helper
+        function shuffleArray(arr) {
             for (let i = arr.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [arr[i], arr[j]] = [arr[j], arr[i]];
@@ -418,229 +418,225 @@
             return arr;
         }
 
-        function updateScoreUI() {
-            document.getElementById('score-tracker').innerText = `Score: ${finalScoreValue}/${questions.length}`;
+        function updateHudDisplay() {
+            document.getElementById('score-tracker').innerText = `Score: ${scoreCounter}/${questionSet.length}`; [cite: 1]
         }
 
-        // Setup individual interactive presentation
-        function displayQuestionItem() {
-            // Terminate previous iterations
-            clearInterval(countdownTimerId);
+        // Question Render Frame logic
+        function renderQuestion() {
+            clearInterval(intervalTimerId);
             document.getElementById('timer').classList.remove('timer-warning');
             
-            // Render panel items
             document.getElementById('quiz-gameplay').style.display = 'block';
             document.getElementById('quiz-results').style.display = 'none';
             document.getElementById('next-button').style.display = 'none';
 
-            attemptCounter = 0; // Reset validation tries per sequence window
+            currentAttempts = 0; // Initialize validation retries per question frame [cite: 1]
 
-            const currentItem = questions[currentIndex];
-            document.getElementById('question-scenario').innerText = currentItem.scenario;
-            document.getElementById('question-main').innerText = currentItem.question;
+            const item = questionSet[currentIndex];
+            document.getElementById('question-scenario').innerText = item.scenario;
+            document.getElementById('question-main').innerText = item.question;
 
-            const optionsBox = document.getElementById('options-container');
-            optionsBox.innerHTML = '';
+            const targetBox = document.getElementById('options-container');
+            targetBox.innerHTML = '';
 
-            currentItem.options.forEach((optText, index) => {
-                const button = document.createElement('button');
-                button.className = 'option-btn';
-                button.innerText = optText;
-                button.setAttribute('data-index', index);
-                button.addEventListener('click', () => evaluationEngine(index, button));
-                optionsBox.appendChild(button);
+            item.options.forEach((choice, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option-btn';
+                optionBtn.innerText = choice;
+                optionBtn.setAttribute('data-idx', index);
+                optionBtn.addEventListener('click', () => processAnswerSelection(index, optionBtn)); [cite: 2]
+                targetBox.appendChild(optionBtn);
             });
 
-            // Enforce functional criteria timer constraint (Grade 3 context reference)
+            // Timer management module init [cite: 1]
             timeRemaining = 60;
-            const timerDisplay = document.getElementById('timer');
-            timerDisplay.innerText = `Time: ${timeRemaining}s`;
+            const timerHUD = document.getElementById('timer');
+            timerHUD.innerText = `Time: ${timeRemaining}s`;
 
-            countdownTimerId = setInterval(() => {
+            intervalTimerId = setInterval(() => {
                 timeRemaining--;
-                timerDisplay.innerText = `Time: ${timeRemaining}s`;
+                timerHUD.innerText = `Time: ${timeRemaining}s`;
 
                 if (timeRemaining <= 10) {
-                    timerDisplay.classList.add('timer-warning');
+                    timerHUD.classList.add('timer-warning');
                 }
 
                 if (timeRemaining <= 0) {
-                    clearInterval(countdownTimerId);
-                    lockDownOptionsOnExpiry();
+                    clearInterval(intervalTimerId);
+                    handleTimerExpiration();
                 }
             }, 1000);
         }
 
-        // Handle logical execution path mapping parameters
-        function evaluationEngine(selectedIndex, clickedButton) {
-            const currentItem = questions[currentIndex];
-            const optionsBox = document.getElementById('options-container');
-            const allButtons = optionsBox.querySelectorAll('.option-btn');
+        // Core processing/grading mechanics [cite: 1, 2]
+        function processAnswerSelection(selectedIndex, clickedBtn) {
+            const currentItem = questionSet[currentIndex];
+            const targetBox = document.getElementById('options-container');
+            const choiceButtons = targetBox.querySelectorAll('.option-btn');
 
             if (selectedIndex === currentItem.answer) {
-                // Correct Path
-                clearInterval(countdownTimerId);
-                clickedButton.classList.add('correct');
-                playSound(correctAudio);
-                triggerSparklers();
-                finalScoreValue++;
-                updateScoreUI();
-                disableAllButtons(allButtons);
-                revealNextButtonNav();
+                // Success Path Execution
+                clearInterval(intervalTimerId);
+                clickedBtn.classList.add('correct');
+                playFeedbackSound(audioSuccess); [cite: 2]
+                triggerConfettiBurst(); [cite: 2]
+                scoreCounter++;
+                updateHudDisplay();
+                disableOptionControls(choiceButtons);
+                revealNavigationButton();
             } else {
-                // Error Sequence Management
-                attemptCounter++;
-                if (attemptCounter < 2) {
-                    // Trigger retry prompt
-                    playSound(wrongAudio);
-                    clickedButton.classList.add('wrong');
-                    clickedButton.disabled = true; // Block repeated evaluation of same wrong node
+                // Wrong Attempt Tracking Configuration [cite: 1]
+                currentAttempts++;
+                if (currentAttempts < 2) {
+                    // Retry execution boundary condition met [cite: 1]
+                    playFeedbackSound(audioFailure); [cite: 2]
+                    clickedBtn.classList.add('wrong');
+                    clickedBtn.disabled = true; // Lock evaluated wrong item selection node
                 } else {
-                    // Max attempts hit
-                    clearInterval(countdownTimerId);
-                    clickedButton.classList.add('wrong');
-                    // Render correct answer visibility target
-                    allButtons[currentItem.answer].classList.add('correct');
-                    playSound(wrongAudio);
-                    disableAllButtons(allButtons);
-                    revealNextButtonNav();
+                    // Maximum retry threshold reached [cite: 1]
+                    clearInterval(intervalTimerId);
+                    clickedBtn.classList.add('wrong');
+                    choiceButtons[currentItem.answer].classList.add('correct');
+                    playFeedbackSound(audioFailure); [cite: 2]
+                    disableOptionControls(choiceButtons);
+                    revealNavigationButton();
                 }
             }
         }
 
-        function lockDownOptionsOnExpiry() {
-            const currentItem = questions[currentIndex];
-            const optionsBox = document.getElementById('options-container');
-            const allButtons = optionsBox.querySelectorAll('.option-btn');
+        function handleTimerExpiration() {
+            const currentItem = questionSet[currentIndex];
+            const targetBox = document.getElementById('options-container');
+            const choiceButtons = targetBox.querySelectorAll('.option-btn');
             
-            playSound(wrongAudio);
-            allButtons[currentItem.answer].classList.add('correct');
-            disableAllButtons(allButtons);
-            revealNextButtonNav();
+            playFeedbackSound(audioFailure); [cite: 2]
+            choiceButtons[currentItem.answer].classList.add('correct');
+            disableOptionControls(choiceButtons);
+            revealNavigationButton();
         }
 
-        function disableAllButtons(buttonsList) {
-            buttonsList.forEach(btn => btn.disabled = true);
+        function disableOptionControls(buttons) {
+            buttons.forEach(btn => btn.disabled = true);
         }
 
-        function revealNextButtonNav() {
-            const nextBtn = document.getElementById('next-button');
-            if (currentIndex < questions.length - 1) {
-                nextBtn.innerText = "Next Question";
+        function revealNavigationButton() {
+            const nextButton = document.getElementById('next-button');
+            if (currentIndex < questionSet.length - 1) {
+                nextButton.innerText = "Next Question";
             } else {
-                nextBtn.innerText = "View Summary";
+                nextButton.innerText = "View Results";
             }
-            nextBtn.style.display = 'block';
+            nextButton.style.display = 'block';
         }
 
-        // Attach system listeners
+        // Interface events binding
         document.getElementById('next-button').addEventListener('click', () => {
-            if (currentIndex < questions.length - 1) {
+            if (currentIndex < questionSet.length - 1) {
                 currentIndex++;
-                displayQuestionItem();
+                renderQuestion();
             } else {
-                renderEvaluationSummary();
+                renderFinalSummaryScore();
             }
         });
 
         document.getElementById('restart-button').addEventListener('click', () => {
-            initializeQuizModule();
+            launchQuizModule();
         });
 
-        // Audio infrastructure wrapper
-        function playSound(audioTarget) {
-            if (!isMuted) {
-                audioTarget.currentTime = 0;
-                audioTarget.play().catch(e => console.log("Audio feedback interaction delayed initialization: ", e));
+        // Audio controller definitions [cite: 2]
+        function playFeedbackSound(audioNode) {
+            if (!isAudioMuted) {
+                audioNode.currentTime = 0;
+                audioNode.play().catch(err => console.log("Audio presentation skipped due to user gesture requirements:", err));
             }
         }
 
-        // Audio controls
         document.getElementById('mute-toggle').addEventListener('click', () => {
-            isMuted = !isMuted;
-            document.getElementById('mute-toggle').innerText = isMuted ? '🔇' : '🔊';
+            isAudioMuted = !isAudioMuted; [cite: 2]
+            document.getElementById('mute-toggle').innerText = isAudioMuted ? '🔇' : '🔊'; [cite: 2]
         });
 
-        // Grading Engine
-        function renderEvaluationSummary() {
-            clearInterval(countdownTimerId);
+        // Grading and Final summary display mapping [cite: 1]
+        function renderFinalSummaryScore() {
+            clearInterval(intervalTimerId);
             document.getElementById('quiz-gameplay').style.display = 'none';
             
             const resultsBox = document.getElementById('quiz-results');
-            const scoreDisplay = document.getElementById('final-score');
-            const feedbackMsg = document.getElementById('feedback-message');
+            const scoreLabel = document.getElementById('final-score');
+            const messageLabel = document.getElementById('feedback-message');
             
-            const percentage = Math.round((finalScoreValue / questions.length) * 100);
-            scoreDisplay.innerText = `You scored: ${finalScoreValue} / ${questions.length} (${percentage}%)`;
+            const gradePercentage = Math.round((scoreCounter / questionSet.length) * 100);
+            scoreLabel.innerText = `You scored: ${scoreCounter} / ${questionSet.length} (${gradePercentage}%)`; [cite: 1]
 
-            // Enforce conditional evaluation text criteria
-            if (percentage >= 75) {
-                feedbackMsg.innerText = "Good job";
-                feedbackMsg.style.color = "var(--success)";
-                triggerSparklers(); // Double length celebration on high pass output
-                setTimeout(triggerSparklers, 400);
-            } else if (percentage >= 40) {
-                feedbackMsg.innerText = "Review this chapter and try again";
-                feedbackMsg.style.color = "var(--warning)";
+            // Strict matching rules implementation for metric text alerts [cite: 1]
+            if (gradePercentage >= 75) {
+                messageLabel.innerText = "Good job"; [cite: 1]
+                messageLabel.style.color = "var(--success)";
+                triggerConfettiBurst(); [cite: 2]
+                setTimeout(triggerConfettiBurst, 350);
+            } else if (gradePercentage >= 40) {
+                messageLabel.innerText = "Review this chapter and try again"; [cite: 1]
+                messageLabel.style.color = "var(--warning)";
             } else {
-                feedbackMsg.innerText = "Let’s practise more";
-                feedbackMsg.style.color = "var(--danger)";
+                messageLabel.innerText = "Let’s practise more"; [cite: 1]
+                messageLabel.style.color = "var(--danger)";
             }
 
             resultsBox.style.display = 'block';
         }
 
-        /* High-Performance Canvas Confetti & Particle System */
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        /* Particle Vector Confetti System */
+        function adjustCanvasSize() {
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
         }
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
+        window.addEventListener('resize', adjustCanvasSize);
+        adjustCanvasSize();
 
-        function triggerSparklers() {
-            const count = 80;
-            const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#fd7e14', '#6f42c1'];
+        function triggerConfettiBurst() {
+            const burstCount = 75;
+            const palette = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#fd7e14', '#6f42c1'];
             
-            for (let i = 0; i < count; i++) {
-                confettiArray.push({
-                    x: Math.random() * canvas.width,
-                    y: -10 - (Math.random() * 20),
-                    size: (Math.random() * 6) + 4,
-                    color: colors[Math.floor(Math.random() * colors.length)],
-                    speedX: (Math.random() * 4) - 2,
-                    speedY: (Math.random() * 5) + 3,
-                    rotation: Math.random() * 360,
-                    rotationSpeed: (Math.random() * 4) - 2
+            for (let i = 0; i < burstCount; i++) {
+                particles.push({
+                    x: Math.random() * canvasElement.width,
+                    y: -20 - (Math.random() * 30),
+                    dimension: (Math.random() * 6) + 5,
+                    color: palette[Math.floor(Math.random() * palette.length)],
+                    vectorX: (Math.random() * 4) - 2,
+                    vectorY: (Math.random() * 4) + 4,
+                    angle: Math.random() * 360,
+                    rotationSpeed: (Math.random() * 3) - 1.5
                 });
             }
         }
 
-        function animationEngineLoop() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        function runParticleRenderLoop() {
+            contextObj.clearRect(0, 0, canvasElement.width, canvasElement.height);
             
-            for (let i = 0; i < confettiArray.length; i++) {
-                const p = confettiArray[i];
-                p.y += p.speedY;
-                p.x += p.speedX;
-                p.rotation += p.rotationSpeed;
+            for (let i = 0; i < particles.length; i++) {
+                const element = particles[i];
+                element.y += element.vectorY;
+                element.x += element.vectorX;
+                element.angle += element.rotationSpeed;
 
-                ctx.save();
-                ctx.translate(p.x, p.y);
-                ctx.rotate(p.rotation * Math.PI / 180);
-                ctx.fillStyle = p.color;
-                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-                ctx.restore();
+                contextObj.save();
+                contextObj.translate(element.x, element.y);
+                contextObj.rotate(element.angle * Math.PI / 180);
+                contextObj.fillStyle = element.color;
+                contextObj.fillRect(-element.dimension / 2, -element.dimension / 2, element.dimension, element.dimension);
+                contextObj.restore();
 
-                // Drop spent array elements to prevent stack leaking issues
-                if (p.y > canvas.height) {
-                    confettiArray.splice(i, 1);
+                // Drop obsolete objects falling off lower bounds
+                if (element.y > canvasElement.height) {
+                    particles.splice(i, 1);
                     i--;
                 }
             }
-            requestAnimationFrame(animationEngineLoop);
+            requestAnimationFrame(runParticleRenderLoop);
         }
-        animationEngineLoop();
+        runParticleRenderLoop();
     </script>
 </body>
 </html>
