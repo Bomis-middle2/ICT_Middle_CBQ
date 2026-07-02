@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT - Chapter 1 Basics of a Circuit and Breadboard Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #059669;
+            --primary-hover: #047857;
+            --bg-color: #f0fdf4;
+            --card-bg: #ffffff;
+            --text-color: #1f2937;
+            --text-muted: #4b5563;
+            --success-color: #10b981;
+            --error-color: #ef4444;
+            --border-color: #e5e7eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Branding Splash Screen Layout */
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Accessibility Audio Control */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        /* Header Layout Components */
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        /* Configuration Panels */
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        /* Evaluation Block Styling */
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #ecfdf5;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #d1fae5;
+            color: #065f46;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fee2e2;
+            color: #991b1b;
+        }
+
+        /* Information Context Panels */
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #d97706;
+        }
+
+        .feedback-box.solution {
+            background-color: #f3f4f6;
+            color: #1f2937;
+            border-left: 4px solid #4b5563;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Global Execution Controls */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        /* Evaluation View Display Layout */
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+        <h1>INNOVINE</h1>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
+
+        <div id="intro-screen" class="screen">
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 1: Basics of a Circuit and Breadboard</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT / Computer Hardware Basics</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Conventional Current, Ohm's Law, Electronic Components (Diodes, Capacitors, Transistors, Inductors), Circuit Layouts, and Breadboard Architecture.</p>
+                <p><strong>Total Questions:</strong> 15</p>
+                <p><strong>Rules:</strong> Each question carries a 45-second running timer limit. Features a 2-stage submission flow providing educational hints on incorrect first responses.</p>
+            </div>
+
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/15</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="timer-wrapper">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question text container?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/15</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Schema compiled from input records
+        const quizData = [
+            {
+                q: "You are setting up a battery for a remote-controlled car. To understand the circuit, you need to know the direction of the electric current. According to circuit fundamentals, in which direction does the current flow?",
+                options: [
+                    "A) From the negative to the positive terminal of the battery",
+                    "B) From the positive to the negative terminal of the battery",
+                    "C) In both directions simultaneously",
+                    "D) From the resistor to the capacitor"
+                ],
+                answer: 1,
+                hint: "Think about the rules of 'conventional' current direction, which flows from the power-giving side around to the grounding side.",
+                explanation: "Correct answer: B) From the positive to the negative terminal of the battery. Conventional current flows outward from the positive battery terminal and returns through the negative terminal."
+            },
+            {
+                q: "Your science project requires a 3A current to flow through a circuit powered by a 12V battery. According to Ohm's Law, how much resistance is needed in the circuit to achieve this safely?",
+                options: [
+                    "A) 36 Ohms",
+                    "B) 15 Ohms",
+                    "C) 4 Ohms",
+                    "D) 9 Ohms"
+                ],
+                answer: 2,
+                hint: "Ohm's law dictates that Resistance equals Voltage divided by Current (R = V / I). Calculate 12 divided by 3.",
+                explanation: "Correct answer: C) 4 Ohms. According to Ohm's law, R = V / I. Thus, 12 Volts / 3 Amperes results in exactly 4 Ohms of resistance."
+            },
+            {
+                q: "You are building an LED flashlight and need to ensure the electricity flows only in one specific direction so the LED isn't damaged. Which circuit component should you use?",
+                options: [
+                    "A) Diode",
+                    "B) Resistor",
+                    "C) Capacitor",
+                    "D) Inductor"
+                ],
+                answer: 0,
+                hint: "An LED itself is a type of this component. It acts like a one-way check valve for electrical current.",
+                explanation: "Correct answer: A) Diode. A diode allows electric current to pass smoothly in one direction while blocking flow in the opposite direction."
+            },
+            {
+                q: "A technician needs to store energy temporarily in the form of an electric charge for an AC (Alternating Current) circuit. Which component should they select?",
+                options: [
+                    "A) Battery",
+                    "B) Resistor",
+                    "C) Inductor",
+                    "D) Capacitor"
+                ],
+                answer: 3,
+                hint: "This component features dual conductive plates separated by an insulator to accumulate electrostatic fields.",
+                explanation: "Correct answer: D) Capacitor. A capacitor collects and stores electrical energy temporarily in an electrostatic field and discharges it when required."
+            },
+            {
+                q: "You are putting up decorative fairy lights. You notice that if one single bulb burns out or is removed, the entire string of lights goes dark. What type of circuit is this?",
+                options: [
+                    "A) Parallel circuit",
+                    "B) Series circuit",
+                    "C) Short circuit",
+                    "D) Open circuit"
+                ],
+                answer: 1,
+                hint: "This type of circuit loops components end-to-end, meaning any break opens the only channel available.",
+                explanation: "Correct answer: B) Series circuit. In a series circuit, all components share a single continuous path. An open node anywhere drops the current across the complete loop."
+            },
+            {
+                q: "In your home electrical wiring, you can turn off the bedroom fan without turning off the room lights. What type of circuit allows for these multiple independent paths of current?",
+                options: [
+                    "A) Parallel circuit",
+                    "B) Series circuit",
+                    "C) Closed circuit",
+                    "D) Short circuit"
+                ],
+                answer: 0,
+                hint: "This electrical configuration branches paths side-by-side, so each appliance runs on its own circuit line.",
+                explanation: "Correct answer: A) Parallel circuit. A parallel circuit partitions current across individual standalone branches, permitting separate device operation."
+            },
+            {
+                q: "While tinkering with wires, two bare wires accidentally touch each other directly, creating a low-resistance path that causes a sudden, large current flow and a dangerous spark. What kind of circuit condition is this?",
+                options: [
+                    "A) Open circuit",
+                    "B) Closed circuit",
+                    "C) Short circuit",
+                    "D) Series circuit"
+                ],
+                answer: 2,
+                hint: "This condition bypasses the intended load, taking a dangerous 'shortcut' directly back to the power supply.",
+                explanation: "Correct answer: C) Short circuit. A short circuit happens when a path of negligible resistance accidentally links two points, creating an excessive, hazardous current surge."
+            },
+            {
+                q: "You need a force to drive mobile electrons through the closed circuit of your robotic arm. Which parameter provides this pushing force from the power source (like a battery)?",
+                options: [
+                    "A) Current (Amperes)",
+                    "B) Voltage (Volts)",
+                    "C) Resistance (Ohms)",
+                    "D) Inductance (Henries)"
+                ],
+                answer: 1,
+                hint: "Think of this as electrical pressure or potential difference that triggers the current flow.",
+                explanation: "Correct answer: B) Voltage (Volts). Voltage represents the electromotive push or pressure from a power source that propels charge carriers forward."
+            },
+            {
+                q: "An engineer wants to test an early model of a smart alarm system without permanently soldering the components together. Which tool should they use for this prototyping?",
+                options: [
+                    "A) Printed Circuit Board (PCB)",
+                    "B) Breadboard",
+                    "C) Transistor",
+                    "D) Insulated wire coil"
+                ],
+                answer: 1,
+                hint: "This solderless board features grid rows of plug-in ports for prototyping temporary electrical layouts.",
+                explanation: "Correct answer: B) Breadboard. A breadboard enables rapid solderless construction of electrical prototypes, allowing pins and wires to be rearranged cleanly."
+            },
+            {
+                q: "While assembling a circuit on a Tinkercad breadboard, you need to connect the 9V battery. Which specific part of the breadboard is designed for power supply connections and is marked with '+' and '-' signs?",
+                options: [
+                    "A) Terminal Strips",
+                    "B) DIP Support",
+                    "C) Power Rails",
+                    "D) Row Markings"
+                ],
+                answer: 2,
+                hint: "These columns run full-length along the edges, distributing power access down both sides of the board.",
+                explanation: "Correct answer: C) Power Rails. Power rails are long vertical strips situated on the outer edges of breadboards used to deliver positive and ground supply across the project."
+            },
+            {
+                q: "You notice a groove running down the middle of your breadboard that divides it into two equal parts. What is this feature called?",
+                options: [
+                    "A) Power Rail",
+                    "B) Terminal Strip",
+                    "C) DIP (Dual In-line Package) Support",
+                    "D) Row gap"
+                ],
+                answer: 2,
+                hint: "This center divide isolates opposite sides of integrated circuit chip packages so their matching pins do not short-circuit.",
+                explanation: "Correct answer: C) DIP (Dual In-line Package) Support. The central isolation canal is designed to clear integrated microchip segments safely while isolating parallel pin columns."
+            },
+            {
+                q: "You are building an audio amplifier and need a semiconductor device to amplify weak audio electrical signals. Which component is most suitable for this?",
+                options: [
+                    "A) Capacitor",
+                    "B) Transistor",
+                    "C) Inductor",
+                    "D) Resistor"
+                ],
+                answer: 1,
+                hint: "This active 3-pin semiconductor serves as an electronic switch or an active signal booster block.",
+                explanation: "Correct answer: B) Transistor. Transistors regulate current channels, acting as electronic valves to amplify incoming low-amplitude signals."
+            },
+            {
+                q: "A student notices that when they add a specific component to their circuit, the light bulb becomes dimmer because the component opposes the flow of current. What is this measure of opposition called?",
+                options: [
+                    "A) Voltage",
+                    "B) Capacitance",
+                    "C) Resistance",
+                    "D) Current"
+                ],
+                answer: 2,
+                hint: "This property actively restricts the flow of electric current and is measured in Ohms.",
+                explanation: "Correct answer: C) Resistance. Resistance describes a material's intrinsic friction against current progression, converting electrical energy into heat."
+            },
+            {
+                q: "A robotics teacher instructs you to place a jumper wire in hole 'c12' on the breadboard. What do the letter 'c' and number '12' represent?",
+                options: [
+                    "A) Component 'c' and wire '12'",
+                    "B) Column 'c' and Row '12'",
+                    "C) Circuit 'c' and Voltage '12'",
+                    "D) Current 'c' and Resistance '12'"
+                ],
+                answer: 1,
+                hint: "Much like a map index or spreadsheet grid, the horizontal and vertical lines use alphanumeric labels.",
+                explanation: "Correct answer: B) Column 'c' and Row '12'. Breadboard coordinate sockets are indexed using columns (labeled with letters) intersecting row coordinates (labeled with numbers)."
+            },
+            {
+                q: "You are designing an electromagnet and need a component that consists of an insulated wire wound into a coil to store energy in the form of a magnetic field. What should you use?",
+                options: [
+                    "A) Capacitor",
+                    "B) Resistor",
+                    "C) Diode",
+                    "D) Inductor"
+                ],
+                answer: 3,
+                hint: "While capacitors utilize static electric fields, this wire loop configuration works with electromagnetism.",
+                explanation: "Correct answer: D) Inductor. An inductor consists of wrapped insulated wire coils that sustain energy within a magnetic field whenever current circulates through them."
+            }
+        ];
+
+        // Global State Tracker Scope
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+        }
+
+        // Web Audio Interfaces
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        // Core App Routing Flow
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Correct! Solid electrical knowledge.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                setNextState();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    setNextState();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function setNextState() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            const messageBox = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            
+            if (percent === 100) {
+                messageBox.innerText = "Excellent! You scored 100% and fully master the foundations of breadboards and fundamental circuitry components.";
+                messageBox.style.backgroundColor = "#d1fae5";
+                messageBox.style.color = "#065f46";
+            } else if (percent >= 70) {
+                messageBox.innerText = "Great job! You demonstrate a reliable understanding of electronic circuits and prototyping mechanics.";
+                messageBox.style.backgroundColor = "#e0f2fe";
+                messageBox.style.color = "#0369a1";
+            } else {
+                messageBox.innerText = "Good try! Review basic formulas like Ohm's Law and the internal structural trace lines of breadboards to improve your score.";
+                messageBox.style.backgroundColor = "#fef3c7";
+                messageBox.style.color = "#92400e";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
