@@ -200,7 +200,7 @@ button{
 <audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-var questions=[
+var originalQuestions=[
 {q:"Maya wants to create a simple animation of a bouncing ball where she draws each individual movement on a new frame to make it look smooth. This technique is known as:",a:"B. Frame-to-Frame animation",o:["A. Motion Tweening","B. Frame-to-Frame animation","C. Static Imaging","D. CGI Scripting"],e:"Frame-to-frame animation means each frame is drawn individually to create smooth motion."},
 {q:"You are drawing a character in Wick Editor and realize the arm is a bit too short. Instead of erasing and redrawing it, which tool should you use to drag the points and reshape the curve smoothly?",a:"C. Path Cursor",o:["A. Eraser (E)","B. Pencil (P)","C. Path Cursor","D. Fill Bucket (F)"],e:"Path Cursor is used to adjust drawings by dragging nodes or points."},
 {q:"A student wants to save his Wick Editor project so he can come back and edit the layers and timeline later. Which file extension should he choose?",a:"D. .wick",o:["A. .mp4","B. .png","C. .gif","D. .wick"],e:".wick is the editable project file extension for Wick Editor."},
@@ -213,7 +213,23 @@ var questions=[
 {q:"Why is Wick Editor often compared to a mix of PowerPoint, Paint, and Scratch?",a:"B. Because it combines drawing tools, presentation-like slides or frames, and coding logic",o:["A. Because it requires high-end hardware like a gaming PC","B. Because it combines drawing tools, presentation-like slides or frames, and coding logic","C. Because it can only be used to make static images","D. Because it is a paid software used by Hollywood"],e:"Wick Editor combines drawing, frames, and coding logic."}
 ];
 
+var questions=[];
 var current=0, marks=0, attempts=0, timeLeft=45, timer=null, locked=false;
+
+function shuffleArray(arr){
+  var copy=arr.slice();
+  for(var i=copy.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var temp=copy[i];
+    copy[i]=copy[j];
+    copy[j]=temp;
+  }
+  return copy;
+}
+
+function prepareQuiz(){
+  questions=shuffleArray(originalQuestions);
+}
 
 function $(id){return document.getElementById(id);}
 function hide(id){$(id).classList.add("hidden");}
@@ -236,6 +252,9 @@ setTimeout(function(){
 },5000);
 
 function startQuiz(){
+  prepareQuiz();
+  current=0;
+  marks=0;
   hide("intro");
   show("quiz");
   loadQuestion();
