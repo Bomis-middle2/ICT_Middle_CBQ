@@ -3,18 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 6 ICT - Chapter 10 Interactive Quiz</title>
+    <title>Grade 8 ICT - Chapter 11 Introduction to C Quiz</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --primary-color: #2b6cb0;
-            --primary-hover: #1a436d;
-            --bg-color: #f7fafc;
+            --primary-color: #0284c7;
+            --primary-hover: #0369a1;
+            --bg-color: #f8fafc;
             --card-bg: #ffffff;
-            --text-color: #2d3748;
-            --text-muted: #718096;
-            --success-color: #48bb78;
-            --error-color: #f56565;
+            --text-color: #334155;
+            --text-muted: #64748b;
+            --success-color: #16a34a;
+            --error-color: #dc2626;
             --border-color: #e2e8f0;
         }
 
@@ -42,13 +42,13 @@
             max-width: 650px;
             background: var(--card-bg);
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
             padding: 24px;
             position: relative;
             overflow: hidden;
         }
 
-        /* Branding Overlay - Fixed pointer-events to prevent click blocking */
+        /* Branding Splash Screen Layout */
         #branding-overlay {
             position: fixed;
             top: 0;
@@ -57,6 +57,7 @@
             height: 100%;
             background: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
@@ -64,22 +65,23 @@
             cursor: pointer;
         }
 
-        #branding-overlay img {
-            max-width: 250px;
-            height: auto;
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
             animation: pulse 1.5s infinite ease-in-out;
         }
 
         @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.8; }
-            50% { transform: scale(1.02); opacity: 1; }
-            100% { transform: scale(0.98); opacity: 0.8; }
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
         }
 
-        /* Utilities */
         .hidden { display: none !important; }
 
-        /* Audio Controls */
+        /* Accessibility Audio Control */
         .audio-control {
             position: absolute;
             top: 15px;
@@ -97,7 +99,7 @@
             z-index: 10;
         }
 
-        /* Header elements */
+        /* Header Layout Components */
         .quiz-header {
             margin-bottom: 20px;
             border-bottom: 2px solid var(--border-color);
@@ -133,10 +135,10 @@
             background-color: var(--error-color);
         }
 
-        /* Screen Elements */
+        /* Configuration Panels */
         .screen h1 {
             font-size: 26px;
-            color: var(--primary-color);
+            color: var(--primary-hover);
             margin-bottom: 8px;
             text-align: center;
         }
@@ -161,11 +163,11 @@
         }
         .meta-info p:last-child { margin-bottom: 0; }
 
-        /* Options layout */
+        /* Evaluation Block Styling */
         .question-text {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             color: var(--text-color);
         }
 
@@ -179,7 +181,7 @@
 
         .option-btn {
             width: 100%;
-            padding: 16px;
+            padding: 15px;
             font-size: 16px;
             text-align: left;
             background: var(--card-bg);
@@ -197,23 +199,23 @@
 
         .option-btn.selected {
             border-color: var(--primary-color);
-            background-color: #ebf8ff;
+            background-color: #f0f9ff;
         }
 
         .option-btn.correct {
             border-color: var(--success-color);
-            background-color: #f0fff4;
-            color: #22543d;
+            background-color: #f0fdf4;
+            color: #14532d;
             font-weight: bold;
         }
 
         .option-btn.incorrect {
             border-color: var(--error-color);
-            background-color: #fff5f5;
-            color: #742a2a;
+            background-color: #fef2f2;
+            color: #7f1d1d;
         }
 
-        /* Feedback Area */
+        /* Information Context Panels */
         .feedback-box {
             padding: 15px;
             border-radius: 8px;
@@ -224,15 +226,15 @@
         }
 
         .feedback-box.hint {
-            background-color: #feebc8;
-            color: #c05621;
-            border-left: 4px solid #dd6b20;
+            background-color: #fef3c7;
+            color: #92400e;
+            border-left: 4px solid #d97706;
         }
 
         .feedback-box.solution {
-            background-color: #e2e8f0;
-            color: #2d3748;
-            border-left: 4px solid #4a5568;
+            background-color: #f1f5f9;
+            color: #1e293b;
+            border-left: 4px solid #475569;
         }
 
         @keyframes fadeIn {
@@ -240,7 +242,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Action Buttons */
+        /* Global Execution Controls */
         .action-btn {
             display: block;
             width: 100%;
@@ -266,7 +268,7 @@
             cursor: not-allowed;
         }
 
-        /* Result Styles */
+        /* Evaluation View Display Layout */
         .result-msg {
             font-size: 20px;
             font-weight: bold;
@@ -284,7 +286,6 @@
             margin-bottom: 20px;
         }
 
-        /* Mobile Adjustments */
         @media (max-width: 480px) {
             body { padding: 10px; }
             .quiz-container { padding: 16px; }
@@ -298,8 +299,8 @@
 <body>
 
     <div id="branding-overlay" onclick="dismissBranding()">
-        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none'; document.getElementById('branding-text').style.display='block';">
-        <h1 id="branding-text" style="display:none; color: #2b6cb0;">INNOVINE</h1>
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+       
     </div>
 
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -311,15 +312,15 @@
         </button>
 
         <div id="intro-screen" class="screen">
-            <h1>Grade 6 ICT Quiz</h1>
-            <h2>Chapter 10: Computer Languages</h2>
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 11: Introduction to C</h2>
             
             <div class="meta-info">
-                <p><strong>Subject:</strong> ICT</p>
-                <p><strong>Grade:</strong> 6</p>
-                <p><strong>Topic:</strong> Generations of Languages & Language Translators</p>
-                <p><strong>Number of Questions:</strong> 12</p>
-                <p><strong>Rules:</strong> You have 45 seconds per question and up to 2 attempts per question if you miss!</p>
+                <p><strong>Subject:</strong> ICT / Computer Science</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Compilation Stages, Identifiers & Keywords, Data Types, Modulo, Logical Operators, and Increment Syntax</p>
+                <p><strong>Total Questions:</strong> 15</p>
+                <p><strong>Rules:</strong> Includes a 45-second running timer bar per view. Contains a 2-stage submit workflow with interactive conceptual hints.</p>
             </div>
 
             <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
@@ -328,7 +329,7 @@
         <div id="quiz-screen" class="screen hidden">
             <div class="quiz-header">
                 <div class="tracker-bar">
-                    <span id="question-number">Question 1/12</span>
+                    <span id="question-number">Question 1/15</span>
                     <span id="score-tracker">Score: 0</span>
                 </div>
                 <div class="timer-wrapper">
@@ -337,7 +338,7 @@
             </div>
 
             <div id="question-container">
-                <p class="question-text" id="question-text">Question content goes here?</p>
+                <p class="question-text" id="question-text">Question context text container?</p>
                 <div class="options-list" id="options-list"></div>
             </div>
 
@@ -347,8 +348,8 @@
         </div>
 
         <div id="result-screen" class="screen hidden">
-            <h1>Quiz Completed!</h1>
-            <div class="score-display" id="final-score">0/12</div>
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/15</div>
             <div id="result-message" class="result-msg"></div>
             
             <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
@@ -356,155 +357,117 @@
     </div>
 
     <script>
-        // Master Dataset containing questions, options, answers, hints, and explanations based on the document
+        // Quiz Data array directly compiled from the supplied text schema
         const quizData = [
             {
-                q: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work. What is the main reason for this?",
-                options: [
-                    "A) Machine language requires an interpreter.",
-                    "B) Machine language is machine-dependent.",
-                    "C) Machine language programs take too long to execute.",
-                    "D) Machine language uses English-like mnemonics."
-                ],
-                answer: 1, 
-                hint: "Binary code operates at the foundational hardware level. Think about how bound it is to the architecture of that specific processor design.",
-                explanation: "Correct answer is B. Machine language is machine-dependent, meaning code written for one specific processor architecture will not execute natively on another type."
+                q: "A student is creating a student grading system and needs to declare a variable to store the student's first name. According to the rules of C, which of the following is a valid variable name?",
+                options: ["A) 1st_name", "B) first name", "C) first_name", "D) char"],
+                answer: 2,
+                hint: "Variable names cannot start with numbers, cannot contain blank spaces, and cannot be reserved keywords.",
+                explanation: "Correct answer: C) first_name. C variable identifiers can include letters, digits, and underscores, but must begin with a letter or underscore."
             },
             {
-                q: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed. Which type of translator is Python most likely using?",
-                options: [
-                    "A) Compiler",
-                    "B) Assembler",
-                    "C) Interpreter",
-                    "D) Linker"
-                ],
-                answer: 2, 
-                hint: "Consider a translator that reads and runs code line-by-line, pausing instantly the moment it encounters a problem.",
-                explanation: "Correct answer is C. An interpreter translates and executes instructions line by line, pausing instantly as soon as a syntax error is discovered."
+                q: "A developer finishes writing the source code for a new C application. After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
+                options: ["A) Preprocessor", "B) Compiler", "C) Linker", "D) Interpreter"],
+                answer: 2,
+                hint: "Think of the compilation stage that acts as a bridge to 'link' compiled binary blocks with standard library definitions.",
+                explanation: "Correct answer: C) Linker. The linker joins machine code object files (.obj/.o) with library dependencies to output the executable binary file."
             },
             {
-                q: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once. What translator did they use?",
-                options: [
-                    "A) Assembler",
-                    "B) Compiler",
-                    "C) Interpreter",
-                    "D) Web Browser"
-                ],
-                answer: 1, 
-                hint: "Look for the translation mechanism that processes the complete bundle of source text globally, creating a freestanding file.",
-                explanation: "Correct answer is B. A compiler reads and processes the entirety of a high-level language source program all at one time, creating a standalone object code file."
+                q: "You are building a weather application that reads temperature from a sensor. The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
+                options: ["A) int", "B) float", "C) double", "D) char"],
+                answer: 1,
+                hint: "While 'double' handles fractional values using 8 bytes, this data type represents single-precision decimals in exactly 4 bytes.",
+                explanation: "Correct answer: B) float. The float data type stores numbers with fractional decimal digits and occupies 4 bytes of system memory."
             },
             {
-                q: "You are managing a database using SQL. You type a simple query specifying exactly what data you need (e.g., 'SELECT names'), without writing the step-by-step logic on how the computer should fetch it. This is a characteristic of which generation of languages?",
-                options: [
-                    "A) First Generation (1GL)",
-                    "B) Second Generation (2GL)",
-                    "C) Third Generation (3GL)",
-                    "D) Fourth Generation (4GL)"
-                ],
-                answer: 3, 
-                hint: "Non-procedural languages focus purely on defining 'what' result is required rather than defining individual loops and structural 'how' operations.",
-                explanation: "Correct answer is D. Fourth-generation languages (4GLs) are non-procedural tools where users specify what properties they want without building algorithmic workflows."
+                q: "In a physics simulation program, you need to use the value of Pi (3.14159). To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
+                options: ["A) As a standard float variable", "B) As a constant", "C) As an integer", "D) As a keyword"],
+                answer: 1,
+                hint: "Look for an immutable data type definition modifier that flags values as read-only.",
+                explanation: "Correct answer: B) As a constant. Defining a value as a constant (e.g., using the 'const' keyword or #define) prevents changes during execution runtime."
             },
             {
-                q: "A programmer is working with a language that uses short abbreviations or mnemonics like 'ADD A, Y' and 'SUB A, B'. To make the computer hardware understand it, they need a specific translator. Which one?",
-                options: [
-                    "A) Assembler",
-                    "B) Compiler",
-                    "C) Interpreter",
-                    "D) Object Coder"
-                ],
-                answer: 0, 
-                hint: "The language here uses structural abbreviations called mnemonics. Think of the utility explicitly named after translating assembly text.",
-                explanation: "Correct answer is A. An assembler converts assembly language mnemonics directly into binary instructions readable by computing processors."
+                q: "A banking app is designed to deposit money into an account. However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
+                options: ["A) Syntax error", "B) Compilation error", "C) Logical error", "D) Preprocessing error"],
+                answer: 2,
+                hint: "This type of defect doesn't break formal language code grammar rules, but it outputs incorrect calculation logic results.",
+                explanation: "Correct answer: C) Logical error. A logical error happens when the program runs smoothly but produces incorrect outcomes due to faulty code equations."
             },
             {
-                q: "A research team is developing a decision-making artificial intelligence (AI) system. They are using constraint-based programming languages like Prolog with visual tools. Which generation of languages are they working with?",
-                options: [
-                    "A) Second Generation Language",
-                    "B) Third Generation Language",
-                    "C) Fourth Generation Language",
-                    "D) Fifth Generation Language"
-                ],
-                answer: 3, 
-                hint: "Modern configurations engineered toward building expert learning modules, neural connections, and advanced AI are assigned to this highest tier tier.",
-                explanation: "Correct answer is D. Fifth Generation Languages (5GL) center around constraint-driven problem-solving models, artificial intelligence solutions, and neural logic platforms."
+                q: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon. When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
+                options: ["A) Syntax error", "B) Logical error", "C) Linking error", "D) Execution error"],
+                answer: 0,
+                hint: "Semicolons are fundamental grammatical structural requirements used to end code statements in C.",
+                explanation: "Correct answer: A) Syntax error. Breaking the grammar rules of a programming language, like omitting a mandatory semicolon statement terminator, causes a syntax error."
             },
             {
-                q: "Your school wants to teach a programming language that is easy to learn, uses English-like mathematical phrases, and allows the written program to run on Windows, Mac, and Linux computers. What broad category of language should they choose?",
-                options: [
-                    "A) High Level Language",
-                    "B) Low Level Language",
-                    "C) Assembly Language",
-                    "D) Machine Language"
-                ],
-                answer: 0, 
-                hint: "Abstract options that prioritize portable deployment across different computer platforms use human-readable phrasing.",
-                explanation: "Correct answer is A. High Level Languages separate developers from base processor circuits, remaining highly understandable and machine-independent."
+                q: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero. Which operator is used specifically to find the remainder of an integer division?",
+                options: ["A) /", "B) &&", "C) %", "D) =="],
+                answer: 2,
+                hint: "The forward slash (/) yields the regular division quotient, but this percentage symbol isolates the remainder integer.",
+                explanation: "Correct answer: C) %. The modulus operator (%) divides two integers and returns the remainder value left over."
             },
             {
-                q: "While reading an article about the history of computing algorithms for the Analytical Engine, you learn about the person widely considered to be the first computer programmer. Who is it?",
-                options: [
-                    "A) Charles Babbage",
-                    "B) Lady Ada Lovelace",
-                    "C) Bill Gates",
-                    "D) Charles Bachman"
-                ],
-                answer: 1, 
-                hint: "Babbage drafted the analytical hardware mechanics, but this mathematician authored notes mapping external sequential formulas for it.",
-                explanation: "Correct answer is B. Lady Ada Lovelace published notes describing processing steps for the Analytical Engine, making her the world's first programmer."
+                q: "A software company writes a C program to control smart home devices on a Windows machine. Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
+                options: ["A) It is a low-level language.", "B) It has 32 keywords.", "C) It is highly portable.", "D) It only uses 0s and 1s."],
+                answer: 1,
+                hint: "This term describes software architecture that can compile and execute across different computer processor platforms easily.",
+                explanation: "Correct answer: C) It is highly portable. Portability means C programs can target diverse operating frameworks and hardware chips with few adjustments."
             },
             {
-                q: "After successfully writing a C++ program, the translator processes your human-readable 'source code' so the computer can execute it without needing the source code again. What is the resulting machine-readable code called?",
-                options: [
-                    "A) Assembly code",
-                    "B) Mnemonic code",
-                    "C) Object code",
-                    "D) Visual code"
-                ],
-                answer: 2, 
-                hint: "This term identifies the resulting target computer language output produced directly by compilers when processing initial human-composed code.",
-                explanation: "Correct answer is C. The final compiled machine-accessible file output created from source operations is officially known as object code."
+                q: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line. Which escape sequence must you insert into your printf() statement?",
+                options: ["A) \\t", "B) \\n", "C) \\a", "D) \\b"],
+                options_clean: ["A) \t", "B) \n", "C) \a", "D) \b"],
+                answer: 1,
+                hint: "The '\\t' escape sequence inserts a horizontal layout tab, while this specific sequence jumps down to a clean line.",
+                explanation: "Correct answer: B) \\n. In string formatting, '\\n' triggers a newline character command, moving the text output cursor to the start of the next line."
             },
             {
-                q: "A developer wants to distribute their software as a standalone executable program so no one can see their original code. Why would an interpreter NOT be the best choice for this task?",
-                options: [
-                    "A) Interpreters do not produce a separate object code file.",
-                    "B) Interpreters translate all lines of code at once.",
-                    "C) Interpreters only work with 1GL languages.",
-                    "D) Interpreters are slower than humans at reading code."
-                ],
-                answer: 0, 
-                hint: "Interpreters evaluate source script definitions on-the-fly inside raw runtime memory, requiring the readable original script to accompany users.",
-                explanation: "Correct answer is A. Interpreters read source instructions line-by-line during runtime instead of saving out encrypted freestanding machine files."
+                q: "A teacher wants to display a student's grade stored in the variable 'char grade = 'A';'. Which format specifier is required in the printf() function to print this specific data type?",
+                options: ["A) %d", "B) %f", "C) %s", "D) %c"],
+                answer: 3,
+                hint: "While '%d' tracks decimal integers and '%f' marks floating points, this specifier is tailored to separate single string characters.",
+                explanation: "Correct answer: D) %c. The '%c' placeholder format specifier is utilized to read or write a single character data byte in C."
             },
             {
-                q: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish. This represents which generation?",
-                options: [
-                    "A) First Generation (1GL)",
-                    "B) Second Generation (2GL)",
-                    "C) Third Generation (3GL)",
-                    "D) Fifth Generation (5GL)"
-                ],
-                answer: 2, 
-                hint: "This standard procedural era established the modern coding landscape by giving programmers human words and phrases (like C, BASIC, and Pascal).",
-                explanation: "Correct answer is C. Third Generation Languages (3GLs) introduced procedural, human-readable structural instructions to dictate steps sequentially."
+                q: "You are writing a program to check if a user is eligible for a teen discount. Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
+                options: ["A) ||", "B) !=", "C) &&", "D) =="],
+                answer: 2,
+                hint: "The double pipe symbol (||) stands for logical OR. Look for the double ampersand notation used to mandate that both side checks evaluate to true.",
+                explanation: "Correct answer: C) &&. The logical AND operator (&&) returns true only if both expressions evaluate as true."
             },
             {
-                q: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language. Is this statement correct based on the provided text?",
-                options: [
-                    "A) Yes, High Level Languages execute the fastest.",
-                    "B) No, programs written in machine language take less time for execution.",
-                    "C) Yes, because they do not require any translators.",
-                    "D) No, because High Level Languages are machine-dependent."
-                ],
-                answer: 1, 
-                hint: "Think about which language needs to pass through extra translation steps, and which one already speaks the computer's native language directly.",
-                explanation: "Correct answer is B. Machine language bypasses all intermediaries, executing instantly at raw speed without any translator processing lag."
+                q: "A programmer attempts to create a variable to hold the interest rate and names it 'double'. The compiler immediately throws an error. Why is this variable name invalid?",
+                options: ["A) It exceeds 31 characters.", "B) It contains a special symbol.", "C) 'double' is a reserved keyword in C.", "D) It does not start with an underscore."],
+                answer: 2,
+                hint: "Words that declare system operations and data types are locked by the language interpreter environment and cannot double as variable names.",
+                explanation: "Correct answer: C) 'double' is a reserved keyword in C. Reserved keywords have specific predefined meanings in C and cannot be repurposed as user variables."
+            },
+            {
+                q: "You are reviewing a large C program consisting of multiple functions. To trace the flow of the program, you need to know where the execution begins. Which mandatory function should you look for?",
+                options: ["A) start()", "B) printf()", "C) include()", "D) main()"],
+                answer: 3,
+                hint: "Every standalone C code application runtime starts execution inside this exact root functional block.",
+                explanation: "Correct answer: D) main(). The main() function acts as the mandatory point of entry where all C programs begin execution processing."
+            },
+            {
+                q: "In a ticketing queue system, the current ticket number is 10 ('ticket = 10;'). The system uses the pre-increment operator to assign the next ticket: 'next_ticket = ++ticket;'. What is the value assigned to 'next_ticket'?",
+                options: ["A) 10", "B) 11", "C) 9", "D) 12"],
+                answer: 1,
+                hint: "Pre-increment means the value is added to first before the assignment expression finishes processing.",
+                explanation: "Correct answer: B) 11. The prefix increment operator (++ticket) adds 1 to the variable immediately, evaluating to 11 before assigning it to next_ticket."
+            },
+            {
+                q: "While debugging, you want to temporarily disable a block of 5 lines of code without deleting them. Which symbols should you use to enclose these lines?",
+                options: ["A) // and //", "B) /* and */", "C) { and }", "D) # and #"],
+                answer: 1,
+                hint: "Double slashes (//) disable text line by line, but these nested wrapper tags format multi-line comment blocks.",
+                explanation: "Correct answer: B) /* and */. Multi-line comments start with '/*' and close with '*/', causing the compiler to skip everything in between."
             }
         ];
 
-        // Application State tracking vars
+        // Global State Tracker Scope
         let currentQuestionIndex = 0;
         let score = 0;
         let attemptCount = 0;
@@ -513,8 +476,8 @@
         let timeLeft = 45; 
         let isMuted = false;
 
-        // Branding Overlay Auto-Dismiss setup
-        let brandingTimer = setTimeout(dismissBranding, 5000);
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
 
         function dismissBranding() {
             if (brandingTimer) clearTimeout(brandingTimer);
@@ -525,13 +488,13 @@
             }
         }
 
-        // Sound System
+        // Web Audio Interfaces
         function playSound(type) {
             if (isMuted) return;
             const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
             if (sound) {
                 sound.currentTime = 0;
-                sound.play().catch(e => console.log("Audio play blocked until user interaction."));
+                sound.play().catch(() => {});
             }
         }
 
@@ -541,7 +504,7 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
-        // Quiz State Control
+        // Core App Flow Routing
         function startQuiz() {
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
@@ -584,62 +547,30 @@
             startTimer();
         }
 
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
         function handleSubmitOrNext() {
             const submitBtn = document.getElementById('submit-next-btn');
             if (submitBtn.innerText === "Submit Answer") {
                 submitAnswer();
             } else if (submitBtn.innerText === "Next Question") {
-                loadNextQuestion();
+                currentQuestionIndex++;
+                loadQuestion();
             } else if (submitBtn.innerText === "View Results") {
                 showResults();
             }
         }
 
-        // Timer Logic
-        function startTimer() {
-            timeLeft = 45;
-            const timerBar = document.getElementById('timer-bar');
-            timerBar.classList.remove('timer-warn');
-            timerBar.style.width = '100%';
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                const percent = (timeLeft / 45) * 100;
-                timerBar.style.width = `${percent}%`;
-
-                if (timeLeft <= 10) {
-                    timerBar.classList.add('timer-warn');
-                }
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeOut();
-                }
-            }, 1000);
-        }
-
-        function resetTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-        }
-
-        // Choice Processing
-        function selectOption(index) {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (submitBtn.innerText === "Next Question" || submitBtn.innerText === "View Results") return; 
-            
-            selectedOptionIndex = index;
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            buttons.forEach((btn, i) => {
-                if (i === index) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
-                }
-            });
-            submitBtn.disabled = false;
-        }
-
-        // Action Evaluators
         function submitAnswer() {
             resetTimer();
             const currentQ = quizData[currentQuestionIndex];
@@ -658,12 +589,12 @@
                 score++;
                 document.getElementById('score-tracker').innerText = `Score: ${score}`;
                 
-                feedbackBox.innerText = "Excellent! You got it right.";
+                feedbackBox.innerText = "Correct! Excellent technical precision.";
                 feedbackBox.className = "feedback-box solution";
                 feedbackBox.classList.remove('hidden');
                 
                 lockOptions();
-                prepareNextStep();
+                setNextState();
             } else {
                 playSound('wrong');
                 buttons[selectedOptionIndex].classList.remove('selected');
@@ -674,6 +605,7 @@
                     feedbackBox.className = "feedback-box hint";
                     feedbackBox.classList.remove('hidden');
                     document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
                 } else {
                     buttons[currentQ.answer].classList.add('correct');
                     feedbackBox.innerText = currentQ.explanation;
@@ -681,7 +613,7 @@
                     feedbackBox.classList.remove('hidden');
                     
                     lockOptions();
-                    prepareNextStep();
+                    setNextState();
                 }
             }
         }
@@ -700,7 +632,31 @@
             feedbackBox.classList.remove('hidden');
             
             lockOptions();
-            prepareNextStep();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
         }
 
         function lockOptions() {
@@ -708,7 +664,7 @@
             buttons.forEach(btn => btn.disabled = true);
         }
 
-        function prepareNextStep() {
+        function setNextState() {
             const submitBtn = document.getElementById('submit-next-btn');
             if (currentQuestionIndex < quizData.length - 1) {
                 submitBtn.innerText = "Next Question";
@@ -718,32 +674,26 @@
             submitBtn.disabled = false;
         }
 
-        function loadNextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
-        }
-
         function showResults() {
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             
             document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
-            
             const messageBox = document.getElementById('result-message');
             const percent = (score / quizData.length) * 100;
             
             if (percent === 100) {
-                messageBox.innerText = "Perfect Score! You are a Computer Languages Expert!";
-                messageBox.style.backgroundColor = "#c6f6d5";
-                messageBox.style.color = "#22543d";
+                messageBox.innerText = "Perfect! You have a profound command of foundational C programming and syntax rules.";
+                messageBox.style.backgroundColor = "#dcfce7";
+                messageBox.style.color = "#14532d";
             } else if (percent >= 70) {
-                messageBox.innerText = "Great job! You have a solid understanding of this chapter.";
-                messageBox.style.backgroundColor = "#ebf8ff";
-                messageBox.style.color = "#2b6cb0";
+                messageBox.innerText = "Great job! You clearly understand identifiers, operators, and formatting layouts.";
+                messageBox.style.backgroundColor = "#e0f2fe";
+                messageBox.style.color = "#0369a1";
             } else {
-                messageBox.innerText = "Good effort! Review the hints and try again to improve your score.";
-                messageBox.style.backgroundColor = "#feebc8";
-                messageBox.style.color = "#c05621";
+                messageBox.innerText = "Good try! Spend some time reviewing reserved words, operator precedence, and formats to build your skills.";
+                messageBox.style.backgroundColor = "#fef3c7";
+                messageBox.style.color = "#92400e";
             }
         }
 
