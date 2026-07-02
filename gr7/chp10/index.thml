@@ -2,236 +2,363 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Wick Editor Quiz - Grade 7 ICT</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 7 ICT MCQ Quiz</title>
 <style>
-*{box-sizing:border-box}
 body{
-    font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
-    margin:0; min-height:100vh;
-    display:flex; justify-content:center; align-items:center;
-    background:linear-gradient(135deg,#e0eafc,#cfdef3);
-    overflow:hidden; color:#1f2937;
+  margin:0;
+  min-height:100vh;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#e0eafc,#cfdef3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
 }
-.bubble-bg{position:fixed; inset:0; z-index:-1; overflow:hidden}
-.bubble{position:absolute; bottom:-90px; background:rgba(255,255,255,.35); border-radius:50%; animation:rise 14s infinite ease-in}
-@keyframes rise{0%{transform:translateY(0);opacity:0}50%{opacity:.7}100%{transform:translateY(-110vh);opacity:0}}
-
-#logo-screen{
-    position:fixed; inset:0; background:white; display:flex; justify-content:center; align-items:center; z-index:999;
+.bubble{
+  position:fixed;
+  bottom:-80px;
+  background:rgba(255,255,255,0.45);
+  border-radius:50%;
+  animation:rise 14s infinite ease-in;
+  z-index:0;
 }
-#logo-screen img{max-width:260px; width:70%}
-.logo-fallback{font-size:2.2rem;font-weight:900;color:#1f3b70}
-
-#intro-screen,#quiz-container,#result-screen{
-    background:rgba(255,255,255,.96);
-    width:92%; max-width:650px; padding:24px;
-    border-radius:20px; box-shadow:0 10px 30px rgba(0,0,0,.12);
-    text-align:center;
+@keyframes rise{
+  from{transform:translateY(0);opacity:0;}
+  50%{opacity:0.8;}
+  to{transform:translateY(-120vh);opacity:0;}
 }
-.hidden{display:none!important}
-h1{margin:0 0 14px;color:#22324a;font-size:1.8rem}
-.info-box{
-    margin:18px 0;text-align:left;background:#f8fafc;padding:15px;border-radius:12px;
-    border:1px solid #e2e8f0;line-height:1.6;
+#logoScreen{
+  position:fixed;
+  inset:0;
+  background:white;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
 }
-button{font-family:inherit}
-.start-btn,.restart-btn,#next-btn{
-    padding:13px 34px;font-size:17px;cursor:pointer;background:#2c3e50;color:white;
-    border:none;border-radius:50px;font-weight:700;
+#logoScreen img{max-width:260px;width:70%;}
+#logoText{font-size:36px;font-weight:bold;color:#273b63;}
+.card{
+  position:relative;
+  z-index:1;
+  width:90%;
+  max-width:650px;
+  background:white;
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  text-align:center;
 }
-#top-bar{display:flex;justify-content:space-between;gap:8px;font-weight:bold;margin-bottom:18px;flex-wrap:wrap}
-.top-pill{background:#eef6ff;color:#183b56;border:1px solid #cfe6ff;padding:8px 12px;border-radius:999px;font-size:.95rem}
-#q-text{
-    font-weight:700;font-size:1.08rem;margin-bottom:18px;text-align:left;line-height:1.5;
-    background:#f9fafb;padding:15px;border-radius:12px;border-left:5px solid #3498db;
+.hidden{display:none!important;}
+h1{margin-top:0;color:#22324a;}
+.info{
+  background:#f7f9fc;
+  padding:15px;
+  border-radius:12px;
+  text-align:left;
+  line-height:1.6;
+  margin:18px 0;
 }
-.option-btn{
-    border:2px solid #3498db;border-radius:10px;padding:12px;margin:8px 0;background:white;
-    cursor:pointer;display:block;width:100%;font-weight:600;transition:.22s;font-size:1rem;text-align:left;
+button{
+  font-family:Arial,sans-serif;
 }
-.option-btn:hover:not(:disabled){background:#3498db;color:white}
-.option-btn.correct{background:#d4edda;border-color:#16a34a;color:#14532d}
-.option-btn.wrong{background:#fee2e2;border-color:#dc2626;color:#7f1d1d;animation:shake .25s}
-.option-btn:disabled{cursor:default}
-@keyframes shake{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-4px)}}
-#feedback{min-height:44px;margin-top:14px;font-weight:700;border-radius:10px;padding:10px}
-.feedback-correct{background:#d4edda;color:#155724;border:2px solid #22c55e}
-.feedback-wrong{background:#fee2e2;color:#7f1d1d;border:2px solid #ef4444}
-.feedback-answer{background:#fff3cd;color:#856404;border:2px solid #facc15}
-#next-btn{display:none;margin-top:13px}
-.final-score{font-size:2.7rem;font-weight:900;color:#2563eb;margin:15px 0}
-.confetti-piece{position:fixed;top:-20px;font-size:20px;z-index:99;animation:fall 2.2s linear forwards;pointer-events:none}
-@keyframes fall{to{transform:translateY(105vh) rotate(720deg);opacity:.2}}
+.startBtn,.nextBtn,.restartBtn{
+  background:#2c3e50;
+  color:white;
+  border:0;
+  border-radius:30px;
+  padding:13px 32px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  font-weight:bold;
+}
+.pill{
+  background:#eef6ff;
+  border:1px solid #cde5ff;
+  padding:8px 12px;
+  border-radius:30px;
+}
+#question{
+  text-align:left;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1.5;
+  background:#f8fafc;
+  border-left:5px solid #3498db;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:14px;
+}
+.option{
+  width:100%;
+  display:block;
+  margin:8px 0;
+  padding:12px;
+  text-align:left;
+  font-size:16px;
+  font-weight:600;
+  border:2px solid #3498db;
+  background:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+.option:hover:not(:disabled){
+  background:#3498db;
+  color:white;
+}
+.option.correct{
+  background:#d4edda;
+  border-color:#22c55e;
+  color:#14532d;
+}
+.option.wrong{
+  background:#fee2e2;
+  border-color:#ef4444;
+  color:#7f1d1d;
+}
+.option:disabled{cursor:default;}
+#feedback{
+  min-height:40px;
+  margin-top:12px;
+  padding:10px;
+  border-radius:10px;
+  font-weight:bold;
+}
+.good{background:#d4edda;color:#155724;border:2px solid #22c55e;}
+.bad{background:#fee2e2;color:#7f1d1d;border:2px solid #ef4444;}
+.ans{background:#fff3cd;color:#856404;border:2px solid #facc15;}
+.nextBtn{display:none;margin-top:12px;}
+.scoreBig{font-size:48px;font-weight:bold;color:#2563eb;}
+.confetti{
+  position:fixed;
+  top:-20px;
+  z-index:9;
+  animation:fall 2.3s linear forwards;
+  pointer-events:none;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
 @media(max-width:520px){
-    body{align-items:flex-start;padding-top:16px;overflow-y:auto}
-    #intro-screen,#quiz-container,#result-screen{padding:18px}
-    h1{font-size:1.45rem}.option-btn{font-size:.95rem}
+  body{align-items:flex-start;padding-top:15px;overflow-y:auto;}
+  .card{padding:18px;}
+  #question{font-size:16px;}
+  .option{font-size:15px;}
 }
 </style>
 </head>
 <body>
 
-<div id="logo-screen">
-    <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
-    <div id="logoText" class="logo-fallback" style="display:none;">INNOVINE</div>
+<div id="logoScreen">
+  <img src="assets/innovine-logo.png" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
+  <div id="logoText" style="display:none;">INNOVINE</div>
 </div>
 
-<div class="bubble-bg" id="bubbles"></div>
-
-<div id="intro-screen" class="hidden">
-    <h1>Wick Editor Quiz</h1>
-    <div class="info-box">
-        <p><strong>Grade:</strong> 7</p>
-        <p><strong>Subject:</strong> ICT</p>
-        <p><strong>Topic:</strong> Wick Editor and Animation</p>
-        <p><strong>No. of Questions:</strong> 10</p>
-        <p><strong>Rule:</strong> Tap the correct option. You get 2 attempts for each question.</p>
-    </div>
-    <button class="start-btn" onclick="startQuiz()">Start Quiz</button>
+<div id="intro" class="card hidden">
+  <h1>Wick Editor Quiz</h1>
+  <div class="info">
+    <p><b>Grade:</b> 7</p>
+    <p><b>Subject:</b> ICT</p>
+    <p><b>Topic:</b> Wick Editor and Animation</p>
+    <p><b>No. of Questions:</b> 10</p>
+    <p><b>Rule:</b> Tap the correct option. You get 2 attempts.</p>
+  </div>
+  <button class="startBtn" onclick="startQuiz()">Start Quiz</button>
 </div>
 
-<div id="quiz-container" class="hidden">
-    <div id="top-bar">
-        <div class="top-pill" id="timer">45s</div>
-        <div class="top-pill" id="progress">Question 1/10</div>
-        <div class="top-pill" id="score-display">Score: 0</div>
-    </div>
-    <div id="q-text"></div>
-    <div id="options"></div>
-    <div id="feedback"></div>
-    <button id="next-btn" onclick="nextQuestion()">Next</button>
+<div id="quiz" class="card hidden">
+  <div class="top">
+    <div class="pill" id="timer">45s</div>
+    <div class="pill" id="progress">Question 1/10</div>
+    <div class="pill" id="score">Score: 0</div>
+  </div>
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+  <button id="nextBtn" class="nextBtn" onclick="nextQuestion()">Next</button>
 </div>
 
-<div id="result-screen" class="hidden">
-    <h1>Quiz Finished!</h1>
-    <p>You completed all questions.</p>
-    <div class="final-score" id="final-score">0/10</div>
-    <p id="final-message"></p>
-    <button class="restart-btn" onclick="location.reload()">Restart Quiz</button>
+<div id="result" class="card hidden">
+  <h1>Quiz Finished!</h1>
+  <p>You completed all questions.</p>
+  <div class="scoreBig" id="finalScore">0/10</div>
+  <p id="finalMessage"></p>
+  <button class="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
 </div>
 
-<audio id="correctSound" src="assets/correct.mp3" preload="auto"></audio>
-<audio id="wrongSound" src="assets/wrong.mp3" preload="auto"></audio>
-<audio id="clapSound" src="assets/freesound_community-claps-44774.mp3" preload="auto"></audio>
+<audio id="correctAudio" src="assets/correct.mp3"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-const questions=[
-{q:"Maya wants to create a simple animation of a bouncing ball where she draws each individual movement on a new frame to make it look smooth. This technique is known as:",a:"B. Frame-to-Frame animation",options:["A. Motion Tweening","B. Frame-to-Frame animation","C. Static Imaging","D. CGI Scripting"],ex:"Frame-to-frame animation means each frame is drawn individually to create smooth motion."},
-{q:"You are drawing a character in Wick Editor and realize the arm is a bit too short. Instead of erasing and redrawing it, which tool should you use to drag the points and reshape the curve smoothly?",a:"C. Path Cursor",options:["A. Eraser (E)","B. Pencil (P)","C. Path Cursor","D. Fill Bucket (F)"],ex:"Path Cursor is used to adjust drawings by dragging nodes or points."},
-{q:"A student wants to save his Wick Editor project so he can come back and edit the layers and timeline later. Which file extension should he choose?",a:"D. .wick",options:["A. .mp4","B. .png","C. .gif","D. .wick"],ex:".wick is the editable project file extension for Wick Editor."},
-{q:"Arjun is making a complex animation with a background, a moving car, and a walking person. To keep his work organized and easily edit the car without affecting the background, he should use:",a:"B. Multiple Layers",options:["A. Different Frames","B. Multiple Layers","C. Different Files","D. The Eyedropper tool"],ex:"Multiple layers help organize different parts of an animation separately."},
-{q:"You have drawn a circle on Frame 1 and want it to move to the other side of the screen by Frame 20 without drawing every frame in between. Which feature should you use to let the computer calculate the movement?",a:"C. Add Tween",options:["A. Add Frame","B. Playhead","C. Add Tween","D. Canvas Resize"],ex:"Add Tween lets the software create the in-between movement automatically."},
-{q:"While working in the Wick Editor interface, you want to see exactly where you are in the timeline. The red vertical line that indicates the current frame being edited is called the:",a:"B. Playhead",options:["A. Cursor","B. Playhead","C. Keyframe","D. Stroke"],ex:"The playhead shows the current position in the timeline."},
-{q:"Which tool in the Wick Editor palette allows you to select a specific color from an existing drawing on the canvas to use it again elsewhere?",a:"B. Eyedropper (D)",options:["A. Fill Bucket (F)","B. Eyedropper (D)","C. Brush (B)","D. Text (T)"],ex:"The Eyedropper tool is used to pick colors from the canvas."},
-{q:"An animator wants to export her finished work as an interactive webpage so people can click on parts of it. Which format should she use?",a:"A. .html",options:["A. .html","B. .mp4","C. .gif","D. .wick"],ex:".html is used for exporting interactive webpage content."},
-{q:"In the Wick Editor timeline, a frame that contains a specific change or a starting/ending point for an animation is called a:",a:"B. Keyframe",options:["A. Layer","B. Keyframe","C. Script","D. Tween"],ex:"A keyframe marks an important change or point in the animation."},
-{q:"Why is Wick Editor often compared to a mix of PowerPoint, Paint, and Scratch?",a:"B. Because it combines drawing tools, presentation-like slides or frames, and coding logic",options:["A. Because it requires high-end hardware like a gaming PC","B. Because it combines drawing tools, presentation-like slides or frames, and coding logic","C. Because it can only be used to make static images","D. Because it is a paid software used by Hollywood"],ex:"Wick Editor combines drawing, frames, and coding logic."}
+var questions=[
+{q:"Maya wants to create a simple animation of a bouncing ball where she draws each individual movement on a new frame to make it look smooth. This technique is known as:",a:"B. Frame-to-Frame animation",o:["A. Motion Tweening","B. Frame-to-Frame animation","C. Static Imaging","D. CGI Scripting"],e:"Frame-to-frame animation means each frame is drawn individually to create smooth motion."},
+{q:"You are drawing a character in Wick Editor and realize the arm is a bit too short. Instead of erasing and redrawing it, which tool should you use to drag the points and reshape the curve smoothly?",a:"C. Path Cursor",o:["A. Eraser (E)","B. Pencil (P)","C. Path Cursor","D. Fill Bucket (F)"],e:"Path Cursor is used to adjust drawings by dragging nodes or points."},
+{q:"A student wants to save his Wick Editor project so he can come back and edit the layers and timeline later. Which file extension should he choose?",a:"D. .wick",o:["A. .mp4","B. .png","C. .gif","D. .wick"],e:".wick is the editable project file extension for Wick Editor."},
+{q:"Arjun is making a complex animation with a background, a moving car, and a walking person. To keep his work organized and easily edit the car without affecting the background, he should use:",a:"B. Multiple Layers",o:["A. Different Frames","B. Multiple Layers","C. Different Files","D. The Eyedropper tool"],e:"Multiple layers help organize different parts of an animation separately."},
+{q:"You have drawn a circle on Frame 1 and want it to move to the other side of the screen by Frame 20 without drawing every frame in between. Which feature should you use to let the computer calculate the movement?",a:"C. Add Tween",o:["A. Add Frame","B. Playhead","C. Add Tween","D. Canvas Resize"],e:"Add Tween lets the software create the in-between movement automatically."},
+{q:"While working in the Wick Editor interface, you want to see exactly where you are in the timeline. The red vertical line that indicates the current frame being edited is called the:",a:"B. Playhead",o:["A. Cursor","B. Playhead","C. Keyframe","D. Stroke"],e:"The playhead shows the current position in the timeline."},
+{q:"Which tool in the Wick Editor palette allows you to select a specific color from an existing drawing on the canvas to use it again elsewhere?",a:"B. Eyedropper (D)",o:["A. Fill Bucket (F)","B. Eyedropper (D)","C. Brush (B)","D. Text (T)"],e:"The Eyedropper tool is used to pick colors from the canvas."},
+{q:"An animator wants to export her finished work as an interactive webpage so people can click on parts of it. Which format should she use?",a:"A. .html",o:["A. .html","B. .mp4","C. .gif","D. .wick"],e:".html is used for exporting interactive webpage content."},
+{q:"In the Wick Editor timeline, a frame that contains a specific change or a starting/ending point for an animation is called a:",a:"B. Keyframe",o:["A. Layer","B. Keyframe","C. Script","D. Tween"],e:"A keyframe marks an important change or point in the animation."},
+{q:"Why is Wick Editor often compared to a mix of PowerPoint, Paint, and Scratch?",a:"B. Because it combines drawing tools, presentation-like slides or frames, and coding logic",o:["A. Because it requires high-end hardware like a gaming PC","B. Because it combines drawing tools, presentation-like slides or frames, and coding logic","C. Because it can only be used to make static images","D. Because it is a paid software used by Hollywood"],e:"Wick Editor combines drawing, frames, and coding logic."}
 ];
 
-let currentQ=0,score=0,attempts=0,timeLeft=45,timer=null,answered=false;
-const correctSound=document.getElementById("correctSound"), wrongSound=document.getElementById("wrongSound"), clapSound=document.getElementById("clapSound");
+var current=0, marks=0, attempts=0, timeLeft=45, timer=null, locked=false;
 
-function playSound(a){a.currentTime=0;a.play().catch(()=>{});}
-function makeConfetti(){
-    const icons=["🎉","⭐","✨","🎊"];
-    for(let i=0;i<35;i++){
-        const s=document.createElement("span");
-        s.className="confetti-piece";
-        s.textContent=icons[Math.floor(Math.random()*icons.length)];
-        s.style.left=Math.random()*100+"vw";
-        s.style.animationDelay=Math.random()*0.4+"s";
-        document.body.appendChild(s);
-        setTimeout(()=>s.remove(),2600);
-    }
+function $(id){return document.getElementById(id);}
+function hide(id){$(id).classList.add("hidden");}
+function show(id){$(id).classList.remove("hidden");}
+
+for(var i=0;i<15;i++){
+  var b=document.createElement("div");
+  b.className="bubble";
+  var size=(Math.random()*60+20)+"px";
+  b.style.width=size;
+  b.style.height=size;
+  b.style.left=(Math.random()*100)+"%";
+  b.style.animationDelay=(Math.random()*8)+"s";
+  document.body.appendChild(b);
 }
-const bg=document.getElementById("bubbles");
-for(let i=0;i<16;i++){
-    const b=document.createElement("div");
-    b.className="bubble";
-    const size=Math.random()*60+20+"px";
-    b.style.width=size;b.style.height=size;b.style.left=Math.random()*100+"%";
-    b.style.animationDelay=Math.random()*10+"s";b.style.animationDuration=Math.random()*10+10+"s";
-    bg.appendChild(b);
-}
-window.addEventListener("load",()=>setTimeout(()=>{
-    document.getElementById("logo-screen").classList.add("hidden");
-    document.getElementById("intro-screen").classList.remove("hidden");
-},5000));
+
+setTimeout(function(){
+  hide("logoScreen");
+  show("intro");
+},5000);
 
 function startQuiz(){
-    document.getElementById("intro-screen").classList.add("hidden");
-    document.getElementById("quiz-container").classList.remove("hidden");
-    renderQuestion();
+  hide("intro");
+  show("quiz");
+  loadQuestion();
 }
-function renderQuestion(){
-    clearInterval(timer); attempts=0; answered=false; timeLeft=45;
-    document.getElementById("timer").innerText=timeLeft+"s";
-    document.getElementById("progress").innerText="Question "+(currentQ+1)+"/10";
-    document.getElementById("feedback").className="";
-    document.getElementById("feedback").innerText="";
-    document.getElementById("next-btn").style.display="none";
-    const q=questions[currentQ];
-    document.getElementById("q-text").innerHTML=(currentQ+1)+". "+q.q;
-    const optDiv=document.getElementById("options");
-    optDiv.innerHTML="";
-    q.options.forEach(option=>{
-        const btn=document.createElement("button");
-        btn.className="option-btn";
-        btn.innerText=option;
-        btn.onclick=()=>checkAnswer(option,btn);
-        optDiv.appendChild(btn);
-    });
-    timer=setInterval(()=>{
-        timeLeft--;
-        document.getElementById("timer").innerText=timeLeft+"s";
-        if(timeLeft<=0){showAnswer("Time up. Correct answer:");}
-    },1000);
-}
-function checkAnswer(choice,btn){
-    if(answered||btn.disabled)return;
-    const q=questions[currentQ];
-    if(choice===q.a){
-        answered=true; clearInterval(timer); score++;
-        document.getElementById("score-display").innerText="Score: "+score;
-        btn.classList.add("correct");
-        document.getElementById("feedback").className="feedback-correct";
-        document.getElementById("feedback").innerText="Correct! "+q.ex;
-        playSound(correctSound); setTimeout(()=>playSound(clapSound),150); makeConfetti();
-        disableOptions(); document.getElementById("next-btn").style.display="inline-block";
-    }else{
-        attempts++; btn.classList.add("wrong"); playSound(wrongSound);
-        if(attempts<2){
-            document.getElementById("feedback").className="feedback-wrong";
-            document.getElementById("feedback").innerText="Wrong answer. Try once more.";
-            btn.disabled=true;
-        }else{showAnswer("Correct answer:");}
+
+function loadQuestion(){
+  clearInterval(timer);
+  attempts=0;
+  locked=false;
+  timeLeft=45;
+  $("timer").innerHTML=timeLeft+"s";
+  $("progress").innerHTML="Question "+(current+1)+"/10";
+  $("score").innerHTML="Score: "+marks;
+  $("feedback").innerHTML="";
+  $("feedback").className="";
+  $("nextBtn").style.display="none";
+  $("question").innerHTML=(current+1)+". "+questions[current].q;
+  $("options").innerHTML="";
+  for(var i=0;i<questions[current].o.length;i++){
+    var btn=document.createElement("button");
+    btn.className="option";
+    btn.innerHTML=questions[current].o[i];
+    btn.onclick=function(){checkAnswer(this);}
+    $("options").appendChild(btn);
+  }
+  timer=setInterval(function(){
+    timeLeft--;
+    $("timer").innerHTML=timeLeft+"s";
+    if(timeLeft<=0){
+      showAnswer("Time up. Correct answer:");
     }
+  },1000);
 }
-function showAnswer(prefix){
-    if(answered)return;
-    answered=true; clearInterval(timer);
-    const q=questions[currentQ];
-    document.querySelectorAll(".option-btn").forEach(btn=>{
-        btn.disabled=true;
-        if(btn.innerText===q.a)btn.classList.add("correct");
-    });
-    document.getElementById("feedback").className="feedback-answer";
-    document.getElementById("feedback").innerText=prefix+" "+q.a+" — "+q.ex;
-    document.getElementById("next-btn").style.display="inline-block";
-}
-function disableOptions(){document.querySelectorAll(".option-btn").forEach(btn=>btn.disabled=true);}
-function nextQuestion(){
-    currentQ++;
-    if(currentQ<questions.length)renderQuestion(); else finishQuiz();
-}
-function finishQuiz(){
+
+function checkAnswer(btn){
+  if(locked || btn.disabled){return;}
+  var choice=btn.innerHTML;
+  if(choice===questions[current].a){
+    locked=true;
     clearInterval(timer);
-    document.getElementById("quiz-container").classList.add("hidden");
-    document.getElementById("result-screen").classList.remove("hidden");
-    document.getElementById("final-score").innerText=score+"/10";
-    document.getElementById("final-message").innerText=score>=8?"Excellent work!":score>=5?"Good effort! Revise once more.":"Keep practising!";
-    playSound(clapSound); makeConfetti(); setTimeout(makeConfetti,500);
+    marks++;
+    $("score").innerHTML="Score: "+marks;
+    btn.classList.add("correct");
+    $("feedback").className="good";
+    $("feedback").innerHTML="Correct! "+questions[current].e;
+    try{$("correctAudio").play();$("clapAudio").play();}catch(e){}
+    confetti();
+    disableButtons();
+    $("nextBtn").style.display="inline-block";
+  }else{
+    attempts++;
+    btn.classList.add("wrong");
+    try{$("wrongAudio").play();}catch(e){}
+    if(attempts<2){
+      $("feedback").className="bad";
+      $("feedback").innerHTML="Wrong answer. Try once more.";
+      btn.disabled=true;
+    }else{
+      showAnswer("Correct answer:");
+    }
+  }
+}
+
+function showAnswer(text){
+  if(locked){return;}
+  locked=true;
+  clearInterval(timer);
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){
+    all[i].disabled=true;
+    if(all[i].innerHTML===questions[current].a){
+      all[i].classList.add("correct");
+    }
+  }
+  $("feedback").className="ans";
+  $("feedback").innerHTML=text+" "+questions[current].a+" — "+questions[current].e;
+  $("nextBtn").style.display="inline-block";
+}
+
+function disableButtons(){
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){all[i].disabled=true;}
+}
+
+function nextQuestion(){
+  current++;
+  if(current<questions.length){
+    loadQuestion();
+  }else{
+    finishQuiz();
+  }
+}
+
+function finishQuiz(){
+  clearInterval(timer);
+  hide("quiz");
+  show("result");
+  $("finalScore").innerHTML=marks+"/10";
+  if(marks>=8){$("finalMessage").innerHTML="Excellent work!";}
+  else if(marks>=5){$("finalMessage").innerHTML="Good effort! Revise once more.";}
+  else{$("finalMessage").innerHTML="Keep practising!";}
+  try{$("clapAudio").play();}catch(e){}
+  confetti();
+}
+
+function restartQuiz(){
+  current=0;
+  marks=0;
+  hide("result");
+  show("intro");
+}
+
+function confetti(){
+  var symbols=["🎉","⭐","✨","🎊"];
+  for(var i=0;i<35;i++){
+    var c=document.createElement("div");
+    c.className="confetti";
+    c.innerHTML=symbols[Math.floor(Math.random()*symbols.length)];
+    c.style.left=(Math.random()*100)+"vw";
+    c.style.animationDelay=(Math.random()*0.4)+"s";
+    document.body.appendChild(c);
+    setTimeout((function(x){return function(){x.remove();};})(c),2500);
+  }
 }
 </script>
 </body>
