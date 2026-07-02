@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Grade 8 ICT Chapter 10 Computer Networks Quiz</title>
+<title>Grade 8 ICT Chapter 10 Python Operators Quiz</title>
 <style>
 body{
   margin:0;
@@ -152,12 +152,12 @@ button{font-family:Arial,sans-serif;}
 </div>
 
 <div id="intro" class="card hidden">
-  <h1>Computer Networks Quiz</h1>
+  <h1>Python Operators Quiz</h1>
   <div class="info">
     <p><b>Grade:</b> 8</p>
     <p><b>Subject:</b> ICT</p>
     <p><b>Chapter:</b> 10</p>
-    <p><b>Topic:</b> Computer Networks</p>
+    <p><b>Topic:</b> Python Operators and Control Statements</p>
     <p><b>No. of Questions:</b> 10</p>
     <p><b>Rule:</b> Tap the correct option. You get 2 attempts.</p>
   </div>
@@ -190,16 +190,16 @@ button{font-family:Arial,sans-serif;}
 
 <script>
 var originalQuestions=[
-{q:"A company wants to allow its primary suppliers to access specific inventory management files stored on the company's private network while ensuring the connection is secure. Which type of network should the company implement?",a:"Extranet",o:["Internet","Intranet","Extranet","Local Area Network (LAN)"],e:"An extranet allows selected external users, such as suppliers, to securely access specific private network resources."},
-{q:"A manufacturing plant needs to connect two buildings. The area between them is highly prone to lightning strikes and experiences intense electromagnetic noise from heavy machinery. Which transmission medium is the most reliable choice?",a:"Optical fiber",o:["Co-axial cable","Ethernet cable","Optical fiber","Twisted pair cable"],e:"Optical fiber uses light signals and is resistant to electromagnetic interference and lightning-related electrical noise."},
-{q:"A student is using a television remote control to change channels. Which wireless communication technology is being utilized, and what is a primary limitation of this technology?",a:"Infrared; it requires a direct line-of-sight and cannot penetrate walls.",o:["Bluetooth; it can only connect to mobile devices.","Infrared; it requires a direct line-of-sight and cannot penetrate walls.","Wi-Fi; it requires a router to be in the same room.","Radio Frequency; it only works over a few feet."],e:"TV remotes commonly use infrared, which needs line-of-sight and cannot pass through walls."},
-{q:"An organization has decided to restrict its internal messaging and document sharing portal so that it is only accessible to employees on the company premises. Why would this be classified as an Intranet rather than the Internet?",a:"It is a private network for internal members, whereas the Internet is public.",o:["It uses different hardware than the Internet.","It is a private network for internal members, whereas the Internet is public.","It cannot be protected by encryption or passwords.","It relies solely on satellite technology."],e:"An intranet is a private network used within an organization, while the Internet is public."},
-{q:"Assertion (A): Optical fiber cables transfer data significantly faster over long distances compared to traditional coaxial cables. Reason (R): Optical fiber cables transmit data as pulses of light through tiny glass tubes rather than electronic signals. Choose the correct option.",a:"Both (A) and (R) are true and (R) is the correct explanation of (A).",o:["Both (A) and (R) are true and (R) is the correct explanation of (A).","Both (A) and (R) are true but (R) is NOT the correct explanation of (A).","(A) is true but (R) is false.","(A) is false but (R) is true."],e:"Optical fiber transfers data as light pulses, which supports faster long-distance transmission."},
-{q:"If a network is being established where nodes are connected specifically to share corporate guidelines, employee benefits, and performance evaluation forms privately among staff, what is the best description of this network?",a:"Intranet",o:["Internet","Extranet","Intranet","Public Network"],e:"An intranet is used privately inside an organization to share internal information among staff."},
-{q:"Gaurav wants internet access for the wired and wireless devices in his house. He needs to connect his router to the modem via its internet port. Which technology or cable characteristic is necessary for him to consider for stable, high-speed data transmission?",a:"Using a direct Ethernet connection for the router-to-modem link.",o:["Using optical fiber for its immunity to electrical interference.","Using a direct Ethernet connection for the router-to-modem link.","Ensuring his devices are within line-of-sight of the modem.","Using a satellite dish for the connection between the router and modem."],e:"A direct Ethernet connection is commonly used for a stable high-speed router-to-modem link."},
-{q:"Data transmission without the use of solid matter is categorized as:",a:"Wireless networking technology",o:["Wired networking technology","Wireless networking technology","Co-axial networking","Fiber optic technology"],e:"Wireless networking transmits data without physical cables or other solid media."},
-{q:"Most modern smartphones have GPS technology embedded in them. What is the primary reliance for GPS technology to function?",a:"Communication satellites",o:["Infrared sensors","Bluetooth proximity","Communication satellites","Local Area Networks (LANs)"],e:"GPS relies on signals from communication satellites to determine location."},
-{q:"Which device is essential to convert or process signals at the Earth Station before they are sent up to a satellite?",a:"An earth station transmitter/receiver system",o:["A standard desktop computer only","A router without any antenna","An earth station transmitter/receiver system","A simple Ethernet hub"],e:"An earth station transmitter/receiver system processes and sends signals to satellites."}
+{q:"A student wants to join two string variables, 'First' and 'Name', into one. Which operator should they use to achieve this?",a:"+",o:["*","+","//","%"],e:"The + operator acts as the concatenation operator for strings, joining them together."},
+{q:"Anira has a list named employees. She needs to check if the name John exists in this list. Which operator is most appropriate?",a:"in",o:["is","in","==","and"],e:"The in operator is a membership operator used to check if a value is present in a sequence like a list."},
+{q:"If variable a is 17 and b is 5, what will be the output of print(a // b)?",a:"3",o:["3.4","3","2","17"],e:"The // operator performs floor division and returns only the integer part."},
+{q:"A programmer uses the code print(5 * 'Hi'). What is the purpose of the * operator in this specific context?",a:"Replication",o:["Multiplication","Exponentiation","Replication","Concatenation"],e:"When used with a string and a number, the * operator repeats the string."},
+{q:"A shop offers a discount if the total purchase amount is strictly greater than $100. Which expression should be used in an if statement?",a:"amount > 100",o:["amount >= 100","amount > 100","amount != 100","amount < 100"],e:"The > operator checks whether a value is strictly greater than another value."},
+{q:"To iterate through a sequence of numbers from 2 to 7, which range function is correct?",a:"range(2, 8)",o:["range(2, 7)","range(2, 8)","range(1, 7)","range(2, 6)"],e:"range() stops before the stop value, so range(2, 8) includes numbers from 2 to 7."},
+{q:"In a program, two variables x and y are assigned the same list object. If x is y returns True, what does this indicate?",a:"Both point to the same memory location",o:["Both have the same value","Both have different values","Both point to the same memory location","Both point to different memory locations"],e:"The is operator checks whether two variables refer to the same object in memory."},
+{q:"A loop is required to execute as long as a user-entered count is less than or equal to 5. Which statement is appropriate?",a:"while count <= 5:",o:["for count in range(5):","if count <= 5:","while count <= 5:","while count < 5:"],e:"A while loop continues to execute while its condition remains True."},
+{q:"Which logical operator would you use to ensure that a block of code executes only if both age > 18 and has_license == True are satisfied?",a:"and",o:["or","not","and","is"],e:"The and operator returns True only when both conditions are true."},
+{q:"In a program calculating grades, if a student's score is 45, which block will execute given: if score >= 50: print('Pass') else: print('Fail')?",a:"Fail",o:["Pass","Fail","Error","Nothing prints"],e:"Since 45 is not greater than or equal to 50, the else block executes and prints Fail."}
 ];
 
 var questions=[];
