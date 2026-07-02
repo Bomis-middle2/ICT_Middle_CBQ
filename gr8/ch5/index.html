@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT - Chapter 5 Advanced HTML Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-hover: #1a4373;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Branding Splash Screen Layout */
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Accessibility Audio Control */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        /* Header Layout Components */
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        /* Configuration Panels */
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        /* Evaluation Block Styling */
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--bg-color);
+            border-color: var(--text-muted);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #ebf8ff;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fff5f5;
+            color: #742a2a;
+        }
+
+        /* Information Context Panels */
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #feebc8;
+            color: #c05621;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .feedback-box.solution {
+            background-color: #e2e8f0;
+            color: #2d3748;
+            border-left: 4px solid #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Global Execution Controls */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Evaluation View Display Layout */
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+        <h1>INNOVINE</h1>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
+
+        <div id="intro-screen" class="screen">
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 5: Advanced HTML</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Semantic HTML Lists, Tables (colspan/rowspan), Frames, Core Syntax Validation & CSS Table Padding</p>
+                <p><strong>Total Questions:</strong> 10</p>
+                <p><strong>Rules:</strong> 45 seconds per question. Offers 2 attempts per screen with guided smart hints.</p>
+            </div>
+
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/10</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="tracker-bar">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question context text container?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/10</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Schema strictly mapping supplied question records
+        const quizData = [
+            {
+                q: "Rahul wants to create a list of items where the order does not matter (e.g., a grocery list). Which HTML tag should he use?",
+                options: ["A) <ol>", "B) <ul>", "C) <dl>", "D) <li>"],
+                answer: 1,
+                hint: "Think about structural lists that render plain bullet points rather than sequential numbers.",
+                explanation: "Correct answer: B) <ul>. The <ul> (Unordered List) tag is used to organize list matrices that require bullet points instead of numerical structures."
+            },
+            {
+                q: "Priya is designing a webpage and needs to divide the browser window into two separate sections to display different documents simultaneously. What should she use?",
+                options: ["A) A table", "B) An unordered list", "C) Frames", "D) A paragraph tag"],
+                answer: 2,
+                hint: "Consider an older HTML mechanism built specifically to partition layout viewports into multiple distinct sub-windows.",
+                explanation: "Correct answer: C) Frames. Frames partition the primary viewing screen into independent columns or rows capable of running separate document locations."
+            },
+            {
+                q: "In an HTML table, which tag is used to define a header cell to make the text stand out?",
+                options: ["A) <td>", "B) <tr>", "C) <th>", "D) <caption>"],
+                answer: 2,
+                hint: "Look for an abbreviation that specifically stands for 'table header' cell rendering.",
+                explanation: "Correct answer: C) <th>. The <th> element defines table header rows, applying bold text and centered alignments by default."
+            },
+            {
+                q: "Amit wants a cell in his table to span across three different columns. Which attribute should he add to his <td> tag?",
+                options: ["A) rowspan=3", "B) colspan=3", "C) span=3", "D) merge=3"],
+                answer: 1,
+                hint: "You need an attribute that stretches the cell's footprint horizontally across multiple columns.",
+                explanation: "Correct answer: B) colspan=3. The colspan attribute tells a cell structural element to expand horizontally across multiple tabular column segments."
+            },
+            {
+                q: "Identify the error in this HTML structure: <p style='font-size:40px'> This is a paragraph. </p>",
+                options: [
+                    "A) The tag <p> is not a container tag.",
+                    "B) The attribute value is not enclosed in double quotes.",
+                    "C) The tag name is case sensitive.",
+                    "D) There is no error in this structure."
+                ],
+                answer: 1,
+                hint: "Standard strict syntactic declarations require style attribute assignments to be contained in double quotation marks (\") rather than single quotes.",
+                explanation: "Correct answer: B) The attribute value is not enclosed in double quotes. For proper standard validation, structural attribute configurations must be surrounded by double quotation markers."
+            },
+            {
+                q: "Which tag pair is used to enclose the main content of a webpage that will be displayed in the browser window?",
+                options: ["A) <head>...</head>", "B) <html>...</html>", "C) <title>...</title> \t", "D) <body>...</body>"],
+                answer: 3,
+                hint: "This structural block holds the actual visual data, images, lists, and text elements exposed on the main browser viewport.",
+                explanation: "Correct answer: D) <body>...</body>. The body tags hold all visible contents rendered inside the browser viewport canvas."
+            },
+            {
+                q: "Sneha wants to create a definition list. Which tag pair defines the term she is describing?",
+                options: ["A) <dt>...</dt>", "B) <dd>...</dd>", "C) <dl>...</dl>", "D) <li>...</li>"],
+                answer: 0,
+                hint: "Look for the specific acronym standing for 'definition term' within a glossary structure.",
+                explanation: "Correct answer: A) <dt>...</dt>. In a structural definition list (<dl>), the <dt> container element frames the unique term or word being queried."
+            },
+            {
+                q: "Which property would you use in CSS to add spacing between the content inside a table cell and its border?",
+                options: ["A) border-spacing", "B) padding", "C) border-collapse", "D) margin"],
+                answer: 1,
+                hint: "This properties block introduces empty breathing space entirely within the interior wall limits of an element.",
+                explanation: "Correct answer: B) padding. CSS padding creates protective interior buffer space between the cell content stream and its outer perimeter border.",
+            },
+            {
+                q: "A developer wants to ensure that a table header is distinct from normal cell data. Which tag structure is most semantically correct?",
+                options: ["A) Use <td> for headers.", "B) Use <th> for headers.", "C) Use <tr> for headers.", "D) Use <col> for headers."],
+                answer: 1,
+                hint: "This matches question 3; choose the element dedicated entirely to handling semantic table headings.",
+                explanation: "Correct answer: B) Use <th> for headers. Using the <th> tag provides programmatic semantics indicating the cell is a metadata structural label."
+            },
+            {
+                q: "A developer needs to create a glossary of technical terms. Which HTML structure best organizes these terms and their corresponding descriptions?",
+                options: [
+                    "A) <ul> list with <li> tags",
+                    "B) <ol> list with <li> tags",
+                    "C) <dl> list with <dt> and <dd> tags",
+                    "D) <table> with <tr> and <td> tags"
+                ],
+                answer: 2,
+                hint: "Glossaries rely on special pairs consisting of structural description terms followed by distinct descriptive text blocks.",
+                explanation: "Correct answer: C) <dl> list with <dt> and <dd> tags. Description lists (<dl>) provide the ideal layout paradigm for matching vocabulary labels with detailed definitions."
+            }
+        ];
+
+        // Global State Tracker Scope
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+        }
+
+        // Web Audio Interfaces
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        // Core Quiz Flows
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Correct! Well done.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                setNextState();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    setNextState();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function setNextState() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            const messageBox = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            
+            if (percent === 100) {
+                messageBox.innerText = "Sensational! You achieved a perfect score in Advanced HTML structural systems.";
+                messageBox.style.backgroundColor = "#c6f6d5";
+                messageBox.style.color = "#22543d";
+            } else if (percent >= 70) {
+                messageBox.innerText = "Great job! You have a solid understanding of layouts, data tables, and syntax constraints.";
+                messageBox.style.backgroundColor = "#ebf8ff";
+                messageBox.style.color = "#2b6cb0";
+            } else {
+                messageBox.innerText = "Keep reviewing! Re-examine structural attribute scopes and description listing logic to strengthen your skills.";
+                messageBox.style.backgroundColor = "#feebc8";
+                messageBox.style.color = "#c05621";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
