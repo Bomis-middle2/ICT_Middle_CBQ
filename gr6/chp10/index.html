@@ -3,482 +3,221 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ICT Assessment Terminal</title>
+    <title>Computer Languages - Interactive Quiz</title>
     <style>
-        :root {
-            --bg-main: #f8fafc;
-            --bg-card: #ffffff;
-            --text-dark: #0f172a;
-            --text-muted: #64748b;
-            --accent-blue: #2563eb;
-            --success: #16a34a;
-            --danger: #dc2626;
-            --border-light: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: system-ui, -apple-system, sans-serif;
-            user-select: none;
-        }
-
-        body {
-            background-color: var(--bg-main);
-            color: var(--text-dark);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
-
-        #game-cabinet {
-            width: 100%;
-            max-width: 460px;
-            height: 85vh;
-            max-height: 680px;
-            background-color: var(--bg-card);
-            border-radius: 12px;
-            border: 1px solid var(--border-light);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .screen {
-            display: none;
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            padding: 24px;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .screen.active {
-            display: flex;
-        }
-
-        /* --- SCREEN 0: SIMPLE 5-SECOND INTRO SPLASH --- */
-        #screen-splash {
-            background-color: #ffffff;
-            justify-content: center;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .logo-box {
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            width: 80px;
-            height: 80px;
-        }
-
-        .logo-core {
-            font-size: 3rem;
-            color: var(--accent-blue);
-            animation: pulseCore 1.5s infinite ease-in-out;
-            z-index: 2;
-        }
-
-        .logo-orbit {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border: 2px solid rgba(37, 99, 235, 0.1);
-            border-top: 2px solid var(--accent-blue);
-            border-radius: 50%;
-            animation: spinOrbit 3s linear infinite;
-        }
-
-        .brand-title {
-            font-size: 1.8rem;
-            font-weight: 800;
-            letter-spacing: 4px;
-            color: var(--text-dark);
-        }
-
-        .brand-tag {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            color: var(--text-muted);
-            margin-top: -10px;
-            text-transform: uppercase;
-        }
-
-        @keyframes spinOrbit {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes pulseCore {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
-        }
-
-        /* --- UI ELEMENTS --- */
-        .panel-header {
-            text-align: center;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 14px;
-        }
-        
-        .panel-title {
-            font-size: 1.3rem;
-            color: var(--accent-blue);
-            font-weight: 700;
-            letter-spacing: 0.5px;
-        }
-
-        .hud-bar {
-            display: flex;
-            justify-content: space-between;
-            background: var(--bg-main);
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            border: 1px solid var(--border-light);
-        }
-
-        .text-container {
-            background: var(--bg-main);
-            border: 1px solid var(--border-light);
-            padding: 16px;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            color: var(--text-dark);
-            overflow-y: auto;
-            max-height: 240px;
-        }
-
-        /* --- OPTIONS BUTTON LIST --- */
-        .options-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .choice-btn {
-            background: #ffffff;
-            color: var(--text-dark);
-            border: 1px solid var(--border-light);
-            padding: 12px 14px;
-            border-radius: 8px;
-            text-align: left;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: background 0.15s, border-color 0.15s;
-            line-height: 1.4;
-        }
-        .choice-btn:hover {
-            background: var(--bg-main);
-            border-color: var(--text-muted);
-        }
-
-        /* EVALUATION SELECTION STATES */
-        .choice-btn.correct {
-            background: #dcfce7 !important;
-            border-color: var(--success) !important;
-            color: var(--success) !important;
-            font-weight: 600;
-        }
-        .choice-btn.wrong {
-            background: #fee2e2 !important;
-            border-color: var(--danger) !important;
-            color: var(--danger) !important;
-        }
-
-        .action-btn {
-            background: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            text-align: center;
-        }
-        .action-btn:hover { opacity: 0.9; }
-
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f4f4f9; display: flex; justify-content: center; padding: 20px; margin: 0; }
+        #quiz-container { background: white; width: 95%; max-width: 600px; padding: 20px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
+        #top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: bold; }
+        .option-btn { border: 2px solid blue; border-radius: 15px; padding: 15px; margin: 10px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: bold; font-family: inherit; }
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #logo-screen, #intro-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 9999; }
+        .hidden { display: none !important; }
+        #q-text { font-weight: bold; font-size: 1.0rem; margin-bottom: 15px; text-align: left; }
     </style>
 </head>
 <body>
 
-<div id="game-cabinet">
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
 
-    <div id="screen-splash" class="screen active">
-        <div class="logo-box">
-            <div class="logo-orbit"></div>
-            <div class="logo-core">⬢</div>
+<div id="intro-screen" class="hidden">
+    <h1>Computer Languages</h1>
+    <p><strong>Grade:</strong> 6</p>
+    <p><strong>Subject:</strong> ICT</p>
+    <p><strong>Topic:</strong> Scenario-Based CBQ Session</p>
+    <p><strong>No. of Questions:</strong> 12</p>
+    <button onclick="startQuiz()" style="padding: 15px 30px; font-size: 18px; font-family: inherit; cursor: pointer;">Start Quiz</button>
+</div>
+
+<div id="quiz-container">
+    <div id="game-area" class="hidden">
+        <div id="top-bar">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
         </div>
-        <div class="brand-title">INNOVINE</div>
-        <div class="brand-tag">Assessment Tool v2.0</div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
     </div>
-
-    <div id="screen-menu" class="screen">
-        <div class="panel-header">
-            <div class="panel-title">Computer Languages</div>
-            <div style="font-size:0.8rem; color:var(--text-muted); margin-top:4px;">Scenario-Based Practice Session</div>
-        </div>
-        
-        <div class="text-container">
-            <b>Instructions:</b><br><br>
-            • You will be given 5 randomized scenario questions chosen from your textbook source file.<br><br>
-            • Topics cover binary machine codes, compiler systems, line interpreters, and procedural generations.<br><br>
-            • Choose an option to immediately test your understanding.
-        </div>
-
-        <button class="action-btn" onclick="launchQuizEngine()">START ASSESSMENT</button>
-    </div>
-
-    <div id="screen-game" class="screen">
-        <div class="hud-bar">
-            <span style="color: var(--accent-blue);" id="hud-node">Question: 1 / 5</span>
-            <span style="color: var(--text-dark);" id="hud-score">Score: 100%</span>
-        </div>
-
-        <div class="text-container" id="display-q" style="font-weight: 500;">
-            Retrieving assignment metrics from document...
-        </div>
-
-        <div class="options-list" id="display-options">
-            </div>
-
-        <button class="action-btn" id="footer-next" style="display: none;" onclick="progressNextNode()">CONTINUE &gt;&gt;</button>
-    </div>
-
-    <div id="screen-over" class="screen">
-        <div class="panel-header">
-            <div class="panel-title" id="final-status">Revision Complete</div>
-        </div>
-
-        <div class="text-container" id="final-matrix" style="font-size:0.9rem; line-height:1.6; max-height: 400px;">
-            Analyzing summary results...
-        </div>
-
-        <button class="action-btn" onclick="location.reload()">RESTART QUIZ</button>
-    </div>
-
 </div>
 
 <script>
-    // --- COMPREHENSIVE SOURCE SYLLABUS DIRECTIVE DATA BANK ---
-    const ICT_BANK = [
-        {
-            question: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work. What is the main reason for this?",
-            choices: [
-                "Machine language requires an interpreter.",
-                "Machine language is machine-dependent.",
-                "Machine language programs take too long to execute.",
+    const questions = [
+        { 
+            q: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work. What is the main reason for this?", 
+            a: "Machine language is machine-dependent.", 
+            options: [
+                "Machine language requires an interpreter.", 
+                "Machine language is machine-dependent.", 
+                "Machine language programs take too long to execute.", 
                 "Machine language uses English-like mnemonics."
-            ],
-            rightIdx: 1
+            ], 
+            hint: "Binary code is tightly bound to a specific processor architecture design." 
         },
-        {
-            question: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed. Which type of translator is Python most likely using?",
-            choices: ["Compiler", "Assembler", "Interpreter", "Linker"],
-            rightIdx: 2
+        { 
+            q: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed. Which type of translator is Python most likely using?", 
+            a: "Interpreter", 
+            options: ["Compiler", "Assembler", "Interpreter", "Linker"], 
+            hint: "This type of translator reads and processes instructions line by line." 
         },
-        {
-            question: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once. What translator did they use?",
-            choices: ["Assembler", "Compiler", "Interpreter", "Web Browser"],
-            rightIdx: 1
+        { 
+            q: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once. What translator did they use?", 
+            a: "Compiler", 
+            options: ["Assembler", "Compiler", "Interpreter", "Web Browser"], 
+            hint: "Think about the translator system that builds complete binary files all at once." 
         },
-        {
-            question: "You are managing a database using SQL. You type a simple query specifying exactly *what* data you need (e.g., 'SELECT names'), without writing the step-by-step logic on *how* the computer should fetch it. This is a characteristic of which generation of languages?",
-            choices: [
-                "First Generation (1GL)",
-                "Second Generation (2GL)",
-                "Third Generation (3GL)",
+        { 
+            q: "You are managing a database using SQL. You type a simple query specifying exactly *what* data you need (e.g., 'SELECT names'), without writing the step-by-step logic on *how* the computer should fetch it. This is a characteristic of which generation of languages?", 
+            a: "Fourth Generation (4GL)", 
+            options: [
+                "First Generation (1GL)", 
+                "Second Generation (2GL)", 
+                "Third Generation (3GL)", 
                 "Fourth Generation (4GL)"
-            ],
-            rightIdx: 3
+            ], 
+            hint: "Non-procedural languages focus purely on the target goal rather than the step logic." 
         },
-        {
-            question: "A programmer is working on low-level system code. Instead of entering binary numbers, they type commands like 'ADD A, B' or 'MOV AX, BX'. When they launch it, a translator program turns these shortcuts straight into machine code. What translator performed this process?",
-            choices: ["Assembler", "Compiler", "Interpreter", "Decompiler"],
-            rightIdx: 0
+        { 
+            q: "A programmer is working on low-level system code. Instead of entering binary numbers, they type commands like 'ADD A, B' or 'MOV AX, BX'. When they launch it, a translator program turns these shortcuts straight into machine code. What translator performed this process?", 
+            a: "Assembler", 
+            options: ["Assembler", "Compiler", "Interpreter", "Decompiler"], 
+            hint: "This module handles mnemonic abbreviations inside low-level frameworks." 
         },
-        {
-            question: "You are talking to an artificial intelligence engine that processes conversational voice prompts and builds its own algorithms to fix user computational errors without manual coding. This AI engine operates on tools from which language generation?",
-            choices: [
-                "Second Generation Language",
-                "Third Generation Language",
-                "Fourth Generation Language",
+        { 
+            q: "You are talking to an artificial intelligence engine that processes conversational voice prompts and builds its own algorithms to fix user computational errors without manual coding. This AI engine operates on tools from which language generation?", 
+            a: "Fifth Generation Language", 
+            options: [
+                "Second Generation Language", 
+                "Third Generation Language", 
+                "Fourth Generation Language", 
                 "Fifth Generation Language"
-            ],
-            rightIdx: 3
+            ], 
+            hint: "Artificial intelligence architectures represent the highest structural layer." 
         },
-        {
-            question: "You want to write a program that can run perfectly on Windows, macOS, and Linux laptops without needing rewrite modifications for each distinct processor system. What category of language must you deploy?",
-            choices: [
-                "High Level Language",
-                "Machine Language",
-                "Low Level Assembly Language",
+        { 
+            q: "You want to write a program that can run perfectly on Windows, macOS, and Linux laptops without needing rewrite modifications for each distinct processor system. What category of language must you deploy?", 
+            a: "High Level Language", 
+            options: [
+                "High Level Language", 
+                "Machine Language", 
+                "Low Level Assembly Language", 
                 "First Generation Binary Code"
-            ],
-            rightIdx: 0
+            ], 
+            hint: "These systems are completely machine-independent platforms." 
         },
-        {
-            question: "You are reading a history book about historical computer pioneers and discover the narrative of a brilliant woman who engineered the earliest algorithm meant for execution on Charles Babbage's Mechanical Analytical Engine. Who is this pioneer?",
-            choices: ["Grace Hopper", "Lady Ada Lovelace", "Marie Curie", "Katherine Johnson"],
-            rightIdx: 1
+        { 
+            q: "You are reading a history book about historical computer pioneers and discover the narrative of a brilliant woman who engineered the earliest algorithm meant for execution on Charles Babbage's Mechanical Analytical Engine. Who is this pioneer?", 
+            a: "Lady Ada Lovelace", 
+            options: ["Grace Hopper", "Lady Ada Lovelace", "Marie Curie", "Katherine Johnson"], 
+            hint: "She is celebrated historically as the world's first software programmer." 
         },
-        {
-            question: "You pass your high-level program's raw source code into a compiler system unit. What file output format does the compiler build that the computer processor can actively understand and run?",
-            choices: ["Source code file", "Script text file", "Object code", "Document archive template"],
-            rightIdx: 2
+        { 
+            q: "You pass your high-level program's raw source code into a compiler system unit. What file output format does the compiler build that the computer processor can actively understand and run?", 
+            a: "Object code", 
+            options: ["Source code file", "Script text file", "Object code", "Document archive template"], 
+            hint: "This is the generated translation output that microprocessors execute." 
         },
-        {
-            question: "An engineer wants to protect a proprietary high-level app package from piracy so no competitor can extract or view the original source logic strings. Why would an interpreter NOT be the best choice for this deployment task?",
-            choices: [
-                "Interpreters do not produce a separate object code file.",
-                "Interpreters translate all lines of code at once.",
-                "Interpreters only work with 1GL languages.",
+        { 
+            q: "An engineer wants to protect a proprietary high-level app package from piracy so no competitor can extract or view the original source logic strings. Why would an interpreter NOT be the best choice for this deployment task?", 
+            a: "Interpreters do not produce a separate object code file.", 
+            options: [
+                "Interpreters do not produce a separate object code file.", 
+                "Interpreters translate all lines of code at once.", 
+                "Interpreters only work with 1GL languages.", 
                 "Interpreters are slower than humans at reading code."
-            ],
-            rightIdx: 0
+            ], 
+            hint: "Without a separate standalone translation output file, source text remains visible." 
         },
-        {
-            question: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish. This represents which generation?",
-            choices: [
-                "First Generation (1GL)",
-                "Second Generation (2GL)",
-                "Third Generation (3GL)",
+        { 
+            q: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish. This represents which generation?", 
+            a: "Third Generation (3GL)", 
+            options: [
+                "First Generation (1GL)", 
+                "Second Generation (2GL)", 
+                "Third Generation (3GL)", 
                 "Fifth Generation (5GL)"
-            ],
-            rightIdx: 2
+            ], 
+            hint: "Standard high-level procedural systems are placed inside this generational block." 
         },
-        {
-            question: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language. Is this statement correct based on text parameters?",
-            choices: [
-                "Yes, High Level Languages execute the fastest.",
-                "No, programs written in machine language take less time for execution.",
-                "Yes, because they do not require any translators.",
+        { 
+            q: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language. Is this statement correct based on text parameters?", 
+            a: "No, programs written in machine language take less time for execution.", 
+            options: [
+                "Yes, High Level Languages execute the fastest.", 
+                "No, programs written in machine language take less time for execution.", 
+                "Yes, because they do not require any translators.", 
                 "No, because High Level Languages are machine-dependent."
-            ],
-            rightIdx: 1
+            ], 
+            hint: "Native binary execution skips the translator layer entirely." 
         }
     ];
 
-    let sessionNodes = [];
-    let currentIdx = 0;
-    let successfulHits = 0;
-    let matrixLocked = false;
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
 
-    // --- SCREEN INTRO INITIAL TIMEOUT HOOK (5s) ---
-    window.addEventListener("DOMContentLoaded", () => {
-        setTimeout(() => {
-            document.getElementById("screen-splash").classList.remove("active");
-            document.getElementById("screen-menu").classList.add("active");
-        }, 5000); 
-    });
+    window.addEventListener('load', () => setTimeout(() => {
+        document.getElementById('logo-screen').classList.add('hidden');
+        document.getElementById('intro-screen').classList.remove('hidden');
+    }, 5000));
 
-    function launchQuizEngine() {
-        document.getElementById("screen-menu").classList.remove("active");
-        document.getElementById("screen-game").classList.add("active");
-
-        // Shuffle out 5 parameters cleanly
-        let sourcePool = [...ICT_BANK];
-        sessionNodes = [];
-        while(sessionNodes.length < 5 && sourcePool.length > 0) {
-            let roll = Math.floor(Math.random() * sourcePool.length);
-            sessionNodes.push(sourcePool.splice(roll, 1)[0]);
-        }
-
-        currentIdx = 0;
-        successfulHits = 0;
-        loadNodeData();
+    function startQuiz() {
+        document.getElementById('intro-screen').classList.add('hidden');
+        document.getElementById('game-area').classList.remove('hidden');
+        renderQuestion();
     }
 
-    function loadNodeData() {
-        matrixLocked = false;
-        document.getElementById("footer-next").style.display = "none";
-
-        let node = sessionNodes[currentIdx];
+    function renderQuestion() {
+        clearInterval(timer);
+        attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = "";
+        document.getElementById('feedback').innerText = "";
         
-        // Populate display variables
-        document.getElementById("hud-node").innerText = `Question: ${currentIdx + 1} / 5`;
-        document.getElementById("hud-score").innerText = `Score: ${Math.round(((5 - currentIdx + successfulHits) / 5) * 100)}%`;
-        document.getElementById("display-q").innerText = node.question;
-
-        const container = document.getElementById("display-options");
-        container.innerHTML = ""; // Wipe standard old child components
-
-        node.choices.forEach((text, idx) => {
-            let button = document.createElement("button");
-            button.className = "choice-btn";
-            button.innerText = text;
-            button.onclick = () => verifyKeyInput(idx, button);
-            container.appendChild(button);
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options');
+        optDiv.innerHTML = "";
+        q.options.forEach(o => {
+            const btn = document.createElement('button');
+            btn.className = "option-btn";
+            btn.innerText = o;
+            btn.onclick = () => checkAnswer(o);
+            optDiv.appendChild(btn);
         });
+
+        timer = setInterval(() => {
+            timeLeft--;
+            document.getElementById('timer').innerText = timeLeft + "s";
+            if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); }
+        }, 1000);
     }
 
-    function verifyKeyInput(selectedIdx, clickedElement) {
-        if(matrixLocked) return;
-        matrixLocked = true;
-
-        let node = sessionNodes[currentIdx];
-        const children = document.getElementById("display-options").children;
-
-        if(selectedIdx === node.rightIdx) {
-            clickedElement.classList.add("correct");
-            successfulHits++;
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++;
+            document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct';
+            feedback.innerText = "Correct!";
+            setTimeout(nextQuestion, 1000);
         } else {
-            clickedElement.classList.add("wrong");
-            // Highlight right option clearly
-            children[node.rightIdx].classList.add("correct");
-        }
-
-        document.getElementById("footer-next").style.display = "block";
-    }
-
-    function progressNextNode() {
-        currentIdx++;
-        if(currentIdx < 5) {
-            loadNodeData();
-        } else {
-            terminateMatrixSession();
+            attempts++;
+            if(attempts < 2) {
+                feedback.className = 'hint-box';
+                feedback.innerText = "Hint: " + questions[currentQ].hint;
+            } else {
+                feedback.className = 'feedback-correct';
+                feedback.innerText = "Correct answer was: " + questions[currentQ].a;
+                setTimeout(nextQuestion, 2000);
+            }
         }
     }
 
-    function terminateMatrixSession() {
-        document.getElementById("screen-game").classList.remove("active");
-        document.getElementById("screen-over").classList.add("active");
-
-        const headline = document.getElementById("final-status");
-        const reportFrame = document.getElementById("final-matrix");
-        let efficiency = (successfulHits / 5) * 100;
-
-        if(efficiency >= 80) {
-            headline.innerText = "Assessment Passed";
-            headline.style.color = "var(--success)";
-        } else {
-            headline.innerText = "Review Suggested";
-            headline.style.color = "var(--danger)";
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else {
+            document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()">Restart Quiz</button>`;
         }
-
-        reportFrame.innerHTML = `
-            <b>Performance Evaluation Summary:</b><br><br>
-            • <b>Total Attempted:</b> 05 Questions<br>
-            • <b>Correct Explanations:</b> ${successfulHits} / 5 Checked Items<br>
-            • <b>Total Accuracy:</b> ${efficiency}% Total Ratio Profile<br><br>
-            <hr style="border: 0; border-top: 1px dashed var(--border-light); margin: 12px 0;"><br>
-            ${efficiency >= 80 ? 
-            "Excellent understanding! You successfully identified the core principles of computer language structure, machine dependencies, compilation procedures, and generational usage paradigms." : 
-            "We suggest checking your textbook notes again. Review specifically why 1GL machine configurations run immediately without standard translation loops but remain entirely dependent on processor hardware, and why line interpreters break running workflows instantly upon catching typos."}
-        `;
     }
 </script>
 </body>
