@@ -2,697 +2,646 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 6 ICT - Chapter 11 Interactive Quiz</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grade 6 ICT - Chapter 11 Quiz</title>
     <style>
         :root {
-            --primary-color: #2b6cb0;
-            --primary-hover: #1a436d;
-            --bg-color: #f7fafc;
+            --bg-color: #f4f6f9;
             --card-bg: #ffffff;
-            --text-color: #2d3748;
-            --text-muted: #718096;
-            --success-color: #48bb78;
-            --error-color: #f56565;
-            --border-color: #e2e8f0;
+            --text-color: #212529;
+            --primary: #0d6efd;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --border-radius: 12px;
+            --font-family: system-ui, -apple-system, sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
+            font-family: var(--font-family);
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.5;
-            padding: 15px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .quiz-container {
-            width: 100%;
-            max-width: 650px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        #branding-overlay {
+        /* Splash Screen Rules */
+        #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background-color: #ffffff;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 1000;
             transition: opacity 0.5s ease-out;
-            cursor: pointer;
         }
 
-        #branding-overlay h1 {
-            color: var(--primary-color);
-            font-size: 36px;
-            letter-spacing: 2px;
-            animation: pulse 1.5s infinite ease-in-out;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.98); opacity: 0.8; }
-            50% { transform: scale(1.02); opacity: 1; }
-            100% { transform: scale(0.98); opacity: 0.8; }
-        }
-
-        .hidden { display: none !important; }
-
-        .audio-control {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--border-color);
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 10;
-        }
-
-        .quiz-header {
+        #splash-screen img {
+            max-width: 200px;
+            height: auto;
             margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
         }
 
-        .tracker-bar {
+        #splash-screen p {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #495057;
+        }
+
+        /* Main Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 24px;
+            display: none;
+            position: relative;
+        }
+
+        /* Top Header Items */
+        .quiz-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .timer-wrapper {
-            width: 100%;
-            background-color: var(--border-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .timer-bar {
-            height: 100%;
-            background-color: var(--primary-color);
-            width: 100%;
-            transition: width 1s linear, background-color 0.3s;
-        }
-
-        .timer-warn {
-            background-color: var(--error-color);
-        }
-
-        .screen h1 {
-            font-size: 26px;
-            color: var(--primary-color);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .screen h2 {
-            font-size: 18px;
-            color: var(--text-muted);
             margin-bottom: 20px;
-            text-align: center;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 12px;
         }
 
-        .meta-info {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+        .audio-control button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
         }
 
-        .meta-info p {
+        .hud-item {
+            font-size: 1rem;
+            font-weight: 600;
+            background: #e9ecef;
+            padding: 6px 12px;
+            border-radius: 20px;
+        }
+
+        /* Timer Alert Styles */
+        .timer-warning {
+            background-color: var(--warning) !important;
+            color: #000 !important;
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* Question Layout */
+        .question-box {
+            margin-bottom: 24px;
+        }
+
+        .scenario {
+            font-style: italic;
+            color: #6c757d;
             margin-bottom: 8px;
-            font-size: 16px;
+            font-size: 0.95rem;
         }
-        .meta-info p:last-child { margin-bottom: 0; }
 
         .question-text {
-            font-size: 18px;
+            font-size: 1.15rem;
             font-weight: 600;
-            margin-bottom: 20px;
-            color: var(--text-color);
+            color: #1a1a1a;
         }
 
+        /* Large Tappable Option Buttons */
         .options-list {
-            list-style: none;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 20px;
         }
 
         .option-btn {
-            width: 100%;
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: var(--border-radius);
             padding: 16px;
-            font-size: 16px;
+            font-size: 1.05rem;
             text-align: left;
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
             transition: all 0.2s ease;
+            width: 100%;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
         }
 
         .option-btn:hover:not(:disabled) {
-            background-color: var(--bg-color);
-            border-color: var(--text-muted);
-        }
-
-        .option-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #ebf8ff;
+            background-color: #e9ecef;
+            border-color: #ced4da;
         }
 
         .option-btn.correct {
-            border-color: var(--success-color);
-            background-color: #f0fff4;
-            color: #22543d;
-            font-weight: bold;
+            background-color: #d1e7dd !important;
+            border-color: var(--success) !important;
+            color: #0f5132 !important;
         }
 
-        .option-btn.incorrect {
-            border-color: var(--error-color);
-            background-color: #fff5f5;
-            color: #742a2a;
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #842029 !important;
         }
 
-        .feedback-box {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 15px;
-            font-weight: 500;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .feedback-box.hint {
-            background-color: #feebc8;
-            color: #c05621;
-            border-left: 4px solid #dd6b20;
-        }
-
-        .feedback-box.solution {
-            background-color: #e2e8f0;
-            color: #2d3748;
-            border-left: 4px solid #4a5568;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .action-btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.2s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .action-btn:disabled {
-            background-color: var(--border-color);
-            color: var(--text-muted);
+        .option-btn:disabled {
             cursor: not-allowed;
+            opacity: 0.8;
         }
 
-        .result-msg {
-            font-size: 20px;
-            font-weight: bold;
+        /* Bottom Controls */
+        .quiz-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* Results Screen */
+        .results-box {
             text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px 0;
+        }
+
+        .results-box h2 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feedback-msg {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 16px 0;
         }
 
         .score-display {
-            font-size: 48px;
-            font-weight: 800;
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
         }
 
+        .restart-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        /* Confetti / Canvas Animation Overlay */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.05); }
+        }
+
+        /* Responsive Tweaks */
         @media (max-width: 480px) {
-            body { padding: 10px; }
+            body { padding: 8px; }
             .quiz-container { padding: 16px; }
-            .screen h1 { font-size: 22px; }
-            .question-text { font-size: 16px; }
-            .option-btn { padding: 14px; font-size: 15px; }
-            .action-btn { padding: 14px; font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 1rem; }
+            .question-text { font-size: 1.05rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="branding-overlay" onclick="dismissBranding()">
-        <h1 id="branding-text">INNOVINE</h1>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <p>Introduction to C Quiz</p>
     </div>
 
-    <audio id="audio-correct" src="https://actions.google.com/sounds/v1/alarms/digital_watch_alarm_long.ogg" preload="auto"></audio>
-    <audio id="audio-wrong" src="https://actions.google.com/sounds/v1/alarms/mechanical_clock_ring_in_distance.ogg" preload="auto"></audio>
-
-    <div class="quiz-container">
-        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
-            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
-        </button>
-
-        <div id="intro-screen" class="screen">
-            <h1>Grade 6 ICT Quiz</h1>
-            <h2>Chapter 11: Introduction to C</h2>
-            
-            <div class="meta-info">
-                <p><strong>Subject:</strong> ICT</p>
-                <p><strong>Grade:</strong> 6</p>
-                <p><strong>Topic:</strong> Rules of C, Identifiers, Operators & Syntax Errors</p>
-                <p><strong>Number of Questions:</strong> 15</p>
-                <p><strong>Rules:</strong> You have 45 seconds per question and up to 2 attempts per question if you miss!</p>
+    <div class="quiz-container" id="quiz-container">
+        
+        <div class="quiz-header">
+            <div class="audio-control">
+                <button id="mute-toggle" aria-label="Mute audio">🔊</button>
             </div>
-
-            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+            <div class="hud-item" id="score-tracker">Score: 0/12</div>
+            <div class="hud-item" id="timer">Time: 60s</div>
         </div>
 
-        <div id="quiz-screen" class="screen hidden">
-            <div class="quiz-header">
-                <div class="tracker-bar">
-                    <span id="question-number">Question 1/15</span>
-                    <span id="score-tracker">Score: 0</span>
-                </div>
-                <div class="timer-wrapper">
-                    <div id="timer-bar" class="timer-bar"></div>
-                </div>
+        <div id="quiz-gameplay">
+            <div class="question-box">
+                <div class="scenario" id="question-scenario">Scenario goes here...</div>
+                <div class="question-text" id="question-main">Question prompt goes here?</div>
             </div>
 
-            <div id="question-container">
-                <p class="question-text" id="question-text">Question content goes here?</p>
-                <div class="options-list" id="options-list"></div>
+            <div class="options-list" id="options-container">
+                </div>
+
+            <div class="quiz-footer">
+                <button class="next-btn" id="next-button">Next Question</button>
             </div>
-
-            <div id="feedback-box" class="feedback-box hidden"></div>
-
-            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
         </div>
 
-        <div id="result-screen" class="screen hidden">
-            <h1>Quiz Completed!</h1>
-            <div class="score-display" id="final-score">0/15</div>
-            <div id="result-message" class="result-msg"></div>
-            
-            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        <div id="quiz-results" style="display: none;" class="results-box">
+            <h2>Quiz Completed!</h2>
+            <div class="score-display" id="final-score">You scored: 0 / 12 (0%)</div>
+            <div class="feedback-msg" id="feedback-message">Message text</div>
+            <button class="restart-btn" id="restart-button">Try Again</button>
         </div>
     </div>
 
     <script>
-        const quizData = [
+        // Quiz bank filtered down to exactly 12 total questions per technical constraint mapping
+        const originalQuestions = [
             {
-                q: "A student is creating a student grading system and needs to declare a variable to store the student's first name. According to the rules of C, which of the following is a valid variable name?",
-                options: ["A) 1st_name", "B) first name", "C) first_name", "D) char"],
-                answer: 2, 
-                hint: "Variable names in C cannot begin with digits, cannot contain spaces, and cannot use reserved keywords like basic data types.",
-                explanation: "Correct answer is C) first_name. C variable names must begin with a letter or underscore and cannot contain spaces or match reserved keywords."
+                scenario: "A student is creating a student grading system and needs to declare a variable to store the student's first name.",
+                question: "According to the rules of C, which of the following is a valid variable name?",
+                options: ["1st_name", "first name", "first_name", "char"],
+                answer: 2 // Index matching 'first_name'
             },
             {
-                q: "A developer finishes writing the source code for a new C application. After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
-                options: ["A) Preprocessor", "B) Compiler", "C) Linker", "D) Interpreter"],
-                answer: 2, 
-                hint: "Think about the system step that links modules together and resolves external references to form the executable output.",
-                explanation: "Correct answer is C) Linker. The Linker combines object files produced by the compiler with standard system libraries to generate the .exe file."
+                scenario: "A developer finishes writing the source code for a new C application.",
+                question: "After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
+                options: ["Preprocessor", "Compiler", "Linker", "Interpreter"],
+                answer: 2 // Index matching 'Linker'
             },
             {
-                q: "You are building a weather application that reads temperature from a sensor. The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
-                options: ["A) int", "B) float", "C) double", "D) char"],
-                answer: 1, 
-                hint: "While integers store whole numbers and 'double' takes 8 bytes of space, another option provides single-precision fractional math in exactly 4 bytes.",
-                explanation: "Correct answer is B) float. A float data type stores numbers with fractional decimal points and exactly consumes 4 bytes of system memory."
+                scenario: "You are building a weather application that reads temperature from a sensor.",
+                question: "The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
+                options: ["int", "float", "double", "char"],
+                answer: 1 // Index matching 'float'
             },
             {
-                q: "In a physics simulation program, you need to use the value of Pi (3.14159). To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
-                options: ["A) As a standard float variable", "B) As a constant", "C) As an integer", "D) As a keyword"],
-                answer: 1, 
-                hint: "An element whose absolute value cannot change throughout program execution is handled as a read-only variable style.",
-                explanation: "Correct answer is B) As a constant. Defining values with the 'const' property makes them read-only and prevents accidental modifications."
+                scenario: "In a physics simulation program, you need to use the value of Pi (3.14159).",
+                question: "To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
+                options: ["As a standard float variable", "As a constant", "As an integer", "As a keyword"],
+                answer: 1 // Index matching 'As a constant'
             },
             {
-                q: "A banking app is designed to deposit money into an account. However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
-                options: ["A) Syntax error", "B) Compilation error", "C) Logical error", "D) Preprocessing error"],
-                answer: 2, 
-                hint: "If code contains valid grammar and structure but produces incorrect outcomes due to broken program logic, it is a human tracking issue.",
-                explanation: "Correct answer is C) Logical error. Logical errors occur when the syntax is perfect, but the logic produces unintended or incorrect computational results."
+                scenario: "A banking app is designed to deposit money into an account.",
+                question: "However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
+                options: ["Syntax error", "Compilation error", "Logical error", "Preprocessing error"],
+                answer: 2 // Index matching 'Logical error'
             },
             {
-                q: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon. When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
-                options: ["A) Syntax error", "B) Logical error", "C) Linking error", "D) Execution error"],
-                answer: 0, 
-                hint: "Violating structural rules or core grammatical requirements of language design triggers this evaluation flaw during collection phases.",
-                explanation: "Correct answer is A) Syntax error. Forgetting structural characters like punctuation or semicolons violates C grammar laws, resulting in a syntax error."
+                scenario: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon.",
+                question: "When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
+                options: ["Syntax error", "Logical error", "Linking error", "Execution error"],
+                answer: 0 // Index matching 'Syntax error'
             },
             {
-                q: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero. Which operator is used specifically to find the remainder of an integer division?",
-                options: ["A) /", "B) &&", "C) %", "D) =="],
-                answer: 2, 
-                hint: "The slash (/) performs standard division. Another special symbol calculates the leftover remainder after integer divisions.",
-                explanation: "Correct answer is C) %. The modulus operator (%) extracts the remainder remaining after integer numerical division."
+                scenario: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero.",
+                question: "Which operator is used specifically to find the remainder of an integer division?",
+                options: ["/", "&&", "%", "=="],
+                answer: 2 // Index matching '%'
             },
             {
-                q: "A software company writes a C program to control smart home devices on a Windows machine. Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
-                options: ["A) It is a low-level language.", "B) It has 32 keywords.", "C) It is highly portable.", "D) It only uses 0s and 1s."],
-                answer: 2, 
-                hint: "This terms means code written for one system can easily be recompiled and run on another platform with minimal changes.",
-                explanation: "Correct answer is C) It is highly portable. High portability allows programmers to compile the same code baseline across diverse system frameworks easily."
+                scenario: "A software company writes a C program to control smart home devices on a Windows machine.",
+                question: "Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
+                options: ["It is a low-level language.", "It has 32 keywords.", "It is highly portable.", "It only uses 0s and 1s."],
+                answer: 2 // Index matching 'It is highly portable.'
             },
             {
-                q: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line. Which escape sequence must you insert into your printf() statement?",
-                options: ["A) \\t", "B) \\n", "C) \\a", "D) \\b"],
-                answer: 1, 
-                hint: "While '\\t' creates horizontal tab indexing gaps, another key sequence triggers a carriage-return newline drop.",
-                explanation: "Correct answer is B) \\n. The newline character escape code sequence '\\n' forces output to descend directly to the subsequent line."
+                scenario: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line.",
+                question: "Which escape sequence must you insert into your printf() statement?",
+                options: ["\\t", "\\n", "\\a", "\\b"],
+                answer: 1 // Index matching '\n'
             },
             {
-                q: "A teacher wants to display a student's grade stored in the variable 'char grade = 'A';'. Which format specifier is required in the printf() function to print this specific data type?",
-                options: ["A) %d", "B) %f", "C) %s", "D) %c"],
-                answer: 3, 
-                hint: "%d outputs basic base integers and %f formats decimal float blocks. Look for the variant representing single characters.",
-                explanation: "Correct answer is D) %c. The '%c' formatting placeholder tells printf to expect and print single character metrics."
+                scenario: "A teacher wants to display a student's grade stored in the variable char grade = 'A';.",
+                question: "Which format specifier is required in the printf() function to print this specific data type?",
+                options: ["%d", "%f", "%s", "%c"],
+                answer: 3 // Index matching '%c'
             },
             {
-                q: "You are writing a program to check if a user is eligible for a teen discount. Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
-                options: ["A) ||", "B) !=", "C) &&", "D) =="],
-                answer: 2, 
-                hint: "The double pipe (||) operates as a logical OR. To check if *both* operations evaluate true concurrently, choose the symbol configuration for logical AND.",
-                explanation: "Correct answer is C) &&. The continuous logic evaluation AND syntax operator ensures conditional checks pass only when both statements hold true."
+                scenario: "You are writing a program to check if a user is eligible for a teen discount.",
+                question: "Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
+                options: ["||", "!=", "&&", "=="],
+                answer: 2 // Index matching '&&'
             },
             {
-                q: "A programmer attempts to create a variable to hold the interest rate and names it 'double'. The compiler immediately throws an error. Why is this variable name invalid?",
-                options: ["A) It exceeds 31 characters.", "B) It contains a special symbol.", "C) 'double' is a reserved keyword in C.", "D) It does not start with an underscore."],
-                answer: 2, 
-                hint: "Core reserved commands used internally to declare fundamental types cannot serve double functions as custom labels.",
-                explanation: "Correct answer is C) 'double' is a reserved keyword in C. Keywords are strictly reserved for defining structures and data types; they cannot serve as variable names."
-            },
-            {
-                q: "You are reviewing a large C program consisting of multiple functions. To trace the flow of the program, you need to know where the execution begins. Which mandatory function should you look for?",
-                options: ["A) start()", "B) printf()", "C) include()", "D) main()"],
-                answer: 3, 
-                hint: "Every standalone operational engine in C looks for this exact name baseline layout to identify the entry point of execution.",
-                explanation: "Correct answer is D) main(). Program routing entry tracking begins processing inside the primary 'main()' operation script sequence."
-            },
-            {
-                q: "In a ticketing queue system, the current ticket number is 10 ('ticket = 10;'). The system uses the pre-increment operator to assign the next ticket: 'next_ticket = ++ticket;'. What is the value assigned to next_ticket?",
-                options: ["A) 10", "B) 11", "C) 9", "D) 12"],
-                answer: 1, 
-                hint: "Pre-increment means the system adds one to the variable *before* assigning its value to the next target.",
-                explanation: "Correct answer is B) 11. Pre-increment adds 1 to 'ticket' immediately (making it 11) before passing that updated evaluation downward."
-            },
-            {
-                q: "While debugging, you want to temporarily disable a block of 5 lines of code without deleting them. Which symbols should you use to enclose these lines?",
-                options: ["A) // and //", "B) /* and */", "C) { and }", "D) # and #"],
-                answer: 1, 
-                hint: "Double slash lines (//) block single tracks. Multi-line segments utilize an asterisk bookend encapsulation framework.",
-                explanation: "Correct answer is B) /* and */. Wrapping sections within block comment stars avoids executing wide blocks of lines simultaneously."
+                scenario: "A programmer attempts to create a variable to hold the interest rate and names it 'double'.",
+                question: "The compiler immediately throws an error. Why is this variable name invalid?",
+                options: ["It exceeds 31 characters.", "It contains a special symbol.", "'double' is a reserved keyword in C.", "It does not start with an underscore."],
+                answer: 2 // Index matching ''double' is a reserved keyword in C.'
             }
         ];
 
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let attemptCount = 0;
-        let selectedOptionIndex = null;
-        let timerInterval = null;
-        let timeLeft = 45; 
+        // Runtime State
+        let questions = [];
+        let currentIndex = 0;
+        let finalScoreValue = 0;
+        let timeRemaining = 60;
+        let countdownTimerId = null;
         let isMuted = false;
+        let attemptCounter = 0; // Tracking allowance parameters for exact retry limits max 2 attempts
 
-        let brandingTimer = setTimeout(dismissBranding, 3000);
+        // Audio asset instantiations
+        const correctAudio = new Audio('assets/correct.mp3');
+        const wrongAudio = new Audio('assets/wrong.mp3');
 
-        function dismissBranding() {
-            if (brandingTimer) clearTimeout(brandingTimer);
-            const overlay = document.getElementById('branding-overlay');
-            if (overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.style.display = 'none', 500);
+        // Confetti tracking array
+        let confettiArray = [];
+        const canvas = document.getElementById('confetti-canvas');
+        const ctx = canvas.getContext('2d');
+
+        // Establish Splash Screen timeout constraints 
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('quiz-container').style.display = 'block';
+                    initializeQuizModule();
+                }, 500);
+            }, 5000); // Enforce view requirement of 5 seconds
+        });
+
+        // Initialize/Reset system configurations
+        function initializeQuizModule() {
+            // High diversity implementation via randomized placement indexes
+            questions = shuffle([...originalQuestions]);
+            currentIndex = 0;
+            finalScoreValue = 0;
+            updateScoreUI();
+            displayQuestionItem();
+        }
+
+        // Standard modern array shuffling mechanics
+        function shuffle(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
+            return arr;
         }
 
-        function playSound(type) {
-            if (isMuted) return;
-            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(e => console.log("Audio play blocked until user interaction."));
-            }
+        function updateScoreUI() {
+            document.getElementById('score-tracker').innerText = `Score: ${finalScoreValue}/${questions.length}`;
         }
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
-            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
-        }
+        // Setup individual interactive presentation
+        function displayQuestionItem() {
+            // Terminate previous iterations
+            clearInterval(countdownTimerId);
+            document.getElementById('timer').classList.remove('timer-warning');
+            
+            // Render panel items
+            document.getElementById('quiz-gameplay').style.display = 'block';
+            document.getElementById('quiz-results').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
 
-        function startQuiz() {
-            document.getElementById('intro-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            currentQuestionIndex = 0;
-            score = 0;
-            loadQuestion();
-        }
+            attemptCounter = 0; // Reset validation tries per sequence window
 
-        function loadQuestion() {
-            resetTimer();
-            attemptCount = 0;
-            selectedOptionIndex = null;
-            
-            const currentQ = quizData[currentQuestionIndex];
-            
-            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
-            document.getElementById('score-tracker').innerText = `Score: ${score}`;
-            document.getElementById('question-text').innerText = currentQ.q;
-            
-            const optionsContainer = document.getElementById('options-list');
-            optionsContainer.innerHTML = '';
-            
-            currentQ.options.forEach((optionText, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = optionText;
-                btn.onclick = () => selectOption(index);
-                optionsContainer.appendChild(btn);
+            const currentItem = questions[currentIndex];
+            document.getElementById('question-scenario').innerText = currentItem.scenario;
+            document.getElementById('question-main').innerText = currentItem.question;
+
+            const optionsBox = document.getElementById('options-container');
+            optionsBox.innerHTML = '';
+
+            currentItem.options.forEach((optText, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.innerText = optText;
+                button.setAttribute('data-index', index);
+                button.addEventListener('click', () => evaluationEngine(index, button));
+                optionsBox.appendChild(button);
             });
 
-            const feedbackBox = document.getElementById('feedback-box');
-            feedbackBox.innerText = '';
-            feedbackBox.className = 'feedback-box';
-            feedbackBox.classList.add('hidden');
-            
-            const submitBtn = document.getElementById('submit-next-btn');
-            submitBtn.innerText = "Submit Answer";
-            submitBtn.disabled = true;
+            // Enforce functional criteria timer constraint (Grade 3 context reference)
+            timeRemaining = 60;
+            const timerDisplay = document.getElementById('timer');
+            timerDisplay.innerText = `Time: ${timeRemaining}s`;
 
-            startTimer();
-        }
+            countdownTimerId = setInterval(() => {
+                timeRemaining--;
+                timerDisplay.innerText = `Time: ${timeRemaining}s`;
 
-        function handleSubmitOrNext() {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (submitBtn.innerText === "Submit Answer") {
-                submitAnswer();
-            } else if (submitBtn.innerText === "Next Question") {
-                loadNextQuestion();
-            } else if (submitBtn.innerText === "View Results") {
-                showResults();
-            }
-        }
-
-        function startTimer() {
-            timeLeft = 45;
-            const timerBar = document.getElementById('timer-bar');
-            timerBar.classList.remove('timer-warn');
-            timerBar.style.width = '100%';
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                const percent = (timeLeft / 45) * 100;
-                timerBar.style.width = `${percent}%`;
-
-                if (timeLeft <= 10) {
-                    timerBar.classList.add('timer-warn');
+                if (timeRemaining <= 10) {
+                    timerDisplay.classList.add('timer-warning');
                 }
 
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeOut();
+                if (timeRemaining <= 0) {
+                    clearInterval(countdownTimerId);
+                    lockDownOptionsOnExpiry();
                 }
             }, 1000);
         }
 
-        function resetTimer() {
-            if (timerInterval) clearInterval(timerInterval);
-        }
+        // Handle logical execution path mapping parameters
+        function evaluationEngine(selectedIndex, clickedButton) {
+            const currentItem = questions[currentIndex];
+            const optionsBox = document.getElementById('options-container');
+            const allButtons = optionsBox.querySelectorAll('.option-btn');
 
-        function selectOption(index) {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (submitBtn.innerText === "Next Question" || submitBtn.innerText === "View Results") return; 
-            
-            selectedOptionIndex = index;
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            buttons.forEach((btn, i) => {
-                if (i === index) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
-                }
-            });
-            submitBtn.disabled = false;
-        }
-
-        function submitAnswer() {
-            resetTimer();
-            const currentQ = quizData[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            const feedbackBox = document.getElementById('feedback-box');
-            
-            attemptCount++;
-
-            if (selectedOptionIndex === currentQ.answer) {
-                playSound('correct');
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                
-                buttons[selectedOptionIndex].classList.remove('selected');
-                buttons[selectedOptionIndex].classList.add('correct');
-                
-                score++;
-                document.getElementById('score-tracker').innerText = `Score: ${score}`;
-                
-                feedbackBox.innerText = "Excellent! You got it right.";
-                feedbackBox.className = "feedback-box solution";
-                feedbackBox.classList.remove('hidden');
-                
-                lockOptions();
-                prepareNextStep();
+            if (selectedIndex === currentItem.answer) {
+                // Correct Path
+                clearInterval(countdownTimerId);
+                clickedButton.classList.add('correct');
+                playSound(correctAudio);
+                triggerSparklers();
+                finalScoreValue++;
+                updateScoreUI();
+                disableAllButtons(allButtons);
+                revealNextButtonNav();
             } else {
-                playSound('wrong');
-                buttons[selectedOptionIndex].classList.remove('selected');
-                buttons[selectedOptionIndex].classList.add('incorrect');
-
-                if (attemptCount === 1) {
-                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
-                    feedbackBox.className = "feedback-box hint";
-                    feedbackBox.classList.remove('hidden');
-                    document.getElementById('submit-next-btn').disabled = true;
+                // Error Sequence Management
+                attemptCounter++;
+                if (attemptCounter < 2) {
+                    // Trigger retry prompt
+                    playSound(wrongAudio);
+                    clickedButton.classList.add('wrong');
+                    clickedButton.disabled = true; // Block repeated evaluation of same wrong node
                 } else {
-                    buttons[currentQ.answer].classList.add('correct');
-                    feedbackBox.innerText = currentQ.explanation;
-                    feedbackBox.className = "feedback-box solution";
-                    feedbackBox.classList.remove('hidden');
-                    
-                    lockOptions();
-                    prepareNextStep();
+                    // Max attempts hit
+                    clearInterval(countdownTimerId);
+                    clickedButton.classList.add('wrong');
+                    // Render correct answer visibility target
+                    allButtons[currentItem.answer].classList.add('correct');
+                    playSound(wrongAudio);
+                    disableAllButtons(allButtons);
+                    revealNextButtonNav();
                 }
             }
         }
 
-        function handleTimeOut() {
-            attemptCount = 2;
-            const currentQ = quizData[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            const feedbackBox = document.getElementById('feedback-box');
+        function lockDownOptionsOnExpiry() {
+            const currentItem = questions[currentIndex];
+            const optionsBox = document.getElementById('options-container');
+            const allButtons = optionsBox.querySelectorAll('.option-btn');
             
-            playSound('wrong');
-            buttons[currentQ.answer].classList.add('correct');
-            
-            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
-            feedbackBox.className = "feedback-box solution";
-            feedbackBox.classList.remove('hidden');
-            
-            lockOptions();
-            prepareNextStep();
+            playSound(wrongAudio);
+            allButtons[currentItem.answer].classList.add('correct');
+            disableAllButtons(allButtons);
+            revealNextButtonNav();
         }
 
-        function lockOptions() {
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            buttons.forEach(btn => btn.disabled = true);
+        function disableAllButtons(buttonsList) {
+            buttonsList.forEach(btn => btn.disabled = true);
         }
 
-        function prepareNextStep() {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (currentQuestionIndex < quizData.length - 1) {
-                submitBtn.innerText = "Next Question";
+        function revealNextButtonNav() {
+            const nextBtn = document.getElementById('next-button');
+            if (currentIndex < questions.length - 1) {
+                nextBtn.innerText = "Next Question";
             } else {
-                submitBtn.innerText = "View Results";
+                nextBtn.innerText = "View Summary";
             }
-            submitBtn.disabled = false;
+            nextBtn.style.display = 'block';
         }
 
-        function loadNextQuestion() {
-            currentQuestionIndex++;
-            loadQuestion();
-        }
-
-        function showResults() {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            
-            const scorePercent = (score / quizData.length) * 100;
-            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
-            
-            const msgBox = document.getElementById('result-message');
-            if (scorePercent >= 80) {
-                msgBox.innerText = "🌟 Fantastic Job! You have mastered Introduction to C Programming!";
-                msgBox.style.backgroundColor = "#e6fffa";
-                msgBox.style.color = "#234e52";
-            } else if (scorePercent >= 50) {
-                msgBox.innerText = "👍 Good Effort! Keep practicing to get an even higher score next time.";
-                msgBox.style.backgroundColor = "#feebc8";
-                msgBox.style.color = "#744210";
+        // Attach system listeners
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (currentIndex < questions.length - 1) {
+                currentIndex++;
+                displayQuestionItem();
             } else {
-                msgBox.innerText = "📚 Don't give up! Review Chapter 11 documentation and try running the module again.";
-                msgBox.style.backgroundColor = "#fff5f5";
-                msgBox.style.color = "#742a2a";
+                renderEvaluationSummary();
+            }
+        });
+
+        document.getElementById('restart-button').addEventListener('click', () => {
+            initializeQuizModule();
+        });
+
+        // Audio infrastructure wrapper
+        function playSound(audioTarget) {
+            if (!isMuted) {
+                audioTarget.currentTime = 0;
+                audioTarget.play().catch(e => console.log("Audio feedback interaction delayed initialization: ", e));
             }
         }
 
-        function restartQuiz() {
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('intro-screen').classList.remove('hidden');
+        // Audio controls
+        document.getElementById('mute-toggle').addEventListener('click', () => {
+            isMuted = !isMuted;
+            document.getElementById('mute-toggle').innerText = isMuted ? '🔇' : '🔊';
+        });
+
+        // Grading Engine
+        function renderEvaluationSummary() {
+            clearInterval(countdownTimerId);
+            document.getElementById('quiz-gameplay').style.display = 'none';
+            
+            const resultsBox = document.getElementById('quiz-results');
+            const scoreDisplay = document.getElementById('final-score');
+            const feedbackMsg = document.getElementById('feedback-message');
+            
+            const percentage = Math.round((finalScoreValue / questions.length) * 100);
+            scoreDisplay.innerText = `You scored: ${finalScoreValue} / ${questions.length} (${percentage}%)`;
+
+            // Enforce conditional evaluation text criteria
+            if (percentage >= 75) {
+                feedbackMsg.innerText = "Good job";
+                feedbackMsg.style.color = "var(--success)";
+                triggerSparklers(); // Double length celebration on high pass output
+                setTimeout(triggerSparklers, 400);
+            } else if (percentage >= 40) {
+                feedbackMsg.innerText = "Review this chapter and try again";
+                feedbackMsg.style.color = "var(--warning)";
+            } else {
+                feedbackMsg.innerText = "Let’s practise more";
+                feedbackMsg.style.color = "var(--danger)";
+            }
+
+            resultsBox.style.display = 'block';
         }
+
+        /* High-Performance Canvas Confetti & Particle System */
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        function triggerSparklers() {
+            const count = 80;
+            const colors = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#fd7e14', '#6f42c1'];
+            
+            for (let i = 0; i < count; i++) {
+                confettiArray.push({
+                    x: Math.random() * canvas.width,
+                    y: -10 - (Math.random() * 20),
+                    size: (Math.random() * 6) + 4,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speedX: (Math.random() * 4) - 2,
+                    speedY: (Math.random() * 5) + 3,
+                    rotation: Math.random() * 360,
+                    rotationSpeed: (Math.random() * 4) - 2
+                });
+            }
+        }
+
+        function animationEngineLoop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < confettiArray.length; i++) {
+                const p = confettiArray[i];
+                p.y += p.speedY;
+                p.x += p.speedX;
+                p.rotation += p.rotationSpeed;
+
+                ctx.save();
+                ctx.translate(p.x, p.y);
+                ctx.rotate(p.rotation * Math.PI / 180);
+                ctx.fillStyle = p.color;
+                ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+                ctx.restore();
+
+                // Drop spent array elements to prevent stack leaking issues
+                if (p.y > canvas.height) {
+                    confettiArray.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animationEngineLoop);
+        }
+        animationEngineLoop();
     </script>
 </body>
 </html>
