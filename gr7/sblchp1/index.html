@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 7 SBL Chapter 1 MCQ Quiz</title>
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#e0eafc,#cfdef3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+.bubble{
+  position:fixed;
+  bottom:-80px;
+  background:rgba(255,255,255,0.45);
+  border-radius:50%;
+  animation:rise 14s infinite ease-in;
+  z-index:0;
+}
+@keyframes rise{
+  from{transform:translateY(0);opacity:0;}
+  50%{opacity:0.8;}
+  to{transform:translateY(-120vh);opacity:0;}
+}
+#logoScreen{
+  position:fixed;
+  inset:0;
+  background:white;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#logoScreen img{max-width:260px;width:70%;}
+#logoText{font-size:36px;font-weight:bold;color:#273b63;}
+.card{
+  position:relative;
+  z-index:1;
+  width:90%;
+  max-width:650px;
+  background:white;
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  text-align:center;
+}
+.hidden{display:none!important;}
+h1{margin-top:0;color:#22324a;}
+.info{
+  background:#f7f9fc;
+  padding:15px;
+  border-radius:12px;
+  text-align:left;
+  line-height:1.6;
+  margin:18px 0;
+}
+button{font-family:Arial,sans-serif;}
+.startBtn,.nextBtn,.restartBtn{
+  background:#2c3e50;
+  color:white;
+  border:0;
+  border-radius:30px;
+  padding:13px 32px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  font-weight:bold;
+}
+.pill{
+  background:#eef6ff;
+  border:1px solid #cde5ff;
+  padding:8px 12px;
+  border-radius:30px;
+}
+#question{
+  text-align:left;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1.5;
+  background:#f8fafc;
+  border-left:5px solid #3498db;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:14px;
+}
+.option{
+  width:100%;
+  display:block;
+  margin:8px 0;
+  padding:12px;
+  text-align:left;
+  font-size:16px;
+  font-weight:600;
+  border:2px solid #3498db;
+  background:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+.option:hover:not(:disabled){
+  background:#3498db;
+  color:white;
+}
+.option.correct{
+  background:#d4edda;
+  border-color:#22c55e;
+  color:#14532d;
+}
+.option.wrong{
+  background:#fee2e2;
+  border-color:#ef4444;
+  color:#7f1d1d;
+}
+.option:disabled{cursor:default;}
+#feedback{
+  min-height:40px;
+  margin-top:12px;
+  padding:10px;
+  border-radius:10px;
+  font-weight:bold;
+}
+.good{background:#d4edda;color:#155724;border:2px solid #22c55e;}
+.bad{background:#fee2e2;color:#7f1d1d;border:2px solid #ef4444;}
+.ans{background:#fff3cd;color:#856404;border:2px solid #facc15;}
+.nextBtn{display:none;margin-top:12px;}
+.scoreBig{font-size:48px;font-weight:bold;color:#2563eb;}
+.confetti{
+  position:fixed;
+  top:-20px;
+  z-index:9;
+  animation:fall 2.3s linear forwards;
+  pointer-events:none;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+@media(max-width:520px){
+  body{align-items:flex-start;padding-top:15px;overflow-y:auto;}
+  .card{padding:18px;}
+  #question{font-size:16px;}
+  .option{font-size:15px;}
+}
+</style>
+</head>
+<body>
+
+<div id="logoScreen">
+  <img src="assets/innovine-logo.png" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
+  <div id="logoText" style="display:none;">INNOVINE</div>
+</div>
+
+<div id="intro" class="card hidden">
+  <h1>Arduino Quiz</h1>
+  <div class="info">
+    <p><b>Grade:</b> 7</p>
+    <p><b>Subject:</b> ICT-SBL</p>
+    <p><b>Chapter:</b> 1</p>
+    <p><b>Topic:</b> Arduino IDE and Tinkercad</p>
+    <p><b>No. of Questions:</b> 10</p>
+    <p><b>Rule:</b> Tap the correct option. You get 2 attempts.</p>
+  </div>
+  <button class="startBtn" onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="top">
+    <div class="pill" id="timer">45s</div>
+    <div class="pill" id="progress">Progress: 1/10</div>
+    <div class="pill" id="score">Score: 0</div>
+  </div>
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+  <button id="nextBtn" class="nextBtn" onclick="nextQuestion()">Next</button>
+</div>
+
+<div id="result" class="card hidden">
+  <h1>Quiz Finished!</h1>
+  <p>You completed all questions.</p>
+  <div class="scoreBig" id="finalScore">0/10</div>
+  <p id="finalMessage"></p>
+  <button class="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+</div>
+
+<audio id="correctAudio" src="assets/correct.mp3"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+var originalQuestions=[
+{q:"Ishaan is writing a computer program to control a robot. In the Arduino IDE, the file he is writing is commonly referred to as a:",a:"Sketch",o:["Script","Sketch","Note","Scenario"],e:"Programs written in Arduino IDE are called sketches."},
+{q:"You have finished writing your code and want to check if there are any typing errors or logic mistakes before sending it to the physical Arduino board. Which button should you click?",a:"Verify button",o:["Upload button","Reset button","Verify button","Power button"],e:"The Verify button is used to compile the sketch and find errors."},
+{q:"After successfully verifying the code, Priya wants to transfer the program from her laptop to the Arduino Uno board using a USB cable. She needs to use the:",a:"Upload button",o:["Save button","Select Board menu","Text Editor","Upload button"],e:"The Upload button is used to upload the code to the Arduino board."},
+{q:"While working on a project, you notice your file is saved with a specific extension. Which of the following is the correct file extension for an Arduino sketch?",a:".ino",o:[".doc",".exe",".ino",".ard"],e:"Arduino sketches are saved with the file extension .ino."},
+{q:"A student is building a simple circuit to turn a lamp ON or OFF. Since the lamp only has two states, on or off, which type of pins on the Arduino board are best suited for this task?",a:"Digital Pins",o:["Analog Pins","Digital Pins","Power Pins","Ground Pins"],e:"Digital pins are used when input or output has only two values: High or Low."},
+{q:"You are using a sensor that measures sound waves, which are continuous signals that vary over time. To read this information accurately, you should connect the sensor to:",a:"Analog Pins",o:["Digital Pins","Analog Pins","USB Port","Reset Button"],e:"Analog pins are used to read continuous signals like sound waves or current."},
+{q:"In Tinkercad, you want to create a traffic light simulation. You need a component that allows you to prototype the circuit without soldering. Which component should you drag onto the workspace?",a:"Breadboard Small",o:["Battery","Breadboard Small","Resistor","Capacitor"],e:"A breadboard is used for creating circuits and prototyping without soldering."},
+{q:"When setting up your Arduino IDE, you see a message saying the board is not found. Which part of the IDE interface helps you ensure the software recognizes the connected hardware and the correct communication path?",a:"Select Board and Port",o:["Text Editor","Toolbar","Select Board and Port","Sketchbook"],e:"Select Board and Port helps the IDE recognize the connected board and communication port."},
+{q:"You are building a traffic signal in Tinkercad and want to make the wires look neat by giving them twists and turns. How do you achieve this in the simulation?",a:"Hold the left mouse button and drag, then unhold to create a turn",o:["Press the R key while dragging","Double-click the wire","Hold the left mouse button and drag, then unhold to create a turn","Use a different color for each turn"],e:"Holding and dragging the wire allows you to create turns in the connection."},
+{q:"What is the main purpose of the Sketchbook in the Arduino IDE interface?",a:"To store all your sketches locally on your computer",o:["To draw diagrams of the circuit","To store all your sketches locally on your computer","To search for code on the internet","To act as a recycling bin for deleted code"],e:"The Sketchbook contains all your local Arduino sketches."}
+];
+
+var questions=[], current=0, marks=0, attempts=0, timeLeft=45, timer=null, locked=false;
+var letters=["A","B","C","D"];
+
+function $(id){return document.getElementById(id);}
+function hide(id){$(id).classList.add("hidden");}
+function show(id){$(id).classList.remove("hidden");}
+
+function shuffleArray(arr){
+  var copy=arr.slice();
+  for(var i=copy.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var temp=copy[i];
+    copy[i]=copy[j];
+    copy[j]=temp;
+  }
+  return copy;
+}
+
+function prepareQuiz(){
+  questions=shuffleArray(originalQuestions).map(function(q){
+    var shuffledOptions=shuffleArray(q.o);
+    return {q:q.q,a:q.a,o:shuffledOptions,e:q.e};
+  });
+}
+
+for(var i=0;i<15;i++){
+  var b=document.createElement("div");
+  b.className="bubble";
+  var size=(Math.random()*60+20)+"px";
+  b.style.width=size;
+  b.style.height=size;
+  b.style.left=(Math.random()*100)+"%";
+  b.style.animationDelay=(Math.random()*8)+"s";
+  document.body.appendChild(b);
+}
+
+setTimeout(function(){
+  hide("logoScreen");
+  show("intro");
+},5000);
+
+function startQuiz(){
+  prepareQuiz();
+  current=0;
+  marks=0;
+  hide("intro");
+  show("quiz");
+  loadQuestion();
+}
+
+function loadQuestion(){
+  clearInterval(timer);
+  attempts=0;
+  locked=false;
+  timeLeft=45;
+  $("timer").innerHTML=timeLeft+"s";
+  $("progress").innerHTML="Progress: "+(current+1)+"/10";
+  $("score").innerHTML="Score: "+marks;
+  $("feedback").innerHTML="";
+  $("feedback").className="";
+  $("nextBtn").style.display="none";
+  $("question").innerHTML=questions[current].q;
+  $("options").innerHTML="";
+  for(var i=0;i<questions[current].o.length;i++){
+    var btn=document.createElement("button");
+    btn.className="option";
+    btn.innerHTML=letters[i]+". "+questions[current].o[i];
+    btn.setAttribute("data-answer",questions[current].o[i]);
+    btn.onclick=function(){checkAnswer(this);}
+    $("options").appendChild(btn);
+  }
+  timer=setInterval(function(){
+    timeLeft--;
+    $("timer").innerHTML=timeLeft+"s";
+    if(timeLeft<=0){
+      showAnswer("Time up. Correct answer:");
+    }
+  },1000);
+}
+
+function checkAnswer(btn){
+  if(locked || btn.disabled){return;}
+  var choice=btn.getAttribute("data-answer");
+  if(choice===questions[current].a){
+    locked=true;
+    clearInterval(timer);
+    marks++;
+    $("score").innerHTML="Score: "+marks;
+    btn.classList.add("correct");
+    $("feedback").className="good";
+    $("feedback").innerHTML="Correct! "+questions[current].e;
+    try{$("correctAudio").play();$("clapAudio").play();}catch(e){}
+    confetti();
+    disableButtons();
+    $("nextBtn").style.display="inline-block";
+  }else{
+    attempts++;
+    btn.classList.add("wrong");
+    try{$("wrongAudio").play();}catch(e){}
+    if(attempts<2){
+      $("feedback").className="bad";
+      $("feedback").innerHTML="Wrong answer. Try once more.";
+      btn.disabled=true;
+    }else{
+      showAnswer("Correct answer:");
+    }
+  }
+}
+
+function showAnswer(text){
+  if(locked){return;}
+  locked=true;
+  clearInterval(timer);
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){
+    all[i].disabled=true;
+    if(all[i].getAttribute("data-answer")===questions[current].a){
+      all[i].classList.add("correct");
+    }
+  }
+  $("feedback").className="ans";
+  $("feedback").innerHTML=text+" "+questions[current].a+" — "+questions[current].e;
+  $("nextBtn").style.display="inline-block";
+}
+
+function disableButtons(){
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){all[i].disabled=true;}
+}
+
+function nextQuestion(){
+  current++;
+  if(current<questions.length){
+    loadQuestion();
+  }else{
+    finishQuiz();
+  }
+}
+
+function finishQuiz(){
+  clearInterval(timer);
+  hide("quiz");
+  show("result");
+  $("finalScore").innerHTML=marks+"/10";
+  if(marks>=8){$("finalMessage").innerHTML="Excellent work!";}
+  else if(marks>=5){$("finalMessage").innerHTML="Good effort! Revise once more.";}
+  else{$("finalMessage").innerHTML="Keep practising!";}
+  try{$("clapAudio").play();}catch(e){}
+  confetti();
+}
+
+function restartQuiz(){
+  current=0;
+  marks=0;
+  hide("result");
+  show("intro");
+}
+
+function confetti(){
+  var symbols=["🎉","⭐","✨","🎊"];
+  for(var i=0;i<35;i++){
+    var c=document.createElement("div");
+    c.className="confetti";
+    c.innerHTML=symbols[Math.floor(Math.random()*symbols.length)];
+    c.style.left=(Math.random()*100)+"vw";
+    c.style.animationDelay=(Math.random()*0.4)+"s";
+    document.body.appendChild(c);
+    setTimeout((function(x){return function(){x.remove();};})(c),2500);
+  }
+}
+</script>
+</body>
+</html>
