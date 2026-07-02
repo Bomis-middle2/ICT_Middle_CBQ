@@ -177,7 +177,7 @@ button{font-family:Arial,sans-serif;}
 <div id="quiz" class="card hidden">
   <div class="top">
     <div class="pill" id="timer">45s</div>
-    <div class="pill" id="progress">Question 1/10</div>
+    <div class="pill" id="progress">Progress: 1/10</div>
     <div class="pill" id="score">Score: 0</div>
   </div>
   <div id="question"></div>
@@ -199,7 +199,7 @@ button{font-family:Arial,sans-serif;}
 <audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
 
 <script>
-var questions=[
+var originalQuestions=[
 {q:"A librarian wants to find all books in the database that were published after the year 2010. Which feature of MS Access should she use to retrieve this specific information?",a:"B. Query",o:["A. Report","B. Query","C. Sorting","D. Relationship"],e:"A query is used to search a database and find specific information."},
 {q:"You are creating a query to find students who live in Mumbai and have a Grade equal to A. Which type of operator are And, Or, and Not classified as?",a:"C. Logical Operators",o:["A. Relational Operators","B. Mathematical Operators","C. Logical Operators","D. Comparison Operators"],e:"Logical operators like And, Or, and Not help find records matching multiple conditions."},
 {q:"A manager needs to search for employees whose salary is not equal to 50,000. Which relational operator should be used in the criteria box?",a:"D. <>",o:["A. >","B. <","C. =","D. <>"],e:"The relational operator <> means not equal to."},
@@ -212,7 +212,23 @@ var questions=[
 {q:"What is a major advantage of using a relational database like MS Access instead of keeping separate, unconnected lists?",a:"B. It prevents data duplication",o:["A. It makes the files larger","B. It prevents data duplication","C. It allows only one person to use the data","D. It removes the need for queries"],e:"A relational database reduces duplicate data, saves storage space, and reduces errors."}
 ];
 
+var questions=[];
 var current=0, marks=0, attempts=0, timeLeft=45, timer=null, locked=false;
+
+function shuffleArray(arr){
+  var copy=arr.slice();
+  for(var i=copy.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var temp=copy[i];
+    copy[i]=copy[j];
+    copy[j]=temp;
+  }
+  return copy;
+}
+
+function prepareQuiz(){
+  questions=shuffleArray(originalQuestions);
+}
 
 function $(id){return document.getElementById(id);}
 function hide(id){$(id).classList.add("hidden");}
@@ -235,6 +251,9 @@ setTimeout(function(){
 },5000);
 
 function startQuiz(){
+  prepareQuiz();
+  current=0;
+  marks=0;
   hide("intro");
   show("quiz");
   loadQuestion();
@@ -246,12 +265,12 @@ function loadQuestion(){
   locked=false;
   timeLeft=45;
   $("timer").innerHTML=timeLeft+"s";
-  $("progress").innerHTML="Question "+(current+1)+"/10";
+  $("progress").innerHTML="Progress: "+(current+1)+"/10";
   $("score").innerHTML="Score: "+marks;
   $("feedback").innerHTML="";
   $("feedback").className="";
   $("nextBtn").style.display="none";
-  $("question").innerHTML=(current+1)+". "+questions[current].q;
+  $("question").innerHTML=questions[current].q;
   $("options").innerHTML="";
   for(var i=0;i<questions[current].o.length;i++){
     var btn=document.createElement("button");
