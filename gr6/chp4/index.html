@@ -21,11 +21,11 @@
 <div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
 
 <div id="intro-screen" class="hidden">
-    <h1>OpenOffice 4 Calc-II</h1>
+    <h1>Computer Languages Assessment</h1>
     <p><strong>Grade:</strong> 6</p>
     <p><strong>Subject:</strong> ICT</p>
-    <p><strong>Topic:</strong>OpenOffice 4 Calc-II</p>
-	<p><strong>No. of Questions:</strong> 16</p>
+    <p><strong>Topic:</strong> Chapter 10: Computer Languages</p>
+    <p><strong>No. of Questions:</strong> 12</p>
     <button onclick="startQuiz()" style="padding: 15px 30px; font-size: 18px; font-family: inherit; cursor: pointer;">Start Quiz</button>
 </div>
 
@@ -43,22 +43,113 @@
 
 <script>
     const questions = [
-        { q: "A teacher wants to arrange the names of her students in the attendance register alphabetically from A to Z. Which feature of OpenOffice Calc should she use?", a: "Sorting in Ascending order", options: ["Filtering", "Sorting in Ascending order", "Sorting in Descending order", "AutoFill"], hint: "Think of alphabetical order from start to finish." },
-        { q: "A store manager wants to review his product list starting from the most expensive item down to the cheapest. How should he sort the 'Price' column?", a: "Descending Order", options: ["Oldest to Newest", "Ascending Order", "Descending Order", "A to Z"], hint: "Think of values going from high to low." },
-        { q: "An HR manager has a large employee dataset and wants to organize it by Department, then by Job Title, and finally by Salary. In OpenOffice Calc, what is the maximum number of criteria you can apply sequentially using the Sort dialog?", a: "Three", options: ["One", "Two", "Three", "Unlimited"], hint: "Remember the number of sorting levels available in the dialog." },
-        { q: "The school principal only wants to view the records of students belonging to the 'Red House' without deleting the rest of the school's data. Which feature is best suited for this task?", a: "Filter", options: ["Sort Ascending", "Filter", "Fill Handle", "MAX Function"], hint: "This is used to hide data that doesn't match specific criteria." },
-        { q: "Rohan wants to quickly filter a dataset by clicking on drop-down arrows that appear automatically in the title row of each column. Which specific feature does this?", a: "AutoFilter", options: ["Advanced Filter", "AutoFilter", "Standard Filter", "Dropdown Filter"], hint: "This is the quick-access tool for filtering with dropdowns." },
-        { q: "Sarah applied a filter to her spreadsheet to see only 'Stationery' items. She now wants to remove this filter entirely so she can view all items again. What path should she follow?", a: "Data -> Filter -> Remove Filter", options: ["Data -> Sort -> Remove", "Insert -> Filter -> Delete", "Data -> Filter -> Remove Filter", "Format -> Clear -> Filter"], hint: "Look under the 'Data' menu for filter management." },
-        { q: "Aman is trying to calculate his total expenses. He types 'SUM(B2:B5)' in a cell, but Calc just displays the text instead of the result. What mandatory symbol did he forget to place at the beginning?", a: "= (Equal to sign)", options: ["+ (Plus sign)", "= (Equal to sign)", "* (Asterisk)", "/ (Forward slash)"], hint: "Formulas in Calc always start with this special character." },
-        { q: "A shopkeeper wants to find the total sales amount from Monday to Friday (cells D2 to D6). Which of the following is the correct function to use?", a: "=SUM(D2:D6)", options: ["=AVERAGE(D2:D6)", "=COUNT(D2:D6)", "=MAX(D2:D6)", "=SUM(D2:D6)"], hint: "Which function is used for addition?" },
-        { q: "A student has entered his marks for 5 subjects in cells C1 through C5. He wants to know his average score. Which function should he use?", a: "Either A or B", options: ["=SUM(C1:C5)/5", "=AVERAGE(C1:C5)", "Either A or B", "=MIN(C1:C5)"], hint: "Both mathematical expressions arrive at the same result." },
-        { q: "A surveyor has a list of 50 houses, but only 30 families provided their phone numbers (numeric data). Which function will help him count exactly how many cells contain numeric data?", a: "=COUNT()", options: ["=COUNT()", "=SUM()", "=MAX()", "=AVERAGE()"], hint: "This function counts cells containing numbers." },
-        { q: "Riya is recording the daily temperature for the month of January. At the end of the month, she wants to quickly find out the coldest temperature recorded. Which statistical function will return this value?", a: "=MIN()", options: ["=COLD()", "=LOW()", "=MIN()", "=MAX()"], hint: "Which function retrieves the lowest numeric value?" },
-        { q: "A sports coach wants to quickly identify the highest score achieved by a player in a recent cricket tournament from a long list of scores. Which function should he use?", a: "=MAX()", options: ["=SUM()", "=MAX()", "=MIN()", "=COUNT()"], hint: "Which function retrieves the highest numeric value?" },
-        { q: "Meera calculated the total marks for the first student in cell E3. She does not want to manually type the formula for the remaining 39 students. Which feature allows her to drag and copy the formula to the other cells?", a: "Fill Handle", options: ["Function Wizard", "AutoFilter", "Sort", "Fill Handle"], hint: "Use this feature at the corner of a cell to copy formulas." },
-        { q: "A user typed the formula =5+2*3 in OpenOffice Calc. The software multiplies 2*3 first and then adds 5. Which mathematical rule does OpenOffice Calc strictly follow?", a: "BEDMAS", options: ["FILTER", "BEDMAS", "ASCII", "HTML"], hint: "This is the acronym for the order of operations." },
-        { q: "If a user doesn't remember the exact spelling or syntax of a predefined formula, which feature in OpenOffice Calc opens up a list of all available functions to choose from?", a: "Function Wizard", options: ["Formula Wizard", "Function Wizard", "Sort Criteria", "Standard Filter"], hint: "This is the helper tool for selecting and inserting functions." },
-        { q: "When you select a single cell containing a text value and click on the 'Sort' option, what does OpenOffice Calc do by default?", a: "It sorts the entire column based on the data type inside the selected cell.", options: ["It only sorts that specific cell.", "It deletes the cell if it does not match the criteria.", "It sorts the entire column based on the data type inside the selected cell.", "It opens the Function Wizard."], hint: "Calc is smart enough to identify the context of the entire column." }
+        { 
+            q: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work. What is the main reason for this?", 
+            a: "Machine language is machine-dependent.", 
+            options: [
+                "Machine language requires an interpreter.", 
+                "Machine language is machine-dependent.", 
+                "Machine language programs take too long to execute.", 
+                "Machine language uses English-like mnemonics."
+            ], 
+            hint: "Binary code is tightly bound to a specific processor architecture design." 
+        },
+        { 
+            q: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed. Which type of translator is Python most likely using?", 
+            a: "Interpreter", 
+            options: ["Compiler", "Assembler", "Interpreter", "Linker"], 
+            hint: "This type of translator reads and processes instructions line by line." 
+        },
+        { 
+            q: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once. What translator did they use?", 
+            a: "Compiler", 
+            options: ["Assembler", "Compiler", "Interpreter", "Web Browser"], 
+            hint: "Think about the translator system that builds complete binary files all at once." 
+        },
+        { 
+            q: "You are managing a database using SQL. You type a simple query specifying exactly *what* data you need (e.g., 'SELECT names'), without writing the step-by-step logic on *how* the computer should fetch it. This is a characteristic of which generation of languages?", 
+            a: "Fourth Generation (4GL)", 
+            options: [
+                "First Generation (1GL)", 
+                "Second Generation (2GL)", 
+                "Third Generation (3GL)", 
+                "Fourth Generation (4GL)"
+            ], 
+            hint: "Non-procedural languages focus purely on the target goal rather than the step logic." 
+        },
+        { 
+            q: "A programmer is working on low-level system code. Instead of entering binary numbers, they type commands like 'ADD A, B' or 'MOV AX, BX'. When they launch it, a translator program turns these shortcuts straight into machine code. What translator performed this process?", 
+            a: "Assembler", 
+            options: ["Assembler", "Compiler", "Interpreter", "Decompiler"], 
+            hint: "This module handles mnemonic abbreviations inside low-level frameworks." 
+        },
+        { 
+            q: "You are talking to an artificial intelligence engine that processes conversational voice prompts and builds its own algorithms to fix user computational errors without manual coding. This AI engine operates on tools from which language generation?", 
+            a: "Fifth Generation Language", 
+            options: [
+                "Second Generation Language", 
+                "Third Generation Language", 
+                "Fourth Generation Language", 
+                "Fifth Generation Language"
+            ], 
+            hint: "Artificial intelligence architectures represent the highest structural layer." 
+        },
+        { 
+            q: "You want to write a program that can run perfectly on Windows, macOS, and Linux laptops without needing rewrite modifications for each distinct processor system. What category of language must you deploy?", 
+            a: "High Level Language", 
+            options: [
+                "High Level Language", 
+                "Machine Language", 
+                "Low Level Assembly Language", 
+                "First Generation Binary Code"
+            ], 
+            hint: "These systems are completely machine-independent platforms." 
+        },
+        { 
+            q: "You are reading a history book about historical computer pioneers and discover the narrative of a brilliant woman who engineered the earliest algorithm meant for execution on Charles Babbage's Mechanical Analytical Engine. Who is this pioneer?", 
+            a: "Lady Ada Lovelace", 
+            options: ["Grace Hopper", "Lady Ada Lovelace", "Marie Curie", "Katherine Johnson"], 
+            hint: "She is celebrated historically as the world's first software programmer." 
+        },
+        { 
+            q: "You pass your high-level program's raw source code into a compiler system unit. What file output format does the compiler build that the computer processor can actively understand and run?", 
+            a: "Object code", 
+            options: ["Source code file", "Script text file", "Object code", "Document archive template"], 
+            hint: "This is the generated translation output that microprocessors execute." 
+        },
+        { 
+            q: "An engineer wants to protect a proprietary high-level app package from piracy so no competitor can extract or view the original source logic strings. Why would an interpreter NOT be the best choice for this deployment task?", 
+            a: "Interpreters do not produce a separate object code file.", 
+            options: [
+                "Interpreters do not produce a separate object code file.", 
+                "Interpreters translate all lines of code at once.", 
+                "Interpreters only work with 1GL languages.", 
+                "Interpreters are slower than humans at reading code."
+            ], 
+            hint: "Without a separate standalone translation output file, source text remains visible." 
+        },
+        { 
+            q: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish. This represents which generation?", 
+            a: "Third Generation (3GL)", 
+            options: [
+                "First Generation (1GL)", 
+                "Second Generation (2GL)", 
+                "Third Generation (3GL)", 
+                "Fifth Generation (5GL)"
+            ], 
+            hint: "Standard high-level procedural systems are placed inside this generational block." 
+        },
+        { 
+            q: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language. Is this statement correct based on text parameters?", 
+            a: "No, programs written in machine language take less time for execution.", 
+            options: [
+                "Yes, High Level Languages execute the fastest.", 
+                "No, programs written in machine language take less time for execution.", 
+                "Yes, because they do not require any translators.", 
+                "No, because High Level Languages are machine-dependent."
+            ], 
+            hint: "Native binary execution skips the translator layer entirely." 
+        }
     ];
 
     let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
