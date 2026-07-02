@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT - Chapter 4 Cloud Computing Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #2b6cb0;
+            --primary-hover: #1a4373;
+            --bg-color: #f7fafc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --success-color: #48bb78;
+            --error-color: #f56565;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05), 0 1px 3px rgba(0, 0, 0, 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Branding Splash Screen Layout */
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Accessibility Audio Control */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        /* Header Layout Components */
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        /* Configuration Panels */
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: var(--bg-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        /* Evaluation Block Styling */
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: var(--bg-color);
+            border-color: var(--text-muted);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #ebf8ff;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fff5f5;
+            color: #742a2a;
+        }
+
+        /* Information Context Panels */
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #feebc8;
+            color: #c05621;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .feedback-box.solution {
+            background-color: #e2e8f0;
+            color: #2d3748;
+            border-left: 4px solid #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Global Execution Controls */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Evaluation View Display Layout */
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+        <h1>INNOVINE</h1>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
+
+        <div id="intro-screen" class="screen">
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 4: Cloud Computing & Google Workspace</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT / Computer Science</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Remote Storage Paradigms, Collaboration Utilities, Cloud Security & Google Productivity Suite</p>
+                <p><strong>Total Questions:</strong> 10</p>
+                <p><strong>Rules:</strong> Each question carries a 45-second timer limit. Features a 2-stage submission flow providing educational text hints.</p>
+            </div>
+
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/10</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="timer-wrapper">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question context text container?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/10</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Schema compiled from input records
+        const quizData = [
+            {
+                q: "Aarav needs to store a large video project but has run out of space on his laptop's hard drive. Which cloud computing benefit allows him to save space on his computer?",
+                options: [
+                    "A) Remote storage on the internet",
+                    "B) Improved internet speed",
+                    "C) Automatic virus protection",
+                    "D) Increased battery life"
+                ],
+                answer: 0,
+                hint: "Think about moving data off your physical local drives into hosted data storage arrays on the web.",
+                explanation: "Correct answer: A) Remote storage on the internet. Cloud computing frees up physical hardware space by retaining asset files on secure web-based target servers."
+            },
+            {
+                q: "Meera is working on a group presentation and wants her teammates to edit the slides simultaneously from their own homes. Which Google app should she use?",
+                options: [
+                    "A) Google Forms",
+                    "B) Google Slides",
+                    "C) Google Drawings",
+                    "D) Google Search"
+                ],
+                answer: 1,
+                hint: "Identify the dedicated presentation design app in Google Workspace built for shared deck creation.",
+                explanation: "Correct answer: B) Google Slides. Google Slides offers multiplayer concurrent document editing specifically designed for building interactive deck presentations."
+            },
+            {
+                q: "Sanya received an email asking for her password to 'verify' her cloud account, but the sender's address looked suspicious. What security threat is this?",
+                options: [
+                    "A) Data Encryption",
+                    "B) Phishing Email",
+                    "C) Physical Attack",
+                    "D) Data Leakage"
+                ],
+                answer: 1,
+                hint: "This term defines deceptive messages masking as genuine services designed to trick you into revealing login details.",
+                explanation: "Correct answer: B) Phishing Email. Phishing involves fraudulent communications that impersonate valid companies to capture personal credentials."
+            },
+            {
+                q: "Look at the following services: Google Docs, Google Sheets, Google Slides, and a local video game. Which one does NOT belong to the Google productivity suite mentioned in the chapter?",
+                options: [
+                    "A) Google Docs",
+                    "B) Google Sheets",
+                    "C) Google Slides",
+                    "D) Local video game"
+                ],
+                answer: 3,
+                hint: "Spot the standalone asset that resides on a local machine's hard drive rather than running as an integrated cloud workflow.",
+                explanation: "Correct answer: D) Local video game. Local gaming modules require localized computing blocks and are completely separate from web-based productivity applications."
+            },
+            {
+                q: "A school wants to collect responses from students for a survey about their favorite books. Which tool is most appropriate for this?",
+                options: [
+                    "A) Google Docs",
+                    "B) Google Sheets",
+                    "C) Google Forms",
+                    "D) Google Drawings"
+                ],
+                answer: 2,
+                hint: "Look for the specific tool built to assemble questionnaires, survey fields, and data collection frameworks.",
+                explanation: "Correct answer: C) Google Forms. Google Forms provides an adaptive mechanism to deploy surveys and automatically aggregate structured feedback inputs."
+            },
+            {
+                q: "Why is 'auto save' in Google Drive considered a useful feature for students?",
+                options: [
+                    "A) It saves storage space on the cloud.",
+                    "B) It immediately saves changes, preventing data loss.",
+                    "C) It allows access without an internet connection.",
+                    "D) It automatically formats the document fonts."
+                ],
+                answer: 1,
+                hint: "Consider how continuous background saving prevents losing progress if your browser crashes or drops its connection.",
+                explanation: "Correct answer: B) It immediately saves changes, preventing data loss. Automated real-time saving commits adjustments instantly to cloud logs, protecting against sudden workstation failure."
+            },
+            {
+                q: "Which of these is a significant risk when storing sensitive information in a public cloud environment?",
+                options: [
+                    "A) Faster document editing speed",
+                    "B) Lack of internet access",
+                    "C) Potential theft by hackers",
+                    "D) Automatic file deletion"
+                ],
+                answer: 2,
+                hint: "Shared infrastructure models mean unauthorized malicious actors could try to breach remote networks and steal files.",
+                explanation: "Correct answer: C) Potential theft by hackers. Relying on digital cloud hosting adds a security layer that requires constant protection against unauthorized network intrusions."
+            },
+            {
+                q: "If you upload a file to Google Drive and realize you need it on your computer later, what is the best way to retrieve it?",
+                options: [
+                    "A) Create a new file",
+                    "B) Right-click the file and select 'Download'",
+                    "C) Delete the file and re-upload it",
+                    "D) Share the file with yourself"
+                ],
+                answer: 1,
+                hint: "Look for the menu option that pulls a remote file down from the cloud and stores it directly on local storage channels.",
+                explanation: "Correct answer: B) Right-click the file and select 'Download'. Downloading pulls a carbon file stream down from remote host servers to your native hardware disk."
+            },
+            {
+                q: "What does the 'cloud' in cloud computing represent?",
+                options: [
+                    "A) Actual weather clouds",
+                    "B) A metaphor for the internet",
+                    "C) A specific brand of hardware",
+                    "D) A type of computer processor"
+                ],
+                answer: 1,
+                hint: "This term serves as a classic network design symbol representing vast, distributed online infrastructures.",
+                explanation: "Correct answer: B) A metaphor for the internet. The term 'cloud' acts as a visual metaphor for complex, distributed online data systems accessible via the web."
+            },
+            {
+                q: "A teacher wants to store, organize, and share documents with students securely. Why is Google Drive a better choice than a local USB drive?",
+                options: [
+                    "A) It requires special software installation.",
+                    "B) It allows access from any device with an internet connection.",
+                    "C) It is impossible for others to see the files.",
+                    "D) It only works on tablets."
+                ],
+                answer: 1,
+                hint: "Physical USB drives can easily be lost or left behind, whereas web accounts are accessible from any connected device anywhere.",
+                explanation: "Correct answer: B) It allows access from any device with an internet connection. Cloud storage provides global file access via secure authentication portals on any compatible device."
+            }
+        ];
+
+        // Global State Tracker Scope
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+        }
+
+        // Web Audio Interfaces
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        // Quiz Process Controls
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Correct! Well done.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                setNextState();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    setNextState();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function setNextState() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            const messageBox = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            
+            if (percent === 100) {
+                messageBox.innerText = "Exceptional! You earned a perfect score in Cloud Computing structures.";
+                messageBox.style.backgroundColor = "#c6f6d5";
+                messageBox.style.color = "#22543d";
+            } else if (percent >= 70) {
+                messageBox.innerText = "Splendid work! You maintain a great overview of modern web infrastructure platforms.";
+                messageBox.style.backgroundColor = "#ebf8ff";
+                messageBox.style.color = "#2b6cb0";
+            } else {
+                messageBox.innerText = "Good effort! Re-examine cloud security models and collaborative applications to boost your understanding.";
+                messageBox.style.backgroundColor = "#feebc8";
+                messageBox.style.color = "#c05621";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
