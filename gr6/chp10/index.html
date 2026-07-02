@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Innovine ICT CBQ Terminal</title>
+    <style>
+        :root {
+            --bg-dark: #060913;
+            --bg-panel: #0f172a;
+            --neon-blue: #3b82f6;
+            --neon-teal: #06b6d4;
+            --neon-green: #10b981;
+            --neon-red: #ef4444;
+            --text-light: #f8fafc;
+            --text-dim: #64748b;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Courier New', Courier, monospace;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        #game-cabinet {
+            width: 100%;
+            max-width: 460px;
+            height: 85vh;
+            max-height: 680px;
+            background-color: var(--bg-panel);
+            border-radius: 16px;
+            border: 3px solid #1e293b;
+            box-shadow: 0 0 30px rgba(6, 182, 212, 0.15), inset 0 0 15px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 24px;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        /* --- SCREEN 0: 5-SECOND INNOVINE INTRO SPLASH --- */
+        #screen-splash {
+            background-color: #02040a;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo-box {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100px;
+            height: 100px;
+        }
+
+        .logo-core {
+            font-size: 4rem;
+            color: var(--neon-teal);
+            filter: drop-shadow(0 0 12px var(--neon-teal));
+            animation: pulseCore 1.5s infinite ease-in-out;
+            z-index: 2;
+        }
+
+        .logo-orbit {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid rgba(6, 182, 212, 0.05);
+            border-top: 3px solid var(--neon-teal);
+            border-radius: 50%;
+            animation: spinOrbit 4s linear infinite;
+        }
+
+        .brand-title {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
+        }
+
+        .brand-tag {
+            font-size: 0.75rem;
+            letter-spacing: 4px;
+            color: var(--text-dim);
+            margin-top: -12px;
+        }
+
+        @keyframes spinOrbit {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes pulseCore {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; }
+        }
+
+        /* --- UI TYPOGRAPHY & INTERFACE --- */
+        .terminal-header {
+            text-align: center;
+            border-bottom: 2px dashed #1e293b;
+            padding-bottom: 12px;
+        }
+        
+        .arcade-title {
+            font-size: 1.4rem;
+            color: var(--neon-blue);
+            text-shadow: 0 0 5px rgba(59, 130, 246, 0.4);
+            letter-spacing: 1px;
+            font-weight: bold;
+        }
+
+        .hud-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #090d16;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            border: 1px solid #1e293b;
+        }
+
+        .text-frame {
+            background: rgba(0,0,0,0.4);
+            border: 1px solid #1e293b;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            color: #cbd5e1;
+            overflow-y: auto;
+            max-height: 220px;
+        }
+
+        /* --- OPTIONS SELECTION GRID --- */
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .choice-btn {
+            background: #131c2e;
+            color: #94a3b8;
+            border: 1px solid #22314d;
+            padding: 10px 12px;
+            border-radius: 6px;
+            text-align: left;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            line-height: 1.3;
+        }
+        .choice-btn:hover {
+            background: #1b263f;
+            border-color: var(--neon-blue);
+            color: var(--text-light);
+        }
+
+        /* RESPONSE RUNTIME STATES */
+        .choice-btn.correct {
+            background: #064e3b !important;
+            border-color: var(--neon-green) !important;
+            color: #a7f3d0 !important;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+        }
+        .choice-btn.wrong {
+            background: #7f1d1d !important;
+            border-color: var(--neon-red) !important;
+            color: #fca5a5 !important;
+        }
+
+        .action-btn {
+            background: linear-gradient(180deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .action-btn:hover { filter: brightness(1.1); }
+
+    </style>
+</head>
+<body>
+
+<div id="game-cabinet">
+
+    <div id="screen-splash" class="screen active">
+        <div class="logo-box">
+            <div class="logo-orbit"></div>
+            <div class="logo-core">⬢</div>
+        </div>
+        <div class="brand-title">INNOVINE</div>
+        <div class="brand-tag">ICT RUNTIME MODULE v2.0</div>
+    </div>
+
+    <div id="screen-menu" class="screen">
+        <div class="terminal-header">
+            <div class="arcade-title">COMPUTER LANGUAGES</div>
+            <div style="font-size:0.7rem; color:var(--neon-teal); margin-top:4px;">[ SCENARIO CBQ BLITZ ]</div>
+        </div>
+        
+        <div class="text-frame">
+            MISSION DIRECTIVE PROFILE:<br><br>
+            • TARGET: Analyze and crack 5 randomized scenario vectors mapped directly from your real-life ICT document.<br><br>
+            • TOPICS: Machine Code execution, Compilers vs. Interpreters, System Assemblers, and High-Level Generational limits.<br><br>
+            • REQUISITE: Extract clean binary status evaluations. Avoid syntax errors to prevent dashboard integrity drops.
+        </div>
+
+        <button class="action-btn" onclick="launchQuizEngine()">BOOT TERMINAL CORE</button>
+    </div>
+
+    <div id="screen-game" class="screen">
+        <div class="hud-bar">
+            <span style="color: var(--neon-blue);" id="hud-node">NODE: 1 / 5</span>
+            <span style="color: #fbbf24;" id="hud-score">INTEGRITY: 100%</span>
+        </div>
+
+        <div class="text-frame" id="display-q" style="font-weight: bold;">
+            Parsing encrypted code packet data stream...
+        </div>
+
+        <div class="options-grid" id="display-options">
+            </div>
+
+        <button class="action-btn" id="footer-next" style="display: none;" onclick="progressNextNode()">PROCEED TO NEXT NODE &gt;&gt;</button>
+    </div>
+
+    <div id="screen-over" class="screen">
+        <div class="terminal-header">
+            <div class="arcade-title" id="final-status">COMPILATION COMPLETED</div>
+        </div>
+
+        <div class="text-frame" id="final-matrix" style="font-size:0.8rem; line-height:1.5; max-height: 400px;">
+            Compiling execution traces...
+        </div>
+
+        <button class="action-btn" onclick="location.reload()">RELOAD SYSTEM UNIT</button>
+    </div>
+
+</div>
+
+<script>
+    // --- EXACT PARSED DATABASE FROM SCENARIOS DOCUMENT ---
+    const ICT_BANK = [
+        {
+            question: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work. What is the main reason for this?",
+            choices: [
+                "Machine language requires an interpreter.",
+                "Machine language is machine-dependent.",
+                "Machine language programs take too long to execute.",
+                "Machine language uses English-like mnemonics."
+            ],
+            rightIdx: 1
+        },
+        {
+            question: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed. Which type of translator is Python most likely using?",
+            choices: ["Compiler", "Assembler", "Interpreter", "Linker"],
+            rightIdx: 2
+        },
+        {
+            question: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once. What translator did they use?",
+            choices: ["Assembler", "Compiler", "Interpreter", "Web Browser"],
+            rightIdx: 1
+        },
+        {
+            question: "You are managing a database using SQL. You type a simple query specifying exactly *what* data you need (e.g., 'SELECT names'), without writing the step-by-step logic on *how* the computer should fetch it. This is a characteristic of which generation of languages?",
+            choices: [
+                "First Generation (1GL)",
+                "Second Generation (2GL)",
+                "Third Generation (3GL)",
+                "Fourth Generation (4GL)"
+            ],
+            rightIdx: 3
+        },
+        {
+            question: "A programmer is working on low-level system code. Instead of entering binary numbers, they type commands like 'ADD A, B' or 'MOV AX, BX'. When they launch it, a translator program turns these shortcuts straight into machine code. What translator performed this process?",
+            choices: ["Assembler", "Compiler", "Interpreter", "Decompiler"],
+            rightIdx: 0
+        },
+        {
+            question: "You are talking to an artificial intelligence engine that processes conversational voice prompts and builds its own algorithms to fix user computational errors without manual coding. This AI engine operates on tools from which language generation?",
+            choices: [
+                "Second Generation Language",
+                "Third Generation Language",
+                "Fourth Generation Language",
+                "Fifth Generation Language"
+            ],
+            rightIdx: 3
+        },
+        {
+            question: "You want to write a program that can run perfectly on Windows, macOS, and Linux laptops without needing rewrite modifications for each distinct processor system. What category of language must you deploy?",
+            choices: [
+                "High Level Language",
+                "Machine Language",
+                "Low Level Assembly Language",
+                "First Generation Binary Code"
+            ],
+            rightIdx: 0
+        },
+        {
+            question: "You are reading a history book about historical computer pioneers and discover the narrative of a brilliant woman who engineered the earliest algorithm meant for execution on Charles Babbage's Mechanical Analytical Engine. Who is this pioneer?",
+            choices: ["Grace Hopper", "Lady Ada Lovelace", "Marie Curie", "Katherine Johnson"],
+            rightIdx: 1
+        },
+        {
+            question: "You pass your high-level program's raw source code into a compiler system unit. What file output format does the compiler build that the computer processor can actively understand and run?",
+            choices: ["Source code file", "Script text file", "Object code", "Document archive template"],
+            rightIdx: 2
+        },
+        {
+            question: "An engineer wants to protect a proprietary high-level app package from piracy so no competitor can extract or view the original source logic strings. Why would an interpreter NOT be the best choice for this deployment task?",
+            choices: [
+                "Interpreters do not produce a separate object code file.",
+                "Interpreters translate all lines of code at once.",
+                "Interpreters only work with 1GL languages.",
+                "Interpreters are slower than humans at reading code."
+            ],
+            rightIdx: 0
+        },
+        {
+            question: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish. This represents which generation?",
+            choices: [
+                "First Generation (1GL)",
+                "Second Generation (2GL)",
+                "Third Generation (3GL)",
+                "Fifth Generation (5GL)"
+            ],
+            rightIdx: 2
+        },
+        {
+            question: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language. Is this statement correct based on text parameters?",
+            choices: [
+                "Yes, High Level Languages execute the fastest.",
+                "No, programs written in machine language take less time for execution.",
+                "Yes, because they do not require any translators.",
+                "No, because High Level Languages are machine-dependent."
+            ],
+            rightIdx: 1
+        }
+    ];
+
+    let sessionNodes = [];
+    let currentIdx = 0;
+    let successfulHits = 0;
+    let matrixLocked = false;
+
+    // --- INITIAL INTRO SPLASH HOOK (5 SECONDS) ---
+    window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+            document.getElementById("screen-splash").classList.remove("active");
+            document.getElementById("screen-menu").classList.add("active");
+        }, 5000); 
+    });
+
+    function launchQuizEngine() {
+        document.getElementById("screen-menu").classList.remove("active");
+        document.getElementById("screen-game").classList.add("active");
+
+        // Pick exactly 5 unique randomized questions out of the data pool array
+        let sourcePool = [...ICT_BANK];
+        sessionNodes = [];
+        while(sessionNodes.length < 5 && sourcePool.length > 0) {
+            let roll = Math.floor(Math.random() * sourcePool.length);
+            sessionNodes.push(sourcePool.splice(roll, 1)[0]);
+        }
+
+        currentIdx = 0;
+        successfulHits = 0;
+        loadNodeData();
+    }
+
+    function loadNodeData() {
+        matrixLocked = false;
+        document.getElementById("footer-next").style.display = "none";
+
+        let node = sessionNodes[currentIdx];
+        
+        // Update Terminal Display parameters
+        document.getElementById("hud-node").innerText = `NODE: ${currentIdx + 1} / 5`;
+        document.getElementById("hud-score").innerText = `INTEGRITY: ${Math.round(((5 - currentIdx + successfulHits) / 5) * 100)}%`;
+        document.getElementById("display-q").innerText = `SYS_SCENARIO: ${node.question}`;
+
+        const grid = document.getElementById("display-options");
+        grid.innerHTML = ""; // Wipe previous node triggers
+
+        node.choices.forEach((text, idx) => {
+            let button = document.createElement("button");
+            button.className = "choice-btn";
+            button.innerText = `[KEY_0${idx + 1}] -> ${text}`;
+            button.onclick = () => verifyKeyInput(idx, button);
+            grid.appendChild(button);
+        });
+    }
+
+    function verifyKeyInput(selectedIdx, clickedElement) {
+        if(matrixLocked) return;
+        matrixLocked = true;
+
+        let node = sessionNodes[currentIdx];
+        const children = document.getElementById("display-options").children;
+
+        if(selectedIdx === node.rightIdx) {
+            clickedElement.classList.add("correct");
+            successfulHits++;
+        } else {
+            clickedElement.classList.add("wrong");
+            // Automatically illuminate the correct system bypass key
+            children[node.rightIdx].classList.add("correct");
+        }
+
+        document.getElementById("footer-next").style.display = "block";
+    }
+
+    function progressNextNode() {
+        currentIdx++;
+        if(currentIdx < 5) {
+            loadNodeData();
+        } else {
+            terminateMatrixSession();
+        }
+    }
+
+    function terminateMatrixSession() {
+        document.getElementById("screen-game").classList.remove("active");
+        document.getElementById("screen-over").classList.add("active");
+
+        const headline = document.getElementById("final-status");
+        const reportFrame = document.getElementById("final-matrix");
+        let efficiency = (successfulHits / 5) * 100;
+
+        if(efficiency >= 80) {
+            headline.innerText = "COMPILATION SUCCESSFUL";
+            headline.style.color = "var(--neon-green)";
+        } else {
+            headline.innerText = "EXECUTION ABORTED";
+            headline.style.color = "var(--neon-red)";
+        }
+
+        reportFrame.innerHTML = `
+            ICT MATRIX METRICS ANALYSIS REPORT:<br><br>
+            • SCENARIOS ROUTED : 05 / 05 COMPLETION<br>
+            • TARGET SOLUTIONS : ${successfulHits} COMPILED IDENTIFICATIONS<br>
+            • INTEGRITY LEVEL  : ${efficiency}% PROCESS EFFICIENCY<br><br>
+            ----------------------------------------<br>
+            ${efficiency >= 80 ? 
+            "ANALYSIS: Outstanding architecture diagnostic! You have proven a strong competency in computer language paradigms. Mastery verified over machine dependency limits, step-by-step interpreter line breaks, SQL declaration syntax, and object code outputs." : 
+            "ANALYSIS: Core logic mismatch. Diagnostic system flags translation errors. Review text notes covering why machine language runs fastest but remains completely processor-dependent, and why compilers turn source syntax into object code all at once."}
+        `;
+    }
+</script>
+</body>
+</html>
