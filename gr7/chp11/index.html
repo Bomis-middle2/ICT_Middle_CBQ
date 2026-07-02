@@ -1,1 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grade 7 ICT Chapter 11 MCQ Quiz</title>
+<style>
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:Arial, sans-serif;
+  background:linear-gradient(135deg,#e0eafc,#cfdef3);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+}
+.bubble{
+  position:fixed;
+  bottom:-80px;
+  background:rgba(255,255,255,0.45);
+  border-radius:50%;
+  animation:rise 14s infinite ease-in;
+  z-index:0;
+}
+@keyframes rise{
+  from{transform:translateY(0);opacity:0;}
+  50%{opacity:0.8;}
+  to{transform:translateY(-120vh);opacity:0;}
+}
+#logoScreen{
+  position:fixed;
+  inset:0;
+  background:white;
+  z-index:10;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+#logoScreen img{max-width:260px;width:70%;}
+#logoText{font-size:36px;font-weight:bold;color:#273b63;}
+.card{
+  position:relative;
+  z-index:1;
+  width:90%;
+  max-width:650px;
+  background:white;
+  border-radius:20px;
+  padding:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.15);
+  text-align:center;
+}
+.hidden{display:none!important;}
+h1{margin-top:0;color:#22324a;}
+.info{
+  background:#f7f9fc;
+  padding:15px;
+  border-radius:12px;
+  text-align:left;
+  line-height:1.6;
+  margin:18px 0;
+}
+button{font-family:Arial,sans-serif;}
+.startBtn,.nextBtn,.restartBtn{
+  background:#2c3e50;
+  color:white;
+  border:0;
+  border-radius:30px;
+  padding:13px 32px;
+  font-size:17px;
+  font-weight:bold;
+  cursor:pointer;
+}
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:16px;
+  font-weight:bold;
+}
+.pill{
+  background:#eef6ff;
+  border:1px solid #cde5ff;
+  padding:8px 12px;
+  border-radius:30px;
+}
+#question{
+  text-align:left;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1.5;
+  background:#f8fafc;
+  border-left:5px solid #3498db;
+  padding:15px;
+  border-radius:10px;
+  margin-bottom:14px;
+}
+.option{
+  width:100%;
+  display:block;
+  margin:8px 0;
+  padding:12px;
+  text-align:left;
+  font-size:16px;
+  font-weight:600;
+  border:2px solid #3498db;
+  background:white;
+  border-radius:10px;
+  cursor:pointer;
+}
+.option:hover:not(:disabled){
+  background:#3498db;
+  color:white;
+}
+.option.correct{
+  background:#d4edda;
+  border-color:#22c55e;
+  color:#14532d;
+}
+.option.wrong{
+  background:#fee2e2;
+  border-color:#ef4444;
+  color:#7f1d1d;
+}
+.option:disabled{cursor:default;}
+#feedback{
+  min-height:40px;
+  margin-top:12px;
+  padding:10px;
+  border-radius:10px;
+  font-weight:bold;
+}
+.good{background:#d4edda;color:#155724;border:2px solid #22c55e;}
+.bad{background:#fee2e2;color:#7f1d1d;border:2px solid #ef4444;}
+.ans{background:#fff3cd;color:#856404;border:2px solid #facc15;}
+.nextBtn{display:none;margin-top:12px;}
+.scoreBig{font-size:48px;font-weight:bold;color:#2563eb;}
+.confetti{
+  position:fixed;
+  top:-20px;
+  z-index:9;
+  animation:fall 2.3s linear forwards;
+  pointer-events:none;
+}
+@keyframes fall{
+  to{transform:translateY(110vh) rotate(720deg);opacity:0;}
+}
+@media(max-width:520px){
+  body{align-items:flex-start;padding-top:15px;overflow-y:auto;}
+  .card{padding:18px;}
+  #question{font-size:16px;}
+  .option{font-size:15px;}
+}
+</style>
+</head>
+<body>
 
+<div id="logoScreen">
+  <img src="assets/innovine-logo.png" onerror="this.style.display='none';document.getElementById('logoText').style.display='block';">
+  <div id="logoText" style="display:none;">INNOVINE</div>
+</div>
+
+<div id="intro" class="card hidden">
+  <h1>MS Access Quiz</h1>
+  <div class="info">
+    <p><b>Grade:</b> 7</p>
+    <p><b>Subject:</b> ICT</p>
+    <p><b>Chapter:</b> 11</p>
+    <p><b>Topic:</b> MS Access - Queries, Reports, Sorting and Relationships</p>
+    <p><b>No. of Questions:</b> 10</p>
+    <p><b>Rule:</b> Tap the correct option. You get 2 attempts.</p>
+  </div>
+  <button class="startBtn" onclick="startQuiz()">Start Quiz</button>
+</div>
+
+<div id="quiz" class="card hidden">
+  <div class="top">
+    <div class="pill" id="timer">45s</div>
+    <div class="pill" id="progress">Question 1/10</div>
+    <div class="pill" id="score">Score: 0</div>
+  </div>
+  <div id="question"></div>
+  <div id="options"></div>
+  <div id="feedback"></div>
+  <button id="nextBtn" class="nextBtn" onclick="nextQuestion()">Next</button>
+</div>
+
+<div id="result" class="card hidden">
+  <h1>Quiz Finished!</h1>
+  <p>You completed all questions.</p>
+  <div class="scoreBig" id="finalScore">0/10</div>
+  <p id="finalMessage"></p>
+  <button class="restartBtn" onclick="restartQuiz()">Restart Quiz</button>
+</div>
+
+<audio id="correctAudio" src="assets/correct.mp3"></audio>
+<audio id="wrongAudio" src="assets/wrong.mp3"></audio>
+<audio id="clapAudio" src="assets/freesound_community-claps-44774.mp3"></audio>
+
+<script>
+var questions=[
+{q:"A librarian wants to find all books in the database that were published after the year 2010. Which feature of MS Access should she use to retrieve this specific information?",a:"B. Query",o:["A. Report","B. Query","C. Sorting","D. Relationship"],e:"A query is used to search a database and find specific information."},
+{q:"You are creating a query to find students who live in Mumbai and have a Grade equal to A. Which type of operator are And, Or, and Not classified as?",a:"C. Logical Operators",o:["A. Relational Operators","B. Mathematical Operators","C. Logical Operators","D. Comparison Operators"],e:"Logical operators like And, Or, and Not help find records matching multiple conditions."},
+{q:"A manager needs to search for employees whose salary is not equal to 50,000. Which relational operator should be used in the criteria box?",a:"D. <>",o:["A. >","B. <","C. =","D. <>"],e:"The relational operator <> means not equal to."},
+{q:"After creating a query in MS Access, you want to see the results. Which button in the Results group under the Design tab must you click?",a:"B. Run",o:["A. Save","B. Run","C. View","D. Add"],e:"To see matching records, you have to run the query."},
+{q:"A school administrator wants to print a summary of all student fees collected this month to present at a meeting. Which MS Access feature is best suited for organizing and summarizing data for printing?",a:"C. Report",o:["A. Relationship","B. Sorting","C. Report","D. Datasheet"],e:"A report is used to organize and summarize data for viewing or printing."},
+{q:"You have a Students table and a Marks table. Both tables have a Roll_No field. You want to connect these tables so you can see both personal details and marks together. This connection is called a:",a:"D. Relationship",o:["A. Query","B. Report","C. Sorting","D. Relationship"],e:"Tables in a relational database are connected through relationships."},
+{q:"When linking two tables, what is the fundamental requirement for the fields being used to create the link?",a:"B. At least one field name must be exactly the same in both tables",o:["A. They must have different names","B. At least one field name must be exactly the same in both tables","C. They must both be text fields","D. One must be a query and the other a table"],e:"Tables are linked using a common field."},
+{q:"You want to arrange a list of products in a store database from the most expensive to the cheapest. Which sorting order should you select?",a:"B. Descending",o:["A. Ascending","B. Descending","C. Relational","D. Logical"],e:"Sorting from high to low is called descending order."},
+{q:"Which view in MS Access allows you to see how the report will look on paper before you actually print it?",a:"D. Print Preview",o:["A. Report View","B. Layout View","C. Design View","D. Print Preview"],e:"Print Preview shows how the report will look on paper before printing."},
+{q:"What is a major advantage of using a relational database like MS Access instead of keeping separate, unconnected lists?",a:"B. It prevents data duplication",o:["A. It makes the files larger","B. It prevents data duplication","C. It allows only one person to use the data","D. It removes the need for queries"],e:"A relational database reduces duplicate data, saves storage space, and reduces errors."}
+];
+
+var current=0, marks=0, attempts=0, timeLeft=45, timer=null, locked=false;
+
+function $(id){return document.getElementById(id);}
+function hide(id){$(id).classList.add("hidden");}
+function show(id){$(id).classList.remove("hidden");}
+
+for(var i=0;i<15;i++){
+  var b=document.createElement("div");
+  b.className="bubble";
+  var size=(Math.random()*60+20)+"px";
+  b.style.width=size;
+  b.style.height=size;
+  b.style.left=(Math.random()*100)+"%";
+  b.style.animationDelay=(Math.random()*8)+"s";
+  document.body.appendChild(b);
+}
+
+setTimeout(function(){
+  hide("logoScreen");
+  show("intro");
+},5000);
+
+function startQuiz(){
+  hide("intro");
+  show("quiz");
+  loadQuestion();
+}
+
+function loadQuestion(){
+  clearInterval(timer);
+  attempts=0;
+  locked=false;
+  timeLeft=45;
+  $("timer").innerHTML=timeLeft+"s";
+  $("progress").innerHTML="Question "+(current+1)+"/10";
+  $("score").innerHTML="Score: "+marks;
+  $("feedback").innerHTML="";
+  $("feedback").className="";
+  $("nextBtn").style.display="none";
+  $("question").innerHTML=(current+1)+". "+questions[current].q;
+  $("options").innerHTML="";
+  for(var i=0;i<questions[current].o.length;i++){
+    var btn=document.createElement("button");
+    btn.className="option";
+    btn.innerHTML=questions[current].o[i];
+    btn.onclick=function(){checkAnswer(this);}
+    $("options").appendChild(btn);
+  }
+  timer=setInterval(function(){
+    timeLeft--;
+    $("timer").innerHTML=timeLeft+"s";
+    if(timeLeft<=0){
+      showAnswer("Time up. Correct answer:");
+    }
+  },1000);
+}
+
+function checkAnswer(btn){
+  if(locked || btn.disabled){return;}
+  var choice=btn.innerHTML;
+  if(choice===questions[current].a){
+    locked=true;
+    clearInterval(timer);
+    marks++;
+    $("score").innerHTML="Score: "+marks;
+    btn.classList.add("correct");
+    $("feedback").className="good";
+    $("feedback").innerHTML="Correct! "+questions[current].e;
+    try{$("correctAudio").play();$("clapAudio").play();}catch(e){}
+    confetti();
+    disableButtons();
+    $("nextBtn").style.display="inline-block";
+  }else{
+    attempts++;
+    btn.classList.add("wrong");
+    try{$("wrongAudio").play();}catch(e){}
+    if(attempts<2){
+      $("feedback").className="bad";
+      $("feedback").innerHTML="Wrong answer. Try once more.";
+      btn.disabled=true;
+    }else{
+      showAnswer("Correct answer:");
+    }
+  }
+}
+
+function showAnswer(text){
+  if(locked){return;}
+  locked=true;
+  clearInterval(timer);
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){
+    all[i].disabled=true;
+    if(all[i].innerHTML===questions[current].a){
+      all[i].classList.add("correct");
+    }
+  }
+  $("feedback").className="ans";
+  $("feedback").innerHTML=text+" "+questions[current].a+" — "+questions[current].e;
+  $("nextBtn").style.display="inline-block";
+}
+
+function disableButtons(){
+  var all=document.querySelectorAll(".option");
+  for(var i=0;i<all.length;i++){all[i].disabled=true;}
+}
+
+function nextQuestion(){
+  current++;
+  if(current<questions.length){
+    loadQuestion();
+  }else{
+    finishQuiz();
+  }
+}
+
+function finishQuiz(){
+  clearInterval(timer);
+  hide("quiz");
+  show("result");
+  $("finalScore").innerHTML=marks+"/10";
+  if(marks>=8){$("finalMessage").innerHTML="Excellent work!";}
+  else if(marks>=5){$("finalMessage").innerHTML="Good effort! Revise once more.";}
+  else{$("finalMessage").innerHTML="Keep practising!";}
+  try{$("clapAudio").play();}catch(e){}
+  confetti();
+}
+
+function restartQuiz(){
+  current=0;
+  marks=0;
+  hide("result");
+  show("intro");
+}
+
+function confetti(){
+  var symbols=["🎉","⭐","✨","🎊"];
+  for(var i=0;i<35;i++){
+    var c=document.createElement("div");
+    c.className="confetti";
+    c.innerHTML=symbols[Math.floor(Math.random()*symbols.length)];
+    c.style.left=(Math.random()*100)+"vw";
+    c.style.animationDelay=(Math.random()*0.4)+"s";
+    document.body.appendChild(c);
+    setTimeout((function(x){return function(){x.remove();};})(c),2500);
+  }
+}
+</script>
+</body>
+</html>
