@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grade 8 ICT - Chapter 2 Circuits using Breadboard and Arduino UNO Quiz</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #008184;
+            --primary-hover: #005f61;
+            --bg-color: #f0fbfc;
+            --card-bg: #ffffff;
+            --text-color: #2d3748;
+            --text-muted: #718096;
+            --success-color: #38a169;
+            --error-color: #e53e3e;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.5;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .quiz-container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Branding Splash Screen Layout */
+        #branding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease-out;
+            cursor: pointer;
+        }
+
+        #branding-overlay h1 {
+            font-size: 36px;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: var(--primary-color);
+            animation: pulse 1.5s infinite ease-in-out;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.97); opacity: 0.8; }
+            50% { transform: scale(1.03); opacity: 1; }
+            100% { transform: scale(0.97); opacity: 0.8; }
+        }
+
+        .hidden { display: none !important; }
+
+        /* Accessibility Audio Control */
+        .audio-control {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--border-color);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 10;
+        }
+
+        /* Header Layout Components */
+        .quiz-header {
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 12px;
+        }
+
+        .tracker-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+        }
+
+        .timer-wrapper {
+            width: 100%;
+            background-color: var(--border-color);
+            height: 6px;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .timer-bar {
+            height: 100%;
+            background-color: var(--primary-color);
+            width: 100%;
+            transition: width 1s linear, background-color 0.3s;
+        }
+
+        .timer-warn {
+            background-color: var(--error-color);
+        }
+
+        /* Configuration Panels */
+        .screen h1 {
+            font-size: 26px;
+            color: var(--primary-hover);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .screen h2 {
+            font-size: 18px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .meta-info {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 1px solid var(--border-color);
+        }
+
+        .meta-info p {
+            margin-bottom: 8px;
+            font-size: 15px;
+        }
+        .meta-info p:last-child { margin-bottom: 0; }
+
+        /* Evaluation Block Styling */
+        .question-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .option-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            text-align: left;
+            background: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover:not(:disabled) {
+            background-color: #f7fafc;
+            border-color: #a0aec0;
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary-color);
+            background-color: #e6fffa;
+        }
+
+        .option-btn.correct {
+            border-color: var(--success-color);
+            background-color: #f0fff4;
+            color: #22543d;
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            border-color: var(--error-color);
+            background-color: #fff5f5;
+            color: #742a2a;
+        }
+
+        /* Information Context Panels */
+        .feedback-box {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 15px;
+            font-weight: 500;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .feedback-box.hint {
+            background-color: #feebc8;
+            color: #c05621;
+            border-left: 4px solid #dd6b20;
+        }
+
+        .feedback-box.solution {
+            background-color: #edf2f7;
+            color: #2d3748;
+            border-left: 4px solid #4a5568;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Global Execution Controls */
+        .action-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+            background-color: var(--primary-color);
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: background 0.2s;
+        }
+
+        .action-btn:hover {
+            background-color: var(--primary-hover);
+        }
+
+        .action-btn:disabled {
+            background-color: var(--border-color);
+            color: var(--text-muted);
+            cursor: not-allowed;
+        }
+
+        /* Evaluation View Display Layout */
+        .result-msg {
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .score-display {
+            font-size: 48px;
+            font-weight: 800;
+            text-align: center;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 10px; }
+            .quiz-container { padding: 16px; }
+            .screen h1 { font-size: 22px; }
+            .question-text { font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 15px; }
+            .action-btn { padding: 14px; font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="branding-overlay" onclick="dismissBranding()">
+        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
+        <h1>INNOVINE</h1>
+    </div>
+
+    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
+    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
+
+    <div class="quiz-container">
+        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
+            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
+        </button>
+
+        <div id="intro-screen" class="screen">
+            <h1>Grade 8 ICT Quiz</h1>
+            <h2>Chapter 2: Circuits using Breadboard and Arduino UNO</h2>
+            
+            <div class="meta-info">
+                <p><strong>Subject:</strong> ICT / Hardware Prototyping</p>
+                <p><strong>Grade:</strong> 8</p>
+                <p><strong>Focus:</strong> Series and Parallel Circuit Pathways, Arduino Ecosystem Architecture, Microcontrollers (ATmega328P), I/O Interface Layouts, Interfaces (USB vs. DC Jack), and IDE Environments.</p>
+                <p><strong>Total Questions:</strong> 12</p>
+                <p><strong>Rules:</strong> Includes an automated 45-second timer per challenge loop. Incorrect initial selections invoke dedicated structural hints.</p>
+            </div>
+
+            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+        </div>
+
+        <div id="quiz-screen" class="screen hidden">
+            <div class="quiz-header">
+                <div class="tracker-bar">
+                    <span id="question-number">Question 1/12</span>
+                    <span id="score-tracker">Score: 0</span>
+                </div>
+                <div class="timer-wrapper">
+                    <div id="timer-bar" class="timer-bar"></div>
+                </div>
+            </div>
+
+            <div id="question-container">
+                <p class="question-text" id="question-text">Question text template?</p>
+                <div class="options-list" id="options-list"></div>
+            </div>
+
+            <div id="feedback-box" class="feedback-box hidden"></div>
+
+            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
+        </div>
+
+        <div id="result-screen" class="screen hidden">
+            <h1>Evaluation Complete!</h1>
+            <div class="score-display" id="final-score">0/12</div>
+            <div id="result-message" class="result-msg"></div>
+            
+            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Schema strictly compiled from supplied dataset records
+        const quizData = [
+            {
+                q: "You are building a prototype for a string of holiday lights in Tinkercad. If you connect three light bulbs end-to-end with a battery so there is only one path for the current, what type of circuit are you creating?",
+                options: ["A) Parallel Circuit", "B) Series Circuit", "C) Short Circuit", "D) Open Circuit"],
+                answer: 1,
+                hint: "Recall that a circuit arrangement with only a single, unbroken chain for electrical charges to navigate loops all components end-to-end.",
+                explanation: "Correct answer: B) Series Circuit. A series circuit connects electronic elements along a single loop trajectory, forcing the current through every single point."
+            },
+            {
+                q: "A student wants to build a smart dustbin that opens automatically when someone approaches. They need a device that can read inputs from a distance sensor and control a motor. Which open-source platform is most suitable for this?",
+                options: ["A) A plastic breadboard", "B) A battery and an LED", "C) Arduino", "D) DC Barrel Jack"],
+                answer: 2,
+                hint: "Look for the computing hardware controller board capable of processing code variables and interfacing with electronic hardware components.",
+                explanation: "Correct answer: C) Arduino. Arduino is an open-source electronics platform based on flexible hardware and programmable software, perfect for automated prototype triggers."
+            },
+            {
+                q: "You are repairing an Arduino UNO board and notice the main processing chip is damaged. Which specific microcontroller chip is known as the 'heart' of the Arduino UNO and needs to be replaced?",
+                options: ["A) ATmega328P", "B) Intel Core i5", "C) ATMega2560", "D) ARM Cortex"],
+                answer: 0,
+                hint: "This specific chip is a popular 8-bit AVR microcontroller package soldered onto the middle of standard UNO boards.",
+                explanation: "Correct answer: A) ATmega328P. The ATmega328P microcontroller chip functions as the main processor architecture of the Arduino UNO board."
+            },
+            {
+                q: "You are designing a weather station using an Arduino UNO and need to connect several digital sensors. What is the maximum number of dedicated digital input/output pins available on this board?",
+                options: ["A) 6", "B) 10", "C) 13", "D) 14"],
+                answer: 3,
+                hint: "Count all the available digital pin positions lined along the upper socket rail, spanning from pin 0 through pin 13.",
+                explanation: "Correct answer: D) 14. The Arduino UNO features exactly 14 digital input/output interfaces (numbered 0 to 13) for exchanging binary data logic blocks."
+            },
+            {
+                q: "While developing a robotics project, your Arduino is connected to your laptop via a USB cable. Besides allowing you to communicate and upload your newly written code, what other primary function does this USB connection serve?",
+                options: ["A) It acts as a distance sensor.", "B) It powers the Arduino board directly.", "C) It cools down the microcontroller.", "D) It increases the voltage to 12V."],
+                answer: 1,
+                hint: "Consider how power leaves your laptop ports to energize external auxiliary gear like mouse devices, keypads, or development boards.",
+                explanation: "Correct answer: B) It powers the Arduino board directly. The USB communication line carries a steady 5V DC power loop, allowing the board to boot up instantly without an external battery."
+            },
+            {
+                q: "You want your Arduino-based smart car to run independently without being connected to a computer. You decide to use a battery pack. Where should you plug in this 7-12V battery pack to supply power to the board?",
+                options: ["A) USB Port", "B) Reset Button", "C) DC Barrel Jack", "D) Digital Pin 13"],
+                answer: 2,
+                hint: "Look for the dedicated round black power socket port configuration constructed to accept heavy external power plugs safely.",
+                explanation: "Correct answer: C) DC Barrel Jack. The DC Barrel Jack handles direct, unregulated power input lines ranging between 7-12 Volts, allowing standalone operation."
+            },
+            {
+                q: "You have written a new code for your Arduino but don't have any external LEDs or components to test if the board is working. Which pin has an inbuilt LED connected to it for testing and debugging?",
+                options: ["A) Pin 8", "B) Pin 10", "C) Pin 13", "D) Pin 1"],
+                answer: 2,
+                hint: "This matches the final numerical index position among the primary row of standalone digital I/O pins.",
+                explanation: "Correct answer: C) Pin 13. Digital interface Pin 13 is natively wired directly to an on-board surface-mount LED, allowing developer tests without wiring external hardware components."
+            },
+            {
+                q: "A developer is hired to write code for an automated watering system using an Arduino UNO. Which programming language is the Arduino IDE primarily based on for writing these instructions?",
+                options: ["A) Python", "B) C++", "C) Java", "D) HTML"],
+                answer: 1,
+                hint: "Think of an object-oriented language that builds directly upon foundational 'C' programming vocabulary frameworks.",
+                explanation: "Correct answer: B) C++. Arduino source code scripts are mapped and compiled using standard C/C++ syntactic functions and structures."
+            },
+            {
+                q: "A beginner is learning to program an Arduino in Tinkercad but finds typing text-based code difficult. What alternative method does Tinkercad provide by default to program the Arduino easily?",
+                options: ["A) Voice commands", "B) Drawing circuits manually", "C) Block coding", "D) Assembly language"],
+                answer: 3,
+                hint: "Look for a visual programming method that relies on snapping together colored puzzle-like script groups.",
+                explanation: "Correct answer: C) Block coding. Block-based configuration systems let entry-level users construct algorithmic flowcharts visually, removing structural syntax errors."
+            },
+            {
+                q: "Your Arduino-based digital clock has frozen and stopped updating the time due to a software glitch. Which component on the Arduino UNO board should you use to restart the microcontroller's program from the beginning?",
+                options: ["A) Power LED", "B) Reset button", "C) USB Port", "D) DC Barrel Jack"],
+                answer: 1,
+                hint: "Look for the physical push-button switch intended to cycle power states locally without unplugging standard wires.",
+                explanation: "Correct answer: B) Reset button. Depressing the built-in reset button forces the internal microcontroller to restart its active program routine back from line zero."
+            },
+            {
+                q: "You are building a lighting system on a physical breadboard where multiple LEDs are connected. You configure it so that if one LED burns out, the others continue to glow because they have their own paths to the power source. What type of circuit is this?",
+                options: ["A) Series Circuit", "B) Sequential Circuit", "C) Parallel Circuit", "D) Short Circuit"],
+                answer: 2,
+                hint: "This layout splits structural pathways into parallel, side-by-side branch networks so that nodes can operate independently.",
+                explanation: "Correct answer: C) Parallel Circuit. Parallel wiring structures branch out across individual circuits, ensuring that a physical failure in one leg does not interrupt the current along the others."
+            },
+            {
+                q: "A student downloads the Arduino software to write programs. This software provides a code editor, compiler, and upload tool all combined into a single graphical interface. What is the technical term for this type of software?",
+                options: ["A) Microcontroller", "B) Operating System", "C) Integrated Development Environment (IDE)", "D) Bootloader"],
+                answer: 2,
+                hint: "Focus on the full, three-letter software industry acronym representing an consolidated production center for code developers.",
+                explanation: "Correct answer: C) Integrated Development Environment (IDE). An IDE bundles the text compiler, terminal debugger, and firmware uploader into one workspace."
+            }
+        ];
+
+        // Global State Tracker Scope
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let attemptCount = 0;
+        let selectedOptionIndex = null;
+        let timerInterval = null;
+        let timeLeft = 45; 
+        let isMuted = false;
+
+        // Overlay Auto-Dismiss Mechanics
+        let brandingTimer = setTimeout(dismissBranding, 4000);
+
+        function dismissBranding() {
+            if (brandingTimer) clearTimeout(brandingTimer);
+            const overlay = document.getElementById('branding-overlay');
+            if (overlay) {
+                overlay.style.opacity = '0';
+                setTimeout(() => overlay.style.display = 'none', 500);
+            }
+        }
+
+        // Web Audio Interfaces
+        function playSound(type) {
+            if (isMuted) return;
+            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
+            if (sound) {
+                sound.currentTime = 0;
+                sound.play().catch(() => {});
+            }
+        }
+
+        function toggleMute() {
+            isMuted = !isMuted;
+            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
+            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
+        }
+
+        // App Execution Controls
+        function startQuiz() {
+            document.getElementById('intro-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+            currentQuestionIndex = 0;
+            score = 0;
+            loadQuestion();
+        }
+
+        function loadQuestion() {
+            resetTimer();
+            attemptCount = 0;
+            selectedOptionIndex = null;
+            
+            const currentQ = quizData[currentQuestionIndex];
+            
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('score-tracker').innerText = `Score: ${score}`;
+            document.getElementById('question-text').innerText = currentQ.q;
+            
+            const optionsContainer = document.getElementById('options-list');
+            optionsContainer.innerHTML = '';
+            
+            currentQ.options.forEach((optionText, index) => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = optionText;
+                btn.onclick = () => selectOption(index);
+                optionsContainer.appendChild(btn);
+            });
+
+            const feedbackBox = document.getElementById('feedback-box');
+            feedbackBox.innerText = '';
+            feedbackBox.className = 'feedback-box';
+            feedbackBox.classList.add('hidden');
+            
+            const submitBtn = document.getElementById('submit-next-btn');
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.disabled = true;
+
+            startTimer();
+        }
+
+        function selectOption(index) {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText !== "Submit Answer") return; 
+            
+            selectedOptionIndex = index;
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach((btn, i) => {
+                btn.classList.toggle('selected', i === index);
+            });
+            submitBtn.disabled = false;
+        }
+
+        function handleSubmitOrNext() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (submitBtn.innerText === "Submit Answer") {
+                submitAnswer();
+            } else if (submitBtn.innerText === "Next Question") {
+                currentQuestionIndex++;
+                loadQuestion();
+            } else if (submitBtn.innerText === "View Results") {
+                showResults();
+            }
+        }
+
+        function submitAnswer() {
+            resetTimer();
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            attemptCount++;
+
+            if (selectedOptionIndex === currentQ.answer) {
+                playSound('correct');
+                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('correct');
+                
+                score++;
+                document.getElementById('score-tracker').innerText = `Score: ${score}`;
+                
+                feedbackBox.innerText = "Correct! Accurate hardware evaluation.";
+                feedbackBox.className = "feedback-box solution";
+                feedbackBox.classList.remove('hidden');
+                
+                lockOptions();
+                setNextState();
+            } else {
+                playSound('wrong');
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+
+                if (attemptCount === 1) {
+                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
+                    feedbackBox.className = "feedback-box hint";
+                    feedbackBox.classList.remove('hidden');
+                    document.getElementById('submit-next-btn').disabled = true;
+                    startTimer(); 
+                } else {
+                    buttons[currentQ.answer].classList.add('correct');
+                    feedbackBox.innerText = currentQ.explanation;
+                    feedbackBox.className = "feedback-box solution";
+                    feedbackBox.classList.remove('hidden');
+                    
+                    lockOptions();
+                    setNextState();
+                }
+            }
+        }
+
+        function handleTimeOut() {
+            attemptCount = 2;
+            const currentQ = quizData[currentQuestionIndex];
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            const feedbackBox = document.getElementById('feedback-box');
+            
+            playSound('wrong');
+            buttons[currentQ.answer].classList.add('correct');
+            
+            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
+            feedbackBox.className = "feedback-box solution";
+            feedbackBox.classList.remove('hidden');
+            
+            lockOptions();
+            setNextState();
+        }
+
+        function startTimer() {
+            timeLeft = 45;
+            const timerBar = document.getElementById('timer-bar');
+            timerBar.classList.remove('timer-warn');
+            timerBar.style.width = '100%';
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                const percent = (timeLeft / 45) * 100;
+                timerBar.style.width = `${percent}%`;
+
+                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    handleTimeOut();
+                }
+            }, 1000);
+        }
+
+        function resetTimer() {
+            if (timerInterval) clearInterval(timerInterval);
+        }
+
+        function lockOptions() {
+            const buttons = document.querySelectorAll('.options-list .option-btn');
+            buttons.forEach(btn => btn.disabled = true);
+        }
+
+        function setNextState() {
+            const submitBtn = document.getElementById('submit-next-btn');
+            if (currentQuestionIndex < quizData.length - 1) {
+                submitBtn.innerText = "Next Question";
+            } else {
+                submitBtn.innerText = "View Results";
+            }
+            submitBtn.disabled = false;
+        }
+
+        function showResults() {
+            document.getElementById('quiz-screen').classList.add('hidden');
+            document.getElementById('result-screen').classList.remove('hidden');
+            
+            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            const messageBox = document.getElementById('result-message');
+            const percent = (score / quizData.length) * 100;
+            
+            if (percent === 100) {
+                messageBox.innerText = "Outstanding! You scored a perfect 100% in Arduino platform layout and hardware constraints.";
+                messageBox.style.backgroundColor = "#c6f6d5";
+                messageBox.style.color = "#22543d";
+            } else if (percent >= 70) {
+                messageBox.innerText = "Great job! You clearly understand circuit behaviors and microcontrollers.";
+                messageBox.style.backgroundColor = "#ebf8ff";
+                messageBox.style.color = "#2b6cb0";
+            } else {
+                messageBox.innerText = "Keep practicing! Spend some time reviewing digital interface pin assignments and core processing chips to clear your concepts.";
+                messageBox.style.backgroundColor = "#feebc8";
+                messageBox.style.color = "#c05621";
+            }
+        }
+
+        function restartQuiz() {
+            document.getElementById('result-screen').classList.add('hidden');
+            document.getElementById('intro-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
