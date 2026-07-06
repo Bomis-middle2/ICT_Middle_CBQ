@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Grade 6 ICT - Chapter 10 Competency-Based Quiz</title>
+    <title>Grade 6 ICT - Computer languages Competency-Based Quiz</title>
     <style>
         :root {
             --bg-color: #f4f6f9;
@@ -255,7 +255,7 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
         <p>Computer Languages - Chapter 10 Quiz</p>
     </div>
 
@@ -292,94 +292,94 @@
     </div>
 
     <script>
-        // Data Bank mapped strictly from 'G6_ICT_Chapter 10_MCQs.docx' [cite: 114, 115]
+        // Data Bank mapped from Chapter 10
         const rawQuestionData = [
             {
                 scenario: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work.",
-                question: "What is the main reason for this? [cite: 116, 117, 118]",
+                question: "What is the main reason for this?",
                 options: [
                     "Machine language requires an interpreter.",
                     "Machine language is machine-dependent.",
                     "Machine language programs take too long to execute.",
                     "Machine language uses English-like mnemonics."
                 ],
-                answer: 1 // Index of 'Machine language is machine-dependent.' [cite: 192]
+                answer: 1
             },
             {
                 scenario: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed.",
-                question: "Which type of translator is Python most likely using? [cite: 123, 124, 125]",
+                question: "Which type of translator is Python most likely using?",
                 options: ["Compiler", "Assembler", "Interpreter", "Linker"],
-                answer: 2 // Index of 'Interpreter' [cite: 193]
+                answer: 2
             },
             {
                 scenario: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once.",
-                question: "What translator did they use? [cite: 130, 131, 132]",
+                question: "What translator did they use?",
                 options: ["Assembler", "Compiler", "Interpreter", "Web Browser"],
-                answer: 1 // Index of 'Compiler' [cite: 194]
+                answer: 1
             },
             {
                 scenario: "You are managing a database using SQL. You type a simple query specifying exactly what data you need (e.g., 'SELECT names'), without writing the step-by-step logic on how the computer should fetch it.",
-                question: "This is a characteristic of which generation of languages? [cite: 137, 138]",
+                question: "This is a characteristic of which generation of languages?",
                 options: ["First Generation (1GL)", "Second Generation (2GL)", "Third Generation (3GL)", "Fourth Generation (4GL)"],
-                answer: 3 // Index of 'Fourth Generation (4GL)' [cite: 195]
+                answer: 3
             },
             {
                 scenario: "A programmer is working with a language that uses short abbreviations or mnemonics like 'ADD A, Y' and 'SUB A, B'.",
-                question: "To make the computer hardware understand it, they need a specific translator. Which one? [cite: 143, 144]",
-                options: ["Assembler", "Compiler", "Interpreter", "Object Coder"],
-                answer: 0 // Index of 'Assembler' [cite: 196]
+                question: "To make the computer hardware understand it, they need a specific translator. Which one?",
+                options: ["Amplifier", "Compiler", "Interpreter", "Assembler"],
+                answer: 3
             },
             {
                 scenario: "A research team is developing a decision-making artificial intelligence (AI) system. They are using constraint-based programming languages like Prolog with visual tools.",
-                question: "Which generation of languages are they working with? [cite: 149, 150]",
+                question: "Which generation of languages are they working with?",
                 options: ["Second Generation Language", "Third Generation Language", "Fourth Generation Language", "Fifth Generation Language"],
-                answer: 3 // Index of 'Fifth Generation Language' [cite: 197]
+                answer: 3
             },
             {
                 scenario: "Your school wants to teach a programming language that is easy to learn, uses English-like mathematical phrases, and allows the written program to run on Windows, Mac, and Linux computers.",
-                question: "What broad category of language should they choose? [cite: 155, 156]",
+                question: "What broad category of language should they choose?",
                 options: ["High Level Language", "Low Level Language", "Assembly Language", "Machine Language"],
-                answer: 0 // Index of 'High Level Language' [cite: 198]
+                answer: 0
             },
             {
                 scenario: "While reading an article about the history of computing algorithms for the Analytical Engine, you learn about the person widely considered to be the first computer programmer.",
-                question: "Who is it? [cite: 161, 162]",
+                question: "Who is it?",
                 options: ["Charles Babbage", "Lady Ada Lovelace", "Bill Gates", "Charles Bachman"],
-                answer: 1 // Index of 'Lady Ada Lovelace' [cite: 199]
+                answer: 1
             },
             {
                 scenario: "After successfully writing a C++ program, the translator processes your human-readable 'source code' so the computer can execute it without needing the source code again.",
-                question: "What is the resulting machine-readable code called? [cite: 167, 168]",
+                question: "What is the resulting machine-readable code called?",
                 options: ["Assembly code", "Mnemonic code", "Object code", "Visual code"],
-                answer: 2 // Index of 'Object code' [cite: 200]
+                answer: 2
             },
             {
                 scenario: "A developer wants to distribute their software as a standalone executable program so no one can see their original code.",
-                question: "Why would an interpreter NOT be the best choice for this task? [cite: 173, 174]",
+                question: "Why would an interpreter NOT be the best choice for this task?",
                 options: [
                     "Interpreters do not produce a separate object code file.",
                     "Interpreters translate all lines of code at once.",
                     "Interpreters only work with 1GL languages.",
                     "Interpreters are slower than humans at reading code."
                 ],
-                answer: 0 // Index of 'Interpreters do not produce a separate object code file.' [cite: 201]
+                answer: 0
             },
             {
                 scenario: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish.",
-                question: "This represents which generation? [cite: 179, 180]",
+                question: "This represents which generation?",
                 options: ["First Generation (1GL)", "Second Generation (2GL)", "Third Generation (3GL)", "Fifth Generation (5GL)"],
-                answer: 2 // Index of 'Third Generation (3GL)' [cite: 202]
+                answer: 2
             },
             {
                 scenario: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language.",
-                question: "Is this statement correct based on the provided text? [cite: 185, 186]",
+                question: "Is this statement correct based on the provided text?",
                 options: [
                     "Yes, High Level Languages execute the fastest.",
                     "No, programs written in machine language take less time for execution.",
                     "Yes, because they do not require any translators.",
                     "No, because High Level Languages are machine-dependent."
                 ],
-                answer: 1 // Index of 'No, programs written in machine language take less time for execution.' [cite: 203]
+                answer: 1
             }
         ];
 
@@ -387,10 +387,10 @@
         let questionSet = [];
         let currentIndex = 0;
         let scoreCounter = 0;
-        let timeRemaining = 60; // 60 seconds timer
+        let timeRemaining = 60; 
         let intervalTimerId = null;
         let isAudioMuted = false;
-        let currentAttempts = 0; // Tracking retries on wrong attempts (1 retry allowed, total 2 attempts)
+        let currentAttempts = 0; 
 
         // Sound Resources Setup
         const audioSuccess = new Audio('assets/correct.mp3');
@@ -401,7 +401,7 @@
         const canvasElement = document.getElementById('confetti-canvas');
         const contextObj = canvasElement.getContext('2d');
 
-        // Splash screen rendering timer initialization
+        // Splash screen displaying exactly for 5 seconds (5000ms)
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
@@ -411,12 +411,11 @@
                     document.getElementById('quiz-container').style.display = 'block';
                     launchQuizModule();
                 }, 500);
-            }, 5000); // Screen layout logo required to display for 5 seconds
+            }, 5000); 
         });
 
         // Initialize / Restart Quiz Execution Loop
         function launchQuizModule() {
-            // High diversity selection configuration (Randomized order)
             questionSet = shuffleArray([...rawQuestionData]);
             currentIndex = 0;
             scoreCounter = 0;
@@ -446,7 +445,7 @@
             document.getElementById('quiz-results').style.display = 'none';
             document.getElementById('next-button').style.display = 'none';
 
-            currentAttempts = 0; // Reset validation retries per question frame
+            currentAttempts = 0; 
 
             const item = questionSet[currentIndex];
             document.getElementById('question-scenario').innerText = item.scenario;
@@ -501,12 +500,12 @@
                 disableOptionControls(choiceButtons);
                 revealNavigationButton();
             } else {
-                // Wrong Attempt Tracking Configuration (Allowing exactly 1 retry / 2 total attempts)
+                // Retry Configuration (1 retry after first wrong attempt, total 2 attempts)
                 currentAttempts++;
                 if (currentAttempts < 2) {
                     playFeedbackSound(audioFailure);
                     clickedBtn.classList.add('wrong');
-                    clickedBtn.disabled = true; // Lock only this evaluated wrong node for retry
+                    clickedBtn.disabled = true; 
                 } else {
                     // Maximum retry threshold reached
                     clearInterval(intervalTimerId);
@@ -583,7 +582,7 @@
             const gradePercentage = Math.round((scoreCounter / questionSet.length) * 100);
             scoreLabel.innerText = `You scored: ${scoreCounter} / ${questionSet.length} (${gradePercentage}%)`;
 
-            // Strict matching criteria mapping for status displays
+            // Score Tracker Messages matching functional layout specifications
             if (gradePercentage >= 75) {
                 messageLabel.innerText = "Good job";
                 messageLabel.style.color = "var(--success)";
@@ -642,7 +641,6 @@
                 contextObj.fillRect(-element.dimension / 2, -element.dimension / 2, element.dimension, element.dimension);
                 contextObj.restore();
 
-                // Clear memory leak footprints from expired tracking coordinates
                 if (element.y > canvasElement.height) {
                     particles.splice(i, 1);
                     i--;
