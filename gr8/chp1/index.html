@@ -299,8 +299,7 @@
 <body>
 
     <div id="branding-overlay" onclick="dismissBranding()">
-        <img src="assets/logo.png" alt="Innovine" onerror="this.style.display='none';">
-    
+        <h1>INNOVINE</h1>
     </div>
 
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -313,12 +312,12 @@
 
         <div id="intro-screen" class="screen">
             <h1>Grade 8 ICT Quiz</h1>
-            <h2>Chapter 1: Robotics and AI</h2>
+            <h2>Chapter 1: Software Tools & Licensing</h2>
             
             <div class="meta-info">
                 <p><strong>Subject:</strong> ICT</p>
                 <p><strong>Grade:</strong> 8</p>
-                <p><strong>Focus:</strong> AI Core Fields, Logical Reasoning Types, PictoBlox Interface & Hardware Deployments</p>
+                <p><strong>Focus:</strong> Open-Source vs. Proprietary Software, User Rights, Adapting Code & Applications</p>
                 <p><strong>Total Questions:</strong> 10</p>
                 <p><strong>Rules:</strong> 45 seconds per question. Offers 2 attempts per screen with guided smart hints.</p>
             </div>
@@ -357,87 +356,107 @@
     </div>
 
     <script>
-        // Quiz Schema strictly mapping supplied question records
+        // Quiz Schema mapping the supplied Open-Source and Proprietary software questions
         const quizData = [
             {
-                q: "A machine captures an image, extracts geometrical facial properties, and compares them against a database to identify a person. Which process is this describing?",
-                options: ["A) Machine Learning", "B) Face Detection", "C) Natural Language Processing", "D) Object Detection"],
+                q: "1. A programmer is writing a new software feature. They decide to use a specific type of text editor designed solely for managing program code syntax. What is this tool called?",
+                options: ["A) Open-Source Platform", "B) Source Code Editor", "C) Proprietary Interface", "D) Binary Compiler"],
                 answer: 1,
-                hint: "Think about checking for precise structural details like geometry, eyes, and noses to identify or recognize an individual human face.",
-                explanation: "Correct answer: B) Face Detection. Face detection processes analyze digital images to identify and isolate specific geometric structural features of human faces."
+                hint: "Think of an application meant specifically for writing and editing the raw 'source code' lines of text with features like syntax highlighting.",
+                explanation: "Correct answer: B) Source Code Editor. A Source Code Editor is a text editor program designed specifically for editing source code of software applications."
             },
             {
-                q: "If all rectangles have four right angles, and a square has four right angles, can we conclude a square is a rectangle? Which type of reasoning is used here?",
-                options: ["A) Inductive Reasoning", "B) Deductive Reasoning", "C) Guesswork", "D) Sensory reasoning"],
-                answer: 1,
-                hint: "Consider reasoning that flows down from generalized absolute laws or broad established premises to arrive at a definitive specific conclusion.",
-                explanation: "Correct answer: B) Deductive Reasoning. Deductive reasoning starts with generalized top-level facts or rules to verify and confirm a specific case state."
-            },
-            {
-                q: "A student wants to create a robot that functions independently even when not connected to a computer. Which PictoBlox mode should they use?",
-                options: ["A) Stage Mode", "B) Script Mode", "C) Upload Mode", "D) Interaction Mode"],
+                q: "2. A small non-profit organization needs software that they can modify to fit their specific operational needs without paying high licensing fees. Which category of software is most suitable for them?",
+                options: ["A) Closed-Source Software", "B) Proprietary Software", "C) Open-Source Software", "D) System Software"],
                 answer: 2,
-                hint: "To run autonomously away from a workstation, code must be pushed and burned directly into the board storage chips.",
-                explanation: "Correct answer: C) Upload Mode. Upload mode compiles instructions and stores them internally on the physical robot microcontroller so it can run autonomously without being tethered."
+                hint: "Look for software where the original source code is made freely available and can be legally modified or redistributed by anyone.",
+                explanation: "Correct answer: C) Open-Source Software. Open-Source Software permits users to access, modify, and change the code freely without costly restrictive license payments."
             },
             {
-                q: "You observe that every time you open the fridge, the light turns on. You conclude that the light always turns on when the door opens. What type of reasoning is this?",
-                options: ["A) Deductive", "B) Inductive", "C) Logical", "D) Mechanical"],
+                q: "3. Company 'A' creates a program and keeps its source code strictly confidential. Company 'B' uses this program but cannot fix a minor bug they found. What type of software is Company 'B' using?",
+                options: ["A) Open-Source Software", "B) Proprietary Software", "C) Freeware", "D) Collaborative Software"],
                 answer: 1,
-                hint: "This approach aggregates separate specific everyday observations to establish a generalized rule or ongoing theory.",
-                explanation: "Correct answer: B) Inductive. Inductive reasoning looks at recurrent specific patterns or data points to propose a generalized rule."
+                hint: "This type of software is owned exclusively by an individual or a company, and users are forbidden from viewing or modifying the private code.",
+                explanation: "Correct answer: B) Proprietary Software. Proprietary software keeps its underlying code locked and confidential, preventing regular users from directly modifying it to fix bugs."
             },
             {
-                q: "Which component in PictoBlox is primarily used as the 'puzzle-piece' shape to build a program or script?",
-                options: ["A) Sprite", "B) Stage", "C) Backdrop", "D) Block"],
-                answer: 3,
-                hint: "Think of visual block-based frameworks. Individual syntax statements are interlocked together like colorful physical building modules.",
-                explanation: "Correct answer: D) Block. In PictoBlox, programs are constructed by snapping interlocking visual blocks together into logical operational scripts."
-            },
-            {
-                q: "What is the primary difference between how humans and machines 'sense' their environment?",
+                q: "4. A software developer notices that a program's company has gone out of business, yet the software continues to be updated and improved by users worldwide. Based on this, what can you infer about the software?",
                 options: [
-                    "A) Humans use reasoning; machines use sensors.",
-                    "B) Humans use stimuli; machines cannot sense.",
-                    "C) Machines use reasoning; humans use sensors.",
-                    "D) There is no difference."
-                ],
-                answer: 0,
-                hint: "Humans interpret natural environmental stimuli using sensory organs and logical reasoning, whereas computers rely on mechanical inputs.",
-                explanation: "Correct answer: A) Humans use reasoning; machines use sensors. Humans navigate natural environments via bio-stimuli combined with complex active internal reasoning, while computing units process data from electronic sensors."
-            },
-            {
-                q: "In a script, a user wants to hide the Tobi sprite before analyzing an image. Which category of blocks should they use?",
-                options: ["A) Motion", "B) Looks", "C) Sound", "D) Events"],
-                answer: 1,
-                hint: "Hiding, showing, shifting colors, or changing speech balloons alter the visual rendering of sprites on the screen layout.",
-                explanation: "Correct answer: B) Looks. The Looks group contains blocks that control the visibility, costumes, size, and general visual appearance of stage characters."
-            },
-            {
-                q: "Which of these is NOT a core capability supported by PictoBlox extensions?",
-                options: ["A) Object Detection", "B) Speech Recognition", "C) Human Pose Detection", "D) Manual Reasoning"],
-                answer: 3,
-                hint: "Extensions add powerful smart automated sensing workflows to your project. Look for an option that represents internal human thought processing rather than digital sensory automation.",
-                explanation: "Correct answer: D) Manual Reasoning. Advanced computer vision and text manipulation are handled by specialized AI libraries, but manual human reasoning cannot be added as an integrated automation extension."
-            },
-            {
-                q: "An AI researcher is trying to develop a machine that can 'learn' from new situations without being explicitly programmed for every scenario. What is the greatest challenge mentioned?",
-                options: ["A) Implementing deductive reasoning", "B) Implementing inductive reasoning", "C) Using block-based coding", "D) Capturing images"],
-                answer: 1,
-                hint: "Training an agent to extract generalized knowledge from open-ended real-world datasets is much more difficult than following pre-written top-down rules.",
-                explanation: "Correct answer: B) Implementing inductive reasoning. Teaching computing pipelines how to safely execute generalized inductive conclusions from unstructured environmental data points remains a primary challenge in machine learning research."
-            },
-            {
-                q: "Why would you add an extension in PictoBlox?",
-                options: [
-                    "A) To change the background color.",
-                    "B) To add new block categories for specific AI tasks.",
-                    "C) To delete the Tobi sprite.",
-                    "D) To rename the project."
+                    "A) It is closed-source because it is still functioning.",
+                    "B) It is open-source because the code remains accessible for community improvement.",
+                    "C) It is proprietary software because it has updates.",
+                    "D) It is a trial version of a paid application."
                 ],
                 answer: 1,
-                hint: "Consider how you bring into your workspace specialized high-level operations like Face Answering, Machine Translation, or Computer Vision mechanics.",
-                explanation: "Correct answer: B) To add new block categories for specific AI tasks. Extensions expand the core palette by importing dedicated toolkits designed for specialized AI features like text manipulation or hardware integration."
+                hint: "If a global community of users can step in and continue updating software without the original company, the blueprint must be out in the open.",
+                explanation: "Correct answer: B) It is open-source because the code remains accessible for community improvement. Because it's open-source, the project can stay alive through community development even if the original company shuts down."
+            },
+            {
+                q: "5. If you are comparing Open-Source Software (OSS) and Closed-Source Software (CSS), which of these statements accurately highlights a major disadvantage of OSS?",
+                options: [
+                    "A) OSS always requires a high monthly subscription fee.",
+                    "B) OSS may lack the personalized customer support found in paid proprietary software.",
+                    "C) OSS prevents the user from studying how the program works.",
+                    "D) OSS is always incompatible with other applications."
+                ],
+                answer: 1,
+                hint: "Since OSS is often developed collectively by a decentralized community rather than a commercial company, there is no official help desk phone line included.",
+                explanation: "Correct answer: B) OSS may lack the personalized customer support found in paid proprietary software. Commercial closed-source software typically provides dedicated corporate customer service channels, which open-source alternatives often lack."
+            },
+            {
+                q: "6. Identify the 'Odd One Out' from the list: [Linux, Mozilla Firefox, VLC media player, MS Office].",
+                options: ["A) Linux", "B) Mozilla Firefox", "C) VLC media player", "D) MS Office"],
+                answer: 3,
+                hint: "Three of these selections share a license structure that makes them free and modifiable open-source tools. One requires a paid commercial license from Microsoft.",
+                explanation: "Correct answer: D) MS Office. Linux, Firefox, and VLC are well-known examples of Open-Source Software, whereas MS Office is closed-source commercial proprietary software."
+            },
+            {
+                q: "7. A student uses an educational portal where they can contribute their own notes and edit existing knowledge to help others learn. What is the best classification for this type of resource?",
+                options: [
+                    "A) Proprietary learning database",
+                    "B) Open-source learning portal",
+                    "C) Closed-source educational software",
+                    "D) Source code editor"
+                ],
+                answer: 1,
+                hint: "The description highlights a community-driven environment where the material is transparent and accessible for anyone to review and modify.",
+                explanation: "Correct answer: B) Open-source learning portal. Portals that allow users to openly interact, contribute, share, and edit resources follow the open-source philosophy of community sharing."
+            },
+            {
+                q: "8. Why is the license the most significant factor in distinguishing Open-Source Software (OSS) from proprietary software?",
+                options: [
+                    "A) The license determines whether the software can be used on a computer.",
+                    "B) The license defines the legal rights the user has to access, modify, and share the underlying source code.",
+                    "C) The license determines the color of the software logo.",
+                    "D) The license requires the user to be a professional programmer."
+                ],
+                answer: 1,
+                hint: "A software license is a legal document. Think about what rules it sets regarding viewing the inner blueprint of the application.",
+                explanation: "Correct answer: B) The license defines the legal rights the user has to access, modify, and share the underlying source code. The software license lays out the precise legal boundaries regarding whether you are allowed to modify or look at the code."
+            },
+            {
+                q: "9. Which of the following scenarios best demonstrates the concept of 'adaptation' in Open-Source Software?",
+                options: [
+                    "A) Downloading a paid office suite and using it exactly as provided.",
+                    "B) A user modifies the source code of a media player to add support for a new file format.",
+                    "C) Buying a license for a proprietary design tool.",
+                    "D) Installing an operating system that forbids unauthorized changes."
+                ],
+                answer: 1,
+                hint: "To 'adapt' means to alter or fine-tune an object so that it performs a new task or fits a specific user requirement.",
+                explanation: "Correct answer: B) A user modifies the source code of a media player to add support for a new file format. Changing code to insert a customized feature perfectly captures adaptation."
+            },
+            {
+                q: "10. If you were to differentiate between Open-Source and Closed-Source software based on 'User Rights', which statement is correct?",
+                options: [
+                    "A) Both types give the user equal rights to modify the original code.",
+                    "B) Only open-source software allows the user to study, modify, and redistribute the source code.",
+                    "C) Proprietary software always gives more rights to the user than open-source software.",
+                    "D) Neither type provides rights to redistribute the software."
+                ],
+                answer: 1,
+                hint: "Closed-source models heavily restrict user access to protect their commercial property. Which model grants freedom to distribute your own modifications?",
+                explanation: "Correct answer: B) Only open-source software allows the user to study, modify, and redistribute the source code. Open-source licenses fundamentally guarantee users the freedom to study, tweak, and re-share the code."
             }
         ];
 
@@ -657,15 +676,15 @@
             const percent = (score / quizData.length) * 100;
             
             if (percent === 100) {
-                messageBox.innerText = "Sensational! You achieved a perfect score in Robotics & AI systems knowledge.";
+                messageBox.innerText = "Sensational! You achieved a perfect score in Software & Licensing systems knowledge.";
                 messageBox.style.backgroundColor = "#c6f6d5";
                 messageBox.style.color = "#22543d";
             } else if (percent >= 70) {
-                messageBox.innerText = "Great job! You have a solid understanding of algorithmic logic and block-based development.";
+                messageBox.innerText = "Great job! You have a solid understanding of open-source frameworks and development ecosystems.";
                 messageBox.style.backgroundColor = "#ebf8ff";
                 messageBox.style.color = "#2b6cb0";
             } else {
-                messageBox.innerText = "Keep reviewing! Re-examine inductive/deductive models and hardware modes to strengthen your AI foundations.";
+                messageBox.innerText = "Keep reviewing! Re-examine software rights and the differences between OSS and proprietary systems to strengthen your foundation.";
                 messageBox.style.backgroundColor = "#feebc8";
                 messageBox.style.color = "#c05621";
             }
