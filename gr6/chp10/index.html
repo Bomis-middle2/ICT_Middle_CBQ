@@ -2,705 +2,655 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 8 ICT - Chapter 11 Introduction to C Quiz</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Grade 6 ICT - Chapter 10 Competency-Based Quiz</title>
     <style>
         :root {
-            --primary-color: #0284c7;
-            --primary-hover: #0369a1;
-            --bg-color: #f8fafc;
+            --bg-color: #f4f6f9;
             --card-bg: #ffffff;
-            --text-color: #334155;
-            --text-muted: #64748b;
-            --success-color: #16a34a;
-            --error-color: #dc2626;
-            --border-color: #e2e8f0;
+            --text-color: #212529;
+            --primary: #0d6efd;
+            --success: #198754;
+            --danger: #dc3545;
+            --warning: #ffc107;
+            --border-radius: 12px;
+            --font-family: system-ui, -apple-system, sans-serif;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
+            font-family: var(--font-family);
             background-color: var(--bg-color);
             color: var(--text-color);
             line-height: 1.5;
-            padding: 15px;
+            padding: 16px;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            -webkit-tap-highlight-color: transparent;
         }
 
-        .quiz-container {
-            width: 100%;
-            max-width: 650px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Branding Splash Screen Layout */
-        #branding-overlay {
+        /* Splash Screen Constraints */
+        #splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: #ffffff;
+            background-color: #ffffff;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 9999;
+            z-index: 1000;
             transition: opacity 0.5s ease-out;
-            cursor: pointer;
         }
 
-        #branding-overlay h1 {
-            font-size: 36px;
-            font-weight: 800;
-            letter-spacing: 4px;
-            color: var(--primary-color);
-            animation: pulse 1.5s infinite ease-in-out;
+        #splash-screen img {
+            max-width: 220px;
+            height: auto;
+            margin-bottom: 24px;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(0.97); opacity: 0.8; }
-            50% { transform: scale(1.03); opacity: 1; }
-            100% { transform: scale(0.97); opacity: 0.8; }
-        }
-
-        .hidden { display: none !important; }
-
-        /* Accessibility Audio Control */
-        .audio-control {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: var(--border-color);
-            border: none;
-            padding: 8px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 14px;
+        #splash-screen p {
+            font-size: 1.25rem;
             font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            z-index: 10;
+            color: #495057;
         }
 
-        /* Header Layout Components */
+        /* Clean Layout Container */
+        .quiz-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--card-bg);
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 24px;
+            display: none;
+            position: relative;
+        }
+
+        /* Header Navigation Info */
         .quiz-header {
-            margin-bottom: 20px;
-            border-bottom: 2px solid var(--border-color);
-            padding-bottom: 12px;
-        }
-
-        .tracker-bar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            color: var(--text-muted);
-            margin-bottom: 10px;
-        }
-
-        .timer-wrapper {
-            width: 100%;
-            background-color: var(--border-color);
-            height: 6px;
-            border-radius: 3px;
-            overflow: hidden;
-        }
-
-        .timer-bar {
-            height: 100%;
-            background-color: var(--primary-color);
-            width: 100%;
-            transition: width 1s linear, background-color 0.3s;
-        }
-
-        .timer-warn {
-            background-color: var(--error-color);
-        }
-
-        /* Configuration Panels */
-        .screen h1 {
-            font-size: 26px;
-            color: var(--primary-hover);
-            margin-bottom: 8px;
-            text-align: center;
-        }
-
-        .screen h2 {
-            font-size: 18px;
-            color: var(--text-muted);
             margin-bottom: 20px;
-            text-align: center;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 12px;
         }
 
-        .meta-info {
-            background: var(--bg-color);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
+        .audio-control button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            padding: 4px;
         }
 
-        .meta-info p {
-            margin-bottom: 8px;
-            font-size: 16px;
-        }
-        .meta-info p:last-child { margin-bottom: 0; }
-
-        /* Evaluation Block Styling */
-        .question-text {
-            font-size: 18px;
+        .hud-item {
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--text-color);
+            background: #e9ecef;
+            padding: 6px 12px;
+            border-radius: 20px;
         }
 
+        .timer-warning {
+            background-color: var(--warning) !important;
+            color: #000 !important;
+            animation: pulse 1s infinite alternate;
+        }
+
+        /* Non-scrolling Question Framework */
+        .question-box {
+            margin-bottom: 20px;
+        }
+
+        .scenario {
+            font-style: italic;
+            color: #5c636a;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .question-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        /* Large Touch/Tappable Targets */
         .options-list {
-            list-style: none;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            margin-bottom: 20px;
         }
 
         .option-btn {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
+            background-color: #f8f9fa;
+            border: 2px solid #dee2e6;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            font-size: 1.05rem;
             text-align: left;
-            background: var(--card-bg);
-            border: 2px solid var(--border-color);
-            border-radius: 8px;
             cursor: pointer;
-            font-weight: 500;
             transition: all 0.2s ease;
+            width: 100%;
+            font-weight: 500;
+            color: var(--text-color);
         }
 
         .option-btn:hover:not(:disabled) {
-            background-color: var(--bg-color);
-            border-color: var(--text-muted);
-        }
-
-        .option-btn.selected {
-            border-color: var(--primary-color);
-            background-color: #f0f9ff;
+            background-color: #e9ecef;
+            border-color: #ced4da;
         }
 
         .option-btn.correct {
-            border-color: var(--success-color);
-            background-color: #f0fdf4;
-            color: #14532d;
-            font-weight: bold;
+            background-color: #d1e7dd !important;
+            border-color: var(--success) !important;
+            color: #0f5132 !important;
         }
 
-        .option-btn.incorrect {
-            border-color: var(--error-color);
-            background-color: #fef2f2;
-            color: #7f1d1d;
+        .option-btn.wrong {
+            background-color: #f8d7da !important;
+            border-color: var(--danger) !important;
+            color: #842029 !important;
         }
 
-        /* Information Context Panels */
-        .feedback-box {
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 15px;
-            font-weight: 500;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .feedback-box.hint {
-            background-color: #fef3c7;
-            color: #92400e;
-            border-left: 4px solid #d97706;
-        }
-
-        .feedback-box.solution {
-            background-color: #f1f5f9;
-            color: #1e293b;
-            border-left: 4px solid #475569;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Global Execution Controls */
-        .action-btn {
-            display: block;
-            width: 100%;
-            padding: 16px;
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-            background-color: var(--primary-color);
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-align: center;
-            transition: background 0.2s;
-        }
-
-        .action-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        .action-btn:disabled {
-            background-color: var(--border-color);
-            color: var(--text-muted);
+        .option-btn:disabled {
             cursor: not-allowed;
+            opacity: 0.85;
         }
 
-        /* Evaluation View Display Layout */
-        .result-msg {
-            font-size: 20px;
-            font-weight: bold;
+        /* Action Panel Footer */
+        .quiz-footer {
+            margin-top: 24px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .next-btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            font-size: 1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            display: none;
+        }
+
+        .next-btn:hover {
+            background-color: #0b5ed7;
+        }
+
+        /* Summary Evaluation Container */
+        .results-box {
             text-align: center;
-            margin: 20px 0;
-            padding: 15px;
-            border-radius: 8px;
+            padding: 20px 0;
+        }
+
+        .results-box h2 {
+            font-size: 2rem;
+            margin-bottom: 12px;
+        }
+
+        .feedback-msg {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 16px 0;
         }
 
         .score-display {
-            font-size: 48px;
-            font-weight: 800;
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 20px;
+            font-size: 1.5rem;
+            margin-bottom: 24px;
         }
 
+        .restart-btn {
+            background-color: var(--success);
+            color: white;
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+        }
+
+        /* Canvas Particle Layout overlay */
+        #confetti-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        @keyframes pulse {
+            from { transform: scale(1); }
+            to { transform: scale(1.03); }
+        }
+
+        /* Screen Scaling Fixes */
         @media (max-width: 480px) {
-            body { padding: 10px; }
+            body { padding: 8px; }
             .quiz-container { padding: 16px; }
-            .screen h1 { font-size: 22px; }
-            .question-text { font-size: 16px; }
-            .option-btn { padding: 14px; font-size: 15px; }
-            .action-btn { padding: 14px; font-size: 16px; }
+            .option-btn { padding: 14px; font-size: 1rem; }
+            .question-text { font-size: 1.05rem; }
         }
     </style>
 </head>
 <body>
 
-    <div id="branding-overlay" onclick="dismissBranding()">
-        <img src="assets/innovine-logo.png" alt="Innovine" onerror="this.style.display='none';">
-       
+    <canvas id="confetti-canvas"></canvas>
+
+    <div id="splash-screen">
+        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
+        <p>Computer Languages - Chapter 10 Quiz</p>
     </div>
 
-    <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
-    <audio id="audio-wrong" src="assets/wrong.mp3" preload="auto"></audio>
-
-    <div class="quiz-container">
-        <button class="audio-control" id="audio-toggle" onclick="toggleMute()">
-            <span id="audio-icon">🔊</span> <span id="audio-text">Mute</span>
-        </button>
-
-        <div id="intro-screen" class="screen">
-            <h1>Grade 8 ICT Quiz</h1>
-            <h2>Chapter 11: Introduction to C</h2>
-            
-            <div class="meta-info">
-                <p><strong>Subject:</strong> ICT / Computer Science</p>
-                <p><strong>Grade:</strong> 8</p>
-                <p><strong>Focus:</strong> Compilation Stages, Identifiers & Keywords, Data Types, Modulo, Logical Operators, and Increment Syntax</p>
-                <p><strong>Total Questions:</strong> 15</p>
-                <p><strong>Rules:</strong> Includes a 45-second running timer bar per view. Contains a 2-stage submit workflow with interactive conceptual hints.</p>
+    <div class="quiz-container" id="quiz-container">
+        
+        <div class="quiz-header">
+            <div class="audio-control">
+                <button id="mute-toggle" aria-label="Toggle mute state">🔊</button>
             </div>
-
-            <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
+            <div class="hud-item" id="score-tracker">Score: 0/12</div>
+            <div class="hud-item" id="timer">Time: 60s</div>
         </div>
 
-        <div id="quiz-screen" class="screen hidden">
-            <div class="quiz-header">
-                <div class="tracker-bar">
-                    <span id="question-number">Question 1/15</span>
-                    <span id="score-tracker">Score: 0</span>
-                </div>
-                <div class="timer-wrapper">
-                    <div id="timer-bar" class="timer-bar"></div>
-                </div>
+        <div id="quiz-gameplay">
+            <div class="question-box">
+                <div class="scenario" id="question-scenario">Scenario Loading...</div>
+                <div class="question-text" id="question-main">Question prompt loading...</div>
             </div>
 
-            <div id="question-container">
-                <p class="question-text" id="question-text">Question context text container?</p>
-                <div class="options-list" id="options-list"></div>
+            <div class="options-list" id="options-container">
+                </div>
+
+            <div class="quiz-footer">
+                <button class="next-btn" id="next-button">Next Question</button>
             </div>
-
-            <div id="feedback-box" class="feedback-box hidden"></div>
-
-            <button class="action-btn" id="submit-next-btn" onclick="handleSubmitOrNext()" disabled>Submit Answer</button>
         </div>
 
-        <div id="result-screen" class="screen hidden">
-            <h1>Evaluation Complete!</h1>
-            <div class="score-display" id="final-score">0/15</div>
-            <div id="result-message" class="result-msg"></div>
-            
-            <button class="action-btn" onclick="restartQuiz()">Restart Quiz</button>
+        <div id="quiz-results" style="display: none;" class="results-box">
+            <h2>Quiz Evaluation</h2>
+            <div class="score-display" id="final-score">Score: 0 / 12 (0%)</div>
+            <div class="feedback-msg" id="feedback-message">Message</div>
+            <button class="restart-btn" id="restart-button">Try Again</button>
         </div>
     </div>
 
     <script>
-        // Quiz Data array directly compiled from the supplied text schema
-        const quizData = [
+        // Data Bank mapped strictly from 'G6_ICT_Chapter 10_MCQs.docx' [cite: 114, 115]
+        const rawQuestionData = [
             {
-                q: "A student is creating a student grading system and needs to declare a variable to store the student's first name. According to the rules of C, which of the following is a valid variable name?",
-                options: ["A) 1st_name", "B) first name", "C) first_name", "D) char"],
-                answer: 2,
-                hint: "Variable names cannot start with numbers, cannot contain blank spaces, and cannot be reserved keywords.",
-                explanation: "Correct answer: C) first_name. C variable identifiers can include letters, digits, and underscores, but must begin with a letter or underscore."
+                scenario: "You wrote a program on an old computer using its native binary code (0s and 1s). When you try to run it on a new computer with a different processor, it doesn't work.",
+                question: "What is the main reason for this? [cite: 116, 117, 118]",
+                options: [
+                    "Machine language requires an interpreter.",
+                    "Machine language is machine-dependent.",
+                    "Machine language programs take too long to execute.",
+                    "Machine language uses English-like mnemonics."
+                ],
+                answer: 1 // Index of 'Machine language is machine-dependent.' [cite: 192]
             },
             {
-                q: "A developer finishes writing the source code for a new C application. After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
-                options: ["A) Preprocessor", "B) Compiler", "C) Linker", "D) Interpreter"],
-                answer: 2,
-                hint: "Think of the compilation stage that acts as a bridge to 'link' compiled binary blocks with standard library definitions.",
-                explanation: "Correct answer: C) Linker. The linker joins machine code object files (.obj/.o) with library dependencies to output the executable binary file."
+                scenario: "A software developer is writing a program in Python. Upon running the code, the execution stops immediately on line 15 because of a typo, and an error message is displayed.",
+                question: "Which type of translator is Python most likely using? [cite: 123, 124, 125]",
+                options: ["Compiler", "Assembler", "Interpreter", "Linker"],
+                answer: 2 // Index of 'Interpreter' [cite: 193]
             },
             {
-                q: "You are building a weather application that reads temperature from a sensor. The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
-                options: ["A) int", "B) float", "C) double", "D) char"],
-                answer: 1,
-                hint: "While 'double' handles fractional values using 8 bytes, this data type represents single-precision decimals in exactly 4 bytes.",
-                explanation: "Correct answer: B) float. The float data type stores numbers with fractional decimal digits and occupies 4 bytes of system memory."
+                scenario: "A gaming company writes a massive software program in C++. Before releasing it to the public, they translate the entire source code into an executable machine language file all at once.",
+                question: "What translator did they use? [cite: 130, 131, 132]",
+                options: ["Assembler", "Compiler", "Interpreter", "Web Browser"],
+                answer: 1 // Index of 'Compiler' [cite: 194]
             },
             {
-                q: "In a physics simulation program, you need to use the value of Pi (3.14159). To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
-                options: ["A) As a standard float variable", "B) As a constant", "C) As an integer", "D) As a keyword"],
-                answer: 1,
-                hint: "Look for an immutable data type definition modifier that flags values as read-only.",
-                explanation: "Correct answer: B) As a constant. Defining a value as a constant (e.g., using the 'const' keyword or #define) prevents changes during execution runtime."
+                scenario: "You are managing a database using SQL. You type a simple query specifying exactly what data you need (e.g., 'SELECT names'), without writing the step-by-step logic on how the computer should fetch it.",
+                question: "This is a characteristic of which generation of languages? [cite: 137, 138]",
+                options: ["First Generation (1GL)", "Second Generation (2GL)", "Third Generation (3GL)", "Fourth Generation (4GL)"],
+                answer: 3 // Index of 'Fourth Generation (4GL)' [cite: 195]
             },
             {
-                q: "A banking app is designed to deposit money into an account. However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
-                options: ["A) Syntax error", "B) Compilation error", "C) Logical error", "D) Preprocessing error"],
-                answer: 2,
-                hint: "This type of defect doesn't break formal language code grammar rules, but it outputs incorrect calculation logic results.",
-                explanation: "Correct answer: C) Logical error. A logical error happens when the program runs smoothly but produces incorrect outcomes due to faulty code equations."
+                scenario: "A programmer is working with a language that uses short abbreviations or mnemonics like 'ADD A, Y' and 'SUB A, B'.",
+                question: "To make the computer hardware understand it, they need a specific translator. Which one? [cite: 143, 144]",
+                options: ["Assembler", "Compiler", "Interpreter", "Object Coder"],
+                answer: 0 // Index of 'Assembler' [cite: 196]
             },
             {
-                q: "A junior programmer writes 'int age = 15' at the end of a line but forgets to add a semicolon. When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
-                options: ["A) Syntax error", "B) Logical error", "C) Linking error", "D) Execution error"],
-                answer: 0,
-                hint: "Semicolons are fundamental grammatical structural requirements used to end code statements in C.",
-                explanation: "Correct answer: A) Syntax error. Breaking the grammar rules of a programming language, like omitting a mandatory semicolon statement terminator, causes a syntax error."
+                scenario: "A research team is developing a decision-making artificial intelligence (AI) system. They are using constraint-based programming languages like Prolog with visual tools.",
+                question: "Which generation of languages are they working with? [cite: 149, 150]",
+                options: ["Second Generation Language", "Third Generation Language", "Fourth Generation Language", "Fifth Generation Language"],
+                answer: 3 // Index of 'Fifth Generation Language' [cite: 197]
             },
             {
-                q: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero. Which operator is used specifically to find the remainder of an integer division?",
-                options: ["A) /", "B) &&", "C) %", "D) =="],
-                answer: 2,
-                hint: "The forward slash (/) yields the regular division quotient, but this percentage symbol isolates the remainder integer.",
-                explanation: "Correct answer: C) %. The modulus operator (%) divides two integers and returns the remainder value left over."
+                scenario: "Your school wants to teach a programming language that is easy to learn, uses English-like mathematical phrases, and allows the written program to run on Windows, Mac, and Linux computers.",
+                question: "What broad category of language should they choose? [cite: 155, 156]",
+                options: ["High Level Language", "Low Level Language", "Assembly Language", "Machine Language"],
+                answer: 0 // Index of 'High Level Language' [cite: 198]
             },
             {
-                q: "A software company writes a C program to control smart home devices on a Windows machine. Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
-                options: ["A) It is a low-level language.", "B) It has 32 keywords.", "C) It is highly portable.", "D) It only uses 0s and 1s."],
-                answer: 1,
-                hint: "This term describes software architecture that can compile and execute across different computer processor platforms easily.",
-                explanation: "Correct answer: C) It is highly portable. Portability means C programs can target diverse operating frameworks and hardware chips with few adjustments."
+                scenario: "While reading an article about the history of computing algorithms for the Analytical Engine, you learn about the person widely considered to be the first computer programmer.",
+                question: "Who is it? [cite: 161, 162]",
+                options: ["Charles Babbage", "Lady Ada Lovelace", "Bill Gates", "Charles Bachman"],
+                answer: 1 // Index of 'Lady Ada Lovelace' [cite: 199]
             },
             {
-                q: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line. Which escape sequence must you insert into your printf() statement?",
-                options: ["A) \\t", "B) \\n", "C) \\a", "D) \\b"],
-                options_clean: ["A) \t", "B) \n", "C) \a", "D) \b"],
-                answer: 1,
-                hint: "The '\\t' escape sequence inserts a horizontal layout tab, while this specific sequence jumps down to a clean line.",
-                explanation: "Correct answer: B) \\n. In string formatting, '\\n' triggers a newline character command, moving the text output cursor to the start of the next line."
+                scenario: "After successfully writing a C++ program, the translator processes your human-readable 'source code' so the computer can execute it without needing the source code again.",
+                question: "What is the resulting machine-readable code called? [cite: 167, 168]",
+                options: ["Assembly code", "Mnemonic code", "Object code", "Visual code"],
+                answer: 2 // Index of 'Object code' [cite: 200]
             },
             {
-                q: "A teacher wants to display a student's grade stored in the variable 'char grade = 'A';'. Which format specifier is required in the printf() function to print this specific data type?",
-                options: ["A) %d", "B) %f", "C) %s", "D) %c"],
-                answer: 3,
-                hint: "While '%d' tracks decimal integers and '%f' marks floating points, this specifier is tailored to separate single string characters.",
-                explanation: "Correct answer: D) %c. The '%c' placeholder format specifier is utilized to read or write a single character data byte in C."
+                scenario: "A developer wants to distribute their software as a standalone executable program so no one can see their original code.",
+                question: "Why would an interpreter NOT be the best choice for this task? [cite: 173, 174]",
+                options: [
+                    "Interpreters do not produce a separate object code file.",
+                    "Interpreters translate all lines of code at once.",
+                    "Interpreters only work with 1GL languages.",
+                    "Interpreters are slower than humans at reading code."
+                ],
+                answer: 0 // Index of 'Interpreters do not produce a separate object code file.' [cite: 201]
             },
             {
-                q: "You are writing a program to check if a user is eligible for a teen discount. Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
-                options: ["A) ||", "B) !=", "C) &&", "D) =="],
-                answer: 2,
-                hint: "The double pipe symbol (||) stands for logical OR. Look for the double ampersand notation used to mandate that both side checks evaluate to true.",
-                explanation: "Correct answer: C) &&. The logical AND operator (&&) returns true only if both expressions evaluate as true."
+                scenario: "You are teaching a beginner how to write instructions using English-like words in a step-by-step manner (e.g., using languages like C or Java) to tell the computer exactly what to accomplish.",
+                question: "This represents which generation? [cite: 179, 180]",
+                options: ["First Generation (1GL)", "Second Generation (2GL)", "Third Generation (3GL)", "Fifth Generation (5GL)"],
+                answer: 2 // Index of 'Third Generation (3GL)' [cite: 202]
             },
             {
-                q: "A programmer attempts to create a variable to hold the interest rate and names it 'double'. The compiler immediately throws an error. Why is this variable name invalid?",
-                options: ["A) It exceeds 31 characters.", "B) It contains a special symbol.", "C) 'double' is a reserved keyword in C.", "D) It does not start with an underscore."],
-                answer: 2,
-                hint: "Words that declare system operations and data types are locked by the language interpreter environment and cannot double as variable names.",
-                explanation: "Correct answer: C) 'double' is a reserved keyword in C. Reserved keywords have specific predefined meanings in C and cannot be repurposed as user variables."
-            },
-            {
-                q: "You are reviewing a large C program consisting of multiple functions. To trace the flow of the program, you need to know where the execution begins. Which mandatory function should you look for?",
-                options: ["A) start()", "B) printf()", "C) include()", "D) main()"],
-                answer: 3,
-                hint: "Every standalone C code application runtime starts execution inside this exact root functional block.",
-                explanation: "Correct answer: D) main(). The main() function acts as the mandatory point of entry where all C programs begin execution processing."
-            },
-            {
-                q: "In a ticketing queue system, the current ticket number is 10 ('ticket = 10;'). The system uses the pre-increment operator to assign the next ticket: 'next_ticket = ++ticket;'. What is the value assigned to 'next_ticket'?",
-                options: ["A) 10", "B) 11", "C) 9", "D) 12"],
-                answer: 1,
-                hint: "Pre-increment means the value is added to first before the assignment expression finishes processing.",
-                explanation: "Correct answer: B) 11. The prefix increment operator (++ticket) adds 1 to the variable immediately, evaluating to 11 before assigning it to next_ticket."
-            },
-            {
-                q: "While debugging, you want to temporarily disable a block of 5 lines of code without deleting them. Which symbols should you use to enclose these lines?",
-                options: ["A) // and //", "B) /* and */", "C) { and }", "D) # and #"],
-                answer: 1,
-                hint: "Double slashes (//) disable text line by line, but these nested wrapper tags format multi-line comment blocks.",
-                explanation: "Correct answer: B) /* and */. Multi-line comments start with '/*' and close with '*/', causing the compiler to skip everything in between."
+                scenario: "A computer science student claims that High Level Languages are completely superior because they execute faster than Machine Language.",
+                question: "Is this statement correct based on the provided text? [cite: 185, 186]",
+                options: [
+                    "Yes, High Level Languages execute the fastest.",
+                    "No, programs written in machine language take less time for execution.",
+                    "Yes, because they do not require any translators.",
+                    "No, because High Level Languages are machine-dependent."
+                ],
+                answer: 1 // Index of 'No, programs written in machine language take less time for execution.' [cite: 203]
             }
         ];
 
-        // Global State Tracker Scope
-        let currentQuestionIndex = 0;
-        let score = 0;
-        let attemptCount = 0;
-        let selectedOptionIndex = null;
-        let timerInterval = null;
-        let timeLeft = 45; 
-        let isMuted = false;
+        // Core App Context States
+        let questionSet = [];
+        let currentIndex = 0;
+        let scoreCounter = 0;
+        let timeRemaining = 60; // 60 seconds timer
+        let intervalTimerId = null;
+        let isAudioMuted = false;
+        let currentAttempts = 0; // Tracking retries on wrong attempts (1 retry allowed, total 2 attempts)
 
-        // Overlay Auto-Dismiss Mechanics
-        let brandingTimer = setTimeout(dismissBranding, 4000);
+        // Sound Resources Setup
+        const audioSuccess = new Audio('assets/correct.mp3');
+        const audioFailure = new Audio('assets/wrong.mp3');
 
-        function dismissBranding() {
-            if (brandingTimer) clearTimeout(brandingTimer);
-            const overlay = document.getElementById('branding-overlay');
-            if (overlay) {
-                overlay.style.opacity = '0';
-                setTimeout(() => overlay.style.display = 'none', 500);
+        // Confetti Engine Assets
+        let particles = [];
+        const canvasElement = document.getElementById('confetti-canvas');
+        const contextObj = canvasElement.getContext('2d');
+
+        // Splash screen rendering timer initialization
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                const splash = document.getElementById('splash-screen');
+                splash.style.opacity = '0';
+                setTimeout(() => {
+                    splash.style.display = 'none';
+                    document.getElementById('quiz-container').style.display = 'block';
+                    launchQuizModule();
+                }, 500);
+            }, 5000); // Screen layout logo required to display for 5 seconds
+        });
+
+        // Initialize / Restart Quiz Execution Loop
+        function launchQuizModule() {
+            // High diversity selection configuration (Randomized order)
+            questionSet = shuffleArray([...rawQuestionData]);
+            currentIndex = 0;
+            scoreCounter = 0;
+            updateHudDisplay();
+            renderQuestion();
+        }
+
+        // Shuffle logic helper
+        function shuffleArray(arr) {
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
             }
+            return arr;
         }
 
-        // Web Audio Interfaces
-        function playSound(type) {
-            if (isMuted) return;
-            const sound = document.getElementById(type === 'correct' ? 'audio-correct' : 'audio-wrong');
-            if (sound) {
-                sound.currentTime = 0;
-                sound.play().catch(() => {});
-            }
+        function updateHudDisplay() {
+            document.getElementById('score-tracker').innerText = `Score: ${scoreCounter}/${questionSet.length}`;
         }
 
-        function toggleMute() {
-            isMuted = !isMuted;
-            document.getElementById('audio-icon').innerText = isMuted ? "🔇" : "🔊";
-            document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
-        }
+        // Question Render Frame logic
+        function renderQuestion() {
+            clearInterval(intervalTimerId);
+            document.getElementById('timer').classList.remove('timer-warning');
+            
+            document.getElementById('quiz-gameplay').style.display = 'block';
+            document.getElementById('quiz-results').style.display = 'none';
+            document.getElementById('next-button').style.display = 'none';
 
-        // Core App Flow Routing
-        function startQuiz() {
-            document.getElementById('intro-screen').classList.add('hidden');
-            document.getElementById('quiz-screen').classList.remove('hidden');
-            currentQuestionIndex = 0;
-            score = 0;
-            loadQuestion();
-        }
+            currentAttempts = 0; // Reset validation retries per question frame
 
-        function loadQuestion() {
-            resetTimer();
-            attemptCount = 0;
-            selectedOptionIndex = null;
-            
-            const currentQ = quizData[currentQuestionIndex];
-            
-            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
-            document.getElementById('score-tracker').innerText = `Score: ${score}`;
-            document.getElementById('question-text').innerText = currentQ.q;
-            
-            const optionsContainer = document.getElementById('options-list');
-            optionsContainer.innerHTML = '';
-            
-            currentQ.options.forEach((optionText, index) => {
-                const btn = document.createElement('button');
-                btn.className = 'option-btn';
-                btn.innerText = optionText;
-                btn.onclick = () => selectOption(index);
-                optionsContainer.appendChild(btn);
+            const item = questionSet[currentIndex];
+            document.getElementById('question-scenario').innerText = item.scenario;
+            document.getElementById('question-main').innerText = item.question;
+
+            const targetBox = document.getElementById('options-container');
+            targetBox.innerHTML = '';
+
+            item.options.forEach((choice, index) => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = 'option-btn';
+                optionBtn.innerText = choice;
+                optionBtn.setAttribute('data-idx', index);
+                optionBtn.addEventListener('click', () => processAnswerSelection(index, optionBtn));
+                targetBox.appendChild(optionBtn);
             });
 
-            const feedbackBox = document.getElementById('feedback-box');
-            feedbackBox.innerText = '';
-            feedbackBox.className = 'feedback-box';
-            feedbackBox.classList.add('hidden');
-            
-            const submitBtn = document.getElementById('submit-next-btn');
-            submitBtn.innerText = "Submit Answer";
-            submitBtn.disabled = true;
+            // Timer tracking parameters
+            timeRemaining = 60;
+            const timerHUD = document.getElementById('timer');
+            timerHUD.innerText = `Time: ${timeRemaining}s`;
 
-            startTimer();
-        }
+            intervalTimerId = setInterval(() => {
+                timeRemaining--;
+                timerHUD.innerText = `Time: ${timeRemaining}s`;
 
-        function selectOption(index) {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (submitBtn.innerText !== "Submit Answer") return; 
-            
-            selectedOptionIndex = index;
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            buttons.forEach((btn, i) => {
-                btn.classList.toggle('selected', i === index);
-            });
-            submitBtn.disabled = false;
-        }
-
-        function handleSubmitOrNext() {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (submitBtn.innerText === "Submit Answer") {
-                submitAnswer();
-            } else if (submitBtn.innerText === "Next Question") {
-                currentQuestionIndex++;
-                loadQuestion();
-            } else if (submitBtn.innerText === "View Results") {
-                showResults();
-            }
-        }
-
-        function submitAnswer() {
-            resetTimer();
-            const currentQ = quizData[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            const feedbackBox = document.getElementById('feedback-box');
-            
-            attemptCount++;
-
-            if (selectedOptionIndex === currentQ.answer) {
-                playSound('correct');
-                confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                
-                buttons[selectedOptionIndex].classList.remove('selected');
-                buttons[selectedOptionIndex].classList.add('correct');
-                
-                score++;
-                document.getElementById('score-tracker').innerText = `Score: ${score}`;
-                
-                feedbackBox.innerText = "Correct! Excellent technical precision.";
-                feedbackBox.className = "feedback-box solution";
-                feedbackBox.classList.remove('hidden');
-                
-                lockOptions();
-                setNextState();
-            } else {
-                playSound('wrong');
-                buttons[selectedOptionIndex].classList.remove('selected');
-                buttons[selectedOptionIndex].classList.add('incorrect');
-
-                if (attemptCount === 1) {
-                    feedbackBox.innerText = `💡 Hint: ${currentQ.hint}`;
-                    feedbackBox.className = "feedback-box hint";
-                    feedbackBox.classList.remove('hidden');
-                    document.getElementById('submit-next-btn').disabled = true;
-                    startTimer(); 
-                } else {
-                    buttons[currentQ.answer].classList.add('correct');
-                    feedbackBox.innerText = currentQ.explanation;
-                    feedbackBox.className = "feedback-box solution";
-                    feedbackBox.classList.remove('hidden');
-                    
-                    lockOptions();
-                    setNextState();
+                if (timeRemaining <= 10) {
+                    timerHUD.classList.add('timer-warning');
                 }
-            }
-        }
 
-        function handleTimeOut() {
-            attemptCount = 2;
-            const currentQ = quizData[currentQuestionIndex];
-            const buttons = document.querySelectorAll('.options-list .option-btn');
-            const feedbackBox = document.getElementById('feedback-box');
-            
-            playSound('wrong');
-            buttons[currentQ.answer].classList.add('correct');
-            
-            feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
-            feedbackBox.className = "feedback-box solution";
-            feedbackBox.classList.remove('hidden');
-            
-            lockOptions();
-            setNextState();
-        }
-
-        function startTimer() {
-            timeLeft = 45;
-            const timerBar = document.getElementById('timer-bar');
-            timerBar.classList.remove('timer-warn');
-            timerBar.style.width = '100%';
-
-            timerInterval = setInterval(() => {
-                timeLeft--;
-                const percent = (timeLeft / 45) * 100;
-                timerBar.style.width = `${percent}%`;
-
-                if (timeLeft <= 10) timerBar.classList.add('timer-warn');
-
-                if (timeLeft <= 0) {
-                    clearInterval(timerInterval);
-                    handleTimeOut();
+                if (timeRemaining <= 0) {
+                    clearInterval(intervalTimerId);
+                    handleTimerExpiration();
                 }
             }, 1000);
         }
 
-        function resetTimer() {
-            if (timerInterval) clearInterval(timerInterval);
+        // Core processing/grading mechanics
+        function processAnswerSelection(selectedIndex, clickedBtn) {
+            const currentItem = questionSet[currentIndex];
+            const targetBox = document.getElementById('options-container');
+            const choiceButtons = targetBox.querySelectorAll('.option-btn');
+
+            if (selectedIndex === currentItem.answer) {
+                // Success Path Execution
+                clearInterval(intervalTimerId);
+                clickedBtn.classList.add('correct');
+                playFeedbackSound(audioSuccess);
+                triggerConfettiBurst();
+                scoreCounter++;
+                updateHudDisplay();
+                disableOptionControls(choiceButtons);
+                revealNavigationButton();
+            } else {
+                // Wrong Attempt Tracking Configuration (Allowing exactly 1 retry / 2 total attempts)
+                currentAttempts++;
+                if (currentAttempts < 2) {
+                    playFeedbackSound(audioFailure);
+                    clickedBtn.classList.add('wrong');
+                    clickedBtn.disabled = true; // Lock only this evaluated wrong node for retry
+                } else {
+                    // Maximum retry threshold reached
+                    clearInterval(intervalTimerId);
+                    clickedBtn.classList.add('wrong');
+                    choiceButtons[currentItem.answer].classList.add('correct');
+                    playFeedbackSound(audioFailure);
+                    disableOptionControls(choiceButtons);
+                    revealNavigationButton();
+                }
+            }
         }
 
-        function lockOptions() {
-            const buttons = document.querySelectorAll('.options-list .option-btn');
+        function handleTimerExpiration() {
+            const currentItem = questionSet[currentIndex];
+            const targetBox = document.getElementById('options-container');
+            const choiceButtons = targetBox.querySelectorAll('.option-btn');
+            
+            playFeedbackSound(audioFailure);
+            choiceButtons[currentItem.answer].classList.add('correct');
+            disableOptionControls(choiceButtons);
+            revealNavigationButton();
+        }
+
+        function disableOptionControls(buttons) {
             buttons.forEach(btn => btn.disabled = true);
         }
 
-        function setNextState() {
-            const submitBtn = document.getElementById('submit-next-btn');
-            if (currentQuestionIndex < quizData.length - 1) {
-                submitBtn.innerText = "Next Question";
+        function revealNavigationButton() {
+            const nextButton = document.getElementById('next-button');
+            if (currentIndex < questionSet.length - 1) {
+                nextButton.innerText = "Next Question";
             } else {
-                submitBtn.innerText = "View Results";
+                nextButton.innerText = "View Results";
             }
-            submitBtn.disabled = false;
+            nextButton.style.display = 'block';
         }
 
-        function showResults() {
-            document.getElementById('quiz-screen').classList.add('hidden');
-            document.getElementById('result-screen').classList.remove('hidden');
-            
-            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
-            const messageBox = document.getElementById('result-message');
-            const percent = (score / quizData.length) * 100;
-            
-            if (percent === 100) {
-                messageBox.innerText = "Perfect! You have a profound command of foundational C programming and syntax rules.";
-                messageBox.style.backgroundColor = "#dcfce7";
-                messageBox.style.color = "#14532d";
-            } else if (percent >= 70) {
-                messageBox.innerText = "Great job! You clearly understand identifiers, operators, and formatting layouts.";
-                messageBox.style.backgroundColor = "#e0f2fe";
-                messageBox.style.color = "#0369a1";
+        // Interface events binding
+        document.getElementById('next-button').addEventListener('click', () => {
+            if (currentIndex < questionSet.length - 1) {
+                currentIndex++;
+                renderQuestion();
             } else {
-                messageBox.innerText = "Good try! Spend some time reviewing reserved words, operator precedence, and formats to build your skills.";
-                messageBox.style.backgroundColor = "#fef3c7";
-                messageBox.style.color = "#92400e";
+                renderFinalSummaryScore();
+            }
+        });
+
+        document.getElementById('restart-button').addEventListener('click', () => {
+            launchQuizModule();
+        });
+
+        // Audio controller definitions
+        function playFeedbackSound(audioNode) {
+            if (!isAudioMuted) {
+                audioNode.currentTime = 0;
+                audioNode.play().catch(err => console.log("Audio presentation delayed initialization:", err));
             }
         }
 
-        function restartQuiz() {
-            document.getElementById('result-screen').classList.add('hidden');
-            document.getElementById('intro-screen').classList.remove('hidden');
+        document.getElementById('mute-toggle').addEventListener('click', () => {
+            isAudioMuted = !isAudioMuted;
+            document.getElementById('mute-toggle').innerText = isAudioMuted ? '🔇' : '🔊';
+        });
+
+        // Grading and Final summary scoring criteria matching thresholds
+        function renderFinalSummaryScore() {
+            clearInterval(intervalTimerId);
+            document.getElementById('quiz-gameplay').style.display = 'none';
+            
+            const resultsBox = document.getElementById('quiz-results');
+            const scoreLabel = document.getElementById('final-score');
+            const messageLabel = document.getElementById('feedback-message');
+            
+            const gradePercentage = Math.round((scoreCounter / questionSet.length) * 100);
+            scoreLabel.innerText = `You scored: ${scoreCounter} / ${questionSet.length} (${gradePercentage}%)`;
+
+            // Strict matching criteria mapping for status displays
+            if (gradePercentage >= 75) {
+                messageLabel.innerText = "Good job";
+                messageLabel.style.color = "var(--success)";
+                triggerConfettiBurst();
+                setTimeout(triggerConfettiBurst, 350);
+            } else if (gradePercentage >= 40) {
+                messageLabel.innerText = "Review this chapter and try again";
+                messageLabel.style.color = "var(--warning)";
+            } else {
+                messageLabel.innerText = "Let’s practise more";
+                messageLabel.style.color = "var(--danger)";
+            }
+
+            resultsBox.style.display = 'block';
         }
+
+        /* Particle Vector Confetti System */
+        function adjustCanvasSize() {
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
+        }
+        window.addEventListener('resize', adjustCanvasSize);
+        adjustCanvasSize();
+
+        function triggerConfettiBurst() {
+            const burstCount = 75;
+            const palette = ['#0d6efd', '#198754', '#ffc107', '#dc3545', '#fd7e14', '#6f42c1'];
+            
+            for (let i = 0; i < burstCount; i++) {
+                particles.push({
+                    x: Math.random() * canvasElement.width,
+                    y: -20 - (Math.random() * 30),
+                    dimension: (Math.random() * 6) + 5,
+                    color: palette[Math.floor(Math.random() * palette.length)],
+                    vectorX: (Math.random() * 4) - 2,
+                    vectorY: (Math.random() * 4) + 4,
+                    angle: Math.random() * 360,
+                    rotationSpeed: (Math.random() * 3) - 1.5
+                });
+            }
+        }
+
+        function runParticleRenderLoop() {
+            contextObj.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            
+            for (let i = 0; i < particles.length; i++) {
+                const element = particles[i];
+                element.y += element.vectorY;
+                element.x += element.vectorX;
+                element.angle += element.rotationSpeed;
+
+                contextObj.save();
+                contextObj.translate(element.x, element.y);
+                contextObj.rotate(element.angle * Math.PI / 180);
+                contextObj.fillStyle = element.color;
+                contextObj.fillRect(-element.dimension / 2, -element.dimension / 2, element.dimension, element.dimension);
+                contextObj.restore();
+
+                // Clear memory leak footprints from expired tracking coordinates
+                if (element.y > canvasElement.height) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(runParticleRenderLoop);
+        }
+        runParticleRenderLoop();
     </script>
 </body>
 </html>
