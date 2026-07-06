@@ -441,6 +441,7 @@
         ];
 
         // Global State Tracker Scope
+        let activeQuestions = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let attemptCount = 0;
@@ -477,10 +478,21 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
+        // Fisher-Yates Shuffling Logic
+        function shuffleQuestions() {
+            // Create a shallow copy of original structural arrays
+            activeQuestions = [...quizData];
+            for (let i = activeQuestions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [activeQuestions[i], activeQuestions[j]] = [activeQuestions[j], activeQuestions[i]];
+            }
+        }
+
         // Core Quiz Flows
         function startQuiz() {
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
+            shuffleQuestions(); // Set completely unique random arrays on start execution
             currentQuestionIndex = 0;
             score = 0;
             loadQuestion();
@@ -491,9 +503,9 @@
             attemptCount = 0;
             selectedOptionIndex = null;
             
-            const currentQ = quizData[currentQuestionIndex];
+            const currentQ = activeQuestions[currentQuestionIndex];
             
-            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById('question-number').innerText = `Question ${currentQuestionIndex + 1}/${activeQuestions.length}`;
             document.getElementById('score-tracker').innerText = `Score: ${score}`;
             document.getElementById('question-text').innerText = currentQ.q;
             
@@ -546,7 +558,7 @@
 
         function submitAnswer() {
             resetTimer();
-            const currentQ = quizData[currentQuestionIndex];
+            const currentQ = activeQuestions[currentQuestionIndex];
             const buttons = document.querySelectorAll('.options-list .option-btn');
             const feedbackBox = document.getElementById('feedback-box');
             
@@ -593,7 +605,7 @@
 
         function handleTimeOut() {
             attemptCount = 2;
-            const currentQ = quizData[currentQuestionIndex];
+            const currentQ = activeQuestions[currentQuestionIndex];
             const buttons = document.querySelectorAll('.options-list .option-btn');
             const feedbackBox = document.getElementById('feedback-box');
             
@@ -639,7 +651,7 @@
 
         function setNextState() {
             const submitBtn = document.getElementById('submit-next-btn');
-            if (currentQuestionIndex < quizData.length - 1) {
+            if (currentQuestionIndex < activeQuestions.length - 1) {
                 submitBtn.innerText = "Next Question";
             } else {
                 submitBtn.innerText = "View Results";
@@ -651,9 +663,9 @@
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
             
-            document.getElementById('final-score').innerText = `${score}/${quizData.length}`;
+            document.getElementById('final-score').innerText = `${score}/${activeQuestions.length}`;
             const messageBox = document.getElementById('result-message');
-            const percent = (score / quizData.length) * 100;
+            const percent = (score / activeQuestions.length) * 100;
             
             if (percent === 100) {
                 messageBox.innerText = "Sensational! You achieved a perfect score in Advanced HTML structural systems.";
