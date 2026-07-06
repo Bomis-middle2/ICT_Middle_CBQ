@@ -255,8 +255,7 @@
     <canvas id="confetti-canvas"></canvas>
 
     <div id="splash-screen">
-        <img src="assets/innovine-logo.png" alt="Innovine Logo" onerror="this.style.display='none';">
-     
+        <img src="assets/logo.png" alt="Innovine Logo" onerror="console.warn('Splash image not found. Proceeding.'); document.getElementById('splash-screen').style.display='none'; document.getElementById('quiz-container').style.display='block'; launchQuizModule();">
     </div>
 
     <div class="quiz-container" id="quiz-container">
@@ -276,7 +275,7 @@
             </div>
 
             <div class="options-list" id="options-container">
-                </div>
+            </div>
 
             <div class="quiz-footer">
                 <button class="next-btn" id="next-button">Next Question</button>
@@ -292,79 +291,79 @@
     </div>
 
     <script>
-        // Data Bank mapped strictly from 'G6_ICT_Chapter 11_MCQs.docx' to complete a 12-question quiz set [cite: 1, 2]
+        // Data Bank mapped from Chapter 11
         const rawQuestionData = [
             {
                 scenario: "A student is creating a student grading system and needs to declare a variable to store the student's first name.",
                 question: "According to the rules of C, which of the following is a valid variable name?",
                 options: ["1st_name", "first name", "first_name", "char"],
-                answer: 2 // Index of 'first_name' [cite: 7, 99]
+                answer: 2
             },
             {
                 scenario: "A developer finishes writing the source code for a new C application.",
                 question: "After compiling, which specific tool is responsible for combining different object files and library files to produce the final executable (.exe) file?",
                 options: ["Preprocessor", "Compiler", "Linker", "Interpreter"],
-                answer: 2 // Index of 'Linker' [cite: 13, 100]
+                answer: 2
             },
             {
                 scenario: "You are building a weather application that reads temperature from a sensor.",
                 question: "The temperature needs to be stored with decimal places (e.g., 36.55). If memory is constrained and you only have 4 bytes available for this variable, which data type should you use?",
                 options: ["int", "float", "double", "char"],
-                answer: 1 // Index of 'float' [cite: 19, 101]
+                answer: 1
             },
             {
                 scenario: "In a physics simulation program, you need to use the value of Pi (3.14159).",
                 question: "To ensure this value is strictly protected and cannot be modified by other parts of the program during execution, how should it be defined?",
                 options: ["As a standard float variable", "As a constant", "As an integer", "As a keyword"],
-                answer: 1 // Index of 'As a constant' [cite: 25, 102]
+                answer: 1
             },
             {
                 scenario: "A banking app is designed to deposit money into an account.",
                 question: "However, due to a typo, the programmer used a minus sign (-) instead of a plus sign (+). The code compiles and runs without crashing, but the balances are wrong. What type of error is this?",
                 options: ["Syntax error", "Compilation error", "Logical error", "Preprocessing error"],
-                answer: 2 // Index of 'Logical error' [cite: 33, 103]
+                answer: 2
             },
             {
                 scenario: "A junior programmer writes int age = 15 at the end of a line but forgets to add a semicolon.",
                 question: "When they try to run the program, it fails to compile. What type of error is the compiler reporting?",
                 options: ["Syntax error", "Logical error", "Linking error", "Execution error"],
-                answer: 0 // Index of 'Syntax error' [cite: 37, 104]
+                answer: 0
             },
             {
                 scenario: "To determine if a given year is a leap year, your code divides the year by 4 and needs to check if the remainder is zero.",
                 question: "Which operator is used specifically to find the remainder of an integer division?",
                 options: ["/", "&&", "%", "=="],
-                answer: 2 // Index of '%' [cite: 45, 105]
+                answer: 2
             },
             {
                 scenario: "A software company writes a C program to control smart home devices on a Windows machine.",
                 question: "Later, they find that they can run the same program logic on a Linux server without changing the core code. Which feature of C makes this possible?",
                 options: ["It is a low-level language.", "It has 32 keywords.", "It is highly portable.", "It only uses 0s and 1s."],
-                answer: 2 // Index of 'It is highly portable.' [cite: 52, 106]
+                answer: 2
             },
             {
                 scenario: "You are formatting a text-based invoice in C. You want the 'Total Amount' to be printed on a new line.",
                 question: "Which escape sequence must you insert into your printf() statement?",
                 options: ["\\t", "\\n", "\\a", "\\b"],
-                answer: 1 // Index of '\n' [cite: 57, 107]
+                answer: 1
             },
             {
                 scenario: "A teacher wants to display a student's grade stored in the variable char grade = 'A';",
                 question: "Which format specifier is required in the printf() function to print this specific data type?",
                 options: ["%d", "%f", "%s", "%c"],
-                answer: 3 // Index of '%c' [cite: 65, 108]
+                answer: 3
             },
             {
                 scenario: "You are writing a program to check if a user is eligible for a teen discount.",
                 question: "Their age must be greater than 12 AND less than 20. Which logical operator must be used to combine these two conditions?",
                 options: ["||", "!=", "&&", "=="],
-                answer: 2 // Index of '&&' [cite: 70, 109]
+                answer: 2
             },
             {
                 scenario: "A programmer attempts to create a variable to hold the interest rate and names it 'double'.",
                 question: "The compiler immediately throws an error. Why is this variable name invalid?",
                 options: ["It exceeds 31 characters.", "It contains a special symbol.", "'double' is a reserved keyword in C.", "It does not start with an underscore."],
-                answer: 2 // Index of ''double' is a reserved keyword in C.' [cite: 76, 110]
+                answer: 2
             }
         ];
 
@@ -372,12 +371,12 @@
         let questionSet = [];
         let currentIndex = 0;
         let scoreCounter = 0;
-        let timeRemaining = 60; // Forced timer limit tracking metric [cite: 1]
+        let timeRemaining = 60; 
         let intervalTimerId = null;
         let isAudioMuted = false;
-        let currentAttempts = 0; // Tracking retries on error indices [cite: 1]
+        let currentAttempts = 0; 
 
-        // Sound Resources Setup [cite: 2, 4]
+        // Sound Resources Setup
         const audioSuccess = new Audio('assets/correct.mp3');
         const audioFailure = new Audio('assets/wrong.mp3');
 
@@ -390,18 +389,23 @@
         window.addEventListener('load', () => {
             setTimeout(() => {
                 const splash = document.getElementById('splash-screen');
-                splash.style.opacity = '0';
-                setTimeout(() => {
-                    splash.style.display = 'none';
-                    document.getElementById('quiz-container').style.display = 'block';
-                    launchQuizModule();
-                }, 500);
-            }, 5000); // Screen layout execution timeout precisely set at 5000ms 
+                // Check if splash screen is still visible before executing transition
+                if (splash && splash.style.display !== 'none') {
+                    splash.style.opacity = '0';
+                    setTimeout(() => {
+                        splash.style.display = 'none';
+                        document.getElementById('quiz-container').style.display = 'block';
+                        launchQuizModule();
+                    }, 500);
+                }
+            }, 5000); 
         });
 
         // Initialize / Restart Quiz Execution Loop
         function launchQuizModule() {
-            // Apply localized high diversity shuffle routines
+            // Guard clause to prevent duplicate execution loops if already started by onerror
+            if (questionSet.length > 0 && currentIndex > 0) return;
+            
             questionSet = shuffleArray([...rawQuestionData]);
             currentIndex = 0;
             scoreCounter = 0;
@@ -419,7 +423,7 @@
         }
 
         function updateHudDisplay() {
-            document.getElementById('score-tracker').innerText = `Score: ${scoreCounter}/${questionSet.length}`; [cite: 1]
+            document.getElementById('score-tracker').innerText = `Score: ${scoreCounter}/${questionSet.length}`;
         }
 
         // Question Render Frame logic
@@ -431,7 +435,7 @@
             document.getElementById('quiz-results').style.display = 'none';
             document.getElementById('next-button').style.display = 'none';
 
-            currentAttempts = 0; // Initialize validation retries per question frame [cite: 1]
+            currentAttempts = 0; 
 
             const item = questionSet[currentIndex];
             document.getElementById('question-scenario').innerText = item.scenario;
@@ -445,11 +449,10 @@
                 optionBtn.className = 'option-btn';
                 optionBtn.innerText = choice;
                 optionBtn.setAttribute('data-idx', index);
-                optionBtn.addEventListener('click', () => processAnswerSelection(index, optionBtn)); [cite: 2]
+                optionBtn.addEventListener('click', () => processAnswerSelection(index, optionBtn));
                 targetBox.appendChild(optionBtn);
             });
 
-            // Timer management module init [cite: 1]
             timeRemaining = 60;
             const timerHUD = document.getElementById('timer');
             timerHUD.innerText = `Time: ${timeRemaining}s`;
@@ -469,36 +472,32 @@
             }, 1000);
         }
 
-        // Core processing/grading mechanics [cite: 1, 2]
+        // Core processing mechanics
         function processAnswerSelection(selectedIndex, clickedBtn) {
             const currentItem = questionSet[currentIndex];
             const targetBox = document.getElementById('options-container');
             const choiceButtons = targetBox.querySelectorAll('.option-btn');
 
             if (selectedIndex === currentItem.answer) {
-                // Success Path Execution
                 clearInterval(intervalTimerId);
                 clickedBtn.classList.add('correct');
-                playFeedbackSound(audioSuccess); [cite: 2]
-                triggerConfettiBurst(); [cite: 2]
+                playFeedbackSound(audioSuccess);
+                triggerConfettiBurst();
                 scoreCounter++;
                 updateHudDisplay();
                 disableOptionControls(choiceButtons);
                 revealNavigationButton();
             } else {
-                // Wrong Attempt Tracking Configuration [cite: 1]
                 currentAttempts++;
                 if (currentAttempts < 2) {
-                    // Retry execution boundary condition met [cite: 1]
-                    playFeedbackSound(audioFailure); [cite: 2]
+                    playFeedbackSound(audioFailure);
                     clickedBtn.classList.add('wrong');
-                    clickedBtn.disabled = true; // Lock evaluated wrong item selection node
+                    clickedBtn.disabled = true; 
                 } else {
-                    // Maximum retry threshold reached [cite: 1]
                     clearInterval(intervalTimerId);
                     clickedBtn.classList.add('wrong');
                     choiceButtons[currentItem.answer].classList.add('correct');
-                    playFeedbackSound(audioFailure); [cite: 2]
+                    playFeedbackSound(audioFailure);
                     disableOptionControls(choiceButtons);
                     revealNavigationButton();
                 }
@@ -510,7 +509,7 @@
             const targetBox = document.getElementById('options-container');
             const choiceButtons = targetBox.querySelectorAll('.option-btn');
             
-            playFeedbackSound(audioFailure); [cite: 2]
+            playFeedbackSound(audioFailure);
             choiceButtons[currentItem.answer].classList.add('correct');
             disableOptionControls(choiceButtons);
             revealNavigationButton();
@@ -530,7 +529,6 @@
             nextButton.style.display = 'block';
         }
 
-        // Interface events binding
         document.getElementById('next-button').addEventListener('click', () => {
             if (currentIndex < questionSet.length - 1) {
                 currentIndex++;
@@ -544,20 +542,18 @@
             launchQuizModule();
         });
 
-        // Audio controller definitions [cite: 2]
         function playFeedbackSound(audioNode) {
             if (!isAudioMuted) {
                 audioNode.currentTime = 0;
-                audioNode.play().catch(err => console.log("Audio presentation skipped due to user gesture requirements:", err));
+                audioNode.play().catch(err => console.log("Audio presentation skipped:", err));
             }
         }
 
         document.getElementById('mute-toggle').addEventListener('click', () => {
-            isAudioMuted = !isAudioMuted; [cite: 2]
-            document.getElementById('mute-toggle').innerText = isAudioMuted ? '🔇' : '🔊'; [cite: 2]
+            isAudioMuted = !isAudioMuted;
+            document.getElementById('mute-toggle').innerText = isAudioMuted ? '🔇' : '🔊';
         });
 
-        // Grading and Final summary display mapping [cite: 1]
         function renderFinalSummaryScore() {
             clearInterval(intervalTimerId);
             document.getElementById('quiz-gameplay').style.display = 'none';
@@ -567,19 +563,18 @@
             const messageLabel = document.getElementById('feedback-message');
             
             const gradePercentage = Math.round((scoreCounter / questionSet.length) * 100);
-            scoreLabel.innerText = `You scored: ${scoreCounter} / ${questionSet.length} (${gradePercentage}%)`; [cite: 1]
+            scoreLabel.innerText = `You scored: ${scoreCounter} / ${questionSet.length} (${gradePercentage}%)`;
 
-            // Strict matching rules implementation for metric text alerts [cite: 1]
             if (gradePercentage >= 75) {
-                messageLabel.innerText = "Good job"; [cite: 1]
+                messageLabel.innerText = "Good job";
                 messageLabel.style.color = "var(--success)";
-                triggerConfettiBurst(); [cite: 2]
+                triggerConfettiBurst();
                 setTimeout(triggerConfettiBurst, 350);
             } else if (gradePercentage >= 40) {
-                messageLabel.innerText = "Review this chapter and try again"; [cite: 1]
+                messageLabel.innerText = "Review this chapter and try again";
                 messageLabel.style.color = "var(--warning)";
             } else {
-                messageLabel.innerText = "Let’s practise more"; [cite: 1]
+                messageLabel.innerText = "Let’s practise more";
                 messageLabel.style.color = "var(--danger)";
             }
 
@@ -628,7 +623,6 @@
                 contextObj.fillRect(-element.dimension / 2, -element.dimension / 2, element.dimension, element.dimension);
                 contextObj.restore();
 
-                // Drop obsolete objects falling off lower bounds
                 if (element.y > canvasElement.height) {
                     particles.splice(i, 1);
                     i--;
