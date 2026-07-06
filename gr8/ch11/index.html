@@ -369,8 +369,8 @@
     </div>
 
     <script>
-        // Data Structure populated directly from user parameters
-        const quizData = [
+        // Raw immutable Data Structure parameters
+        const masterQuizData = [
             {
                 q: "Which of the following lines of code correctly demonstrates the initialization of a variable named 'score' with an integer value of 95?",
                 options: ["A) int score = 95;", "B) integer score = 95;", "C) int score : 95;", "D) var score = 95;"],
@@ -419,7 +419,7 @@
                     "A) To make the program run faster without compiling.",
                     "B) To convert source code to byte code and then byte code to machine-specific code.",
                     "C) To allow programmers to use notepad instead of BlueJ.",
-                    "D) To make the language case-insensitive."
+                    "A) To make the language case-insensitive."
                 ],
                 answer: 1,
                 hint: "Think about the multi-stage pipeline configuration that facilitates architectural cross-platform code compilation and local deployment execution.",
@@ -442,16 +442,14 @@
             {
                 q: "If a programmer needs to store a value that can only be 'true' or 'false', which data type is most efficient in terms of memory?",
                 options: ["A) int", "B) char", "C) boolean", "D) byte"],
-                answer: 3, // Correct options mapping matching boolean choice
+                answer: 2, // Explicit corrected key target matching boolean option directly
                 hint: "Look for the specific logical flag primitive framework specialized to retain binary state tracking natively.",
                 explanation: "Rationale: The 'boolean' data type handles logical truth-value assignments exclusively and remains highly optimized for storage footprint parameters."
             }
         ];
 
-        // Rectify array indexing values internally for safe programmatic operations
-        quizData[9].answer = 2; 
-
-        // Core App Context Variables
+        // Active context tracking dataset
+        let quizData = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let attemptCount = 0;
@@ -488,10 +486,45 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
+        /**
+         * Dynamic State Randomizer Subroutine
+         * Employs Fisher-Yates logic variant to structurally generate uncorrelated 
+         * random arrangements of question indices and options without shifting native pointers.
+         */
+        function sequenceRandomizer() {
+            // Deep clone master matrix array records safely
+            let localizedSet = JSON.parse(JSON.stringify(masterQuizData));
+            
+            // Step 1: Shuffle questions array
+            for (let i = localizedSet.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [localizedSet[i], localizedSet[j]] = [localizedSet[j], localizedSet[i]];
+            }
+            
+            // Step 2: Shuffle option sequences internally per question item container
+            localizedSet.forEach((item) => {
+                let optionsArray = item.options;
+                let trackValue = optionsArray[item.answer]; // Identify absolute solution plain text
+                
+                for (let x = optionsArray.length - 1; x > 0; x--) {
+                    const y = Math.floor(Math.random() * (x + 1));
+                    [optionsArray[x], optionsArray[y]] = [optionsArray[y], optionsArray[x]];
+                }
+                
+                // Track down matching answer layout position indices dynamically post-shuffle
+                item.answer = optionsArray.indexOf(trackValue);
+            });
+            
+            return localizedSet;
+        }
+
         // Quiz State Flows
         function startQuiz() {
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
+            
+            // Seed structural randomization parameters cleanly
+            quizData = sequenceRandomizer();
             currentQuestionIndex = 0;
             score = 0;
             loadQuestion();
@@ -618,6 +651,10 @@
             
             playSound('wrong');
             buttons[currentQ.answer].classList.add('correct');
+            if(selectedOptionIndex !== null) {
+                buttons[selectedOptionIndex].classList.remove('selected');
+                buttons[selectedOptionIndex].classList.add('incorrect');
+            }
             
             feedbackBox.innerText = "⏰ Time's up! " + currentQ.explanation;
             feedbackBox.className = "feedback-box solution";
