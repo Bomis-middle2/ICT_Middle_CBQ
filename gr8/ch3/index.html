@@ -300,7 +300,6 @@
 
     <div id="branding-overlay" onclick="dismissBranding()">
         <img src="assets/logo.png" alt="Innovine" onerror="this.style.display='none';">
-       
     </div>
 
     <audio id="audio-correct" src="assets/correct.mp3" preload="auto"></audio>
@@ -320,7 +319,7 @@
                 <p><strong>Grade:</strong> 8</p>
                 <p><strong>Focus:</strong> Workplanes, Hole Options, Grouping/Ungrouping, Shortcuts & Dimensional Geometry</p>
                 <p><strong>Total Questions:</strong> 10</p>
-                <p><strong>Rules:</strong> Each screen runs a 45-second timer bar and contains a 2-stage submission setup with integrated learning hints.</p>
+                <p><strong>Rules:</strong> Each question features dynamic question and option randomizers, runs a 45-second timer, and offers hints on incorrect attempts.</p>
             </div>
 
             <button class="action-btn" onclick="startQuiz()">Start Quiz</button>
@@ -357,8 +356,8 @@
     </div>
 
     <script>
-        // Quiz Data array directly compiled from the supplied text schema
-        const quizData = [
+        // Core Question Database Asset
+        const originalQuizData = [
             {
                 q: "Rohan is designing a house in Tinkercad. He places a rectangular box on the workplane, but when he tries to add a triangular roof, it keeps landing on the default workplane instead of the box. What tool should he use first to fix this?",
                 options: ["A. Align tool", "B. Workplane tool", "C. Group tool", "D. Hole option"],
@@ -456,7 +455,8 @@
             }
         ];
 
-        // Global State Tracker Scope
+        // Global Application Architecture States
+        let quizData = [];
         let currentQuestionIndex = 0;
         let score = 0;
         let attemptCount = 0;
@@ -477,6 +477,44 @@
             }
         }
 
+        // Randomization / Shuffling Algorithm Engine
+        function prepareShuffledQuizData() {
+            // Step 1: Deep copy the question array
+            let rawData = JSON.parse(JSON.stringify(originalQuizData));
+            
+            // Step 2: Shuffle questions (Fisher-Yates)
+            for (let i = rawData.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [rawData[i], rawData[j]] = [rawData[j], rawData[i]];
+            }
+
+            // Step 3: Shuffle options inside each question while maintaining standard index pointers
+            rawData.forEach(item => {
+                let optionsWithMetadata = item.options.map((opt, idx) => {
+                    return { text: opt, isCorrect: idx === item.answer };
+                });
+
+                // Shuffle the temporary mapping object array
+                for (let i = optionsWithMetadata.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsWithMetadata[i], optionsWithMetadata[j]] = [optionsWithMetadata[j], optionsWithMetadata[i]];
+                }
+
+                // Standardize the option labels back to correct ordered prefixes [A., B., C., D.]
+                const prefixes = ["A.", "B.", "C.", "D."];
+                item.options = optionsWithMetadata.map((opt, idx) => {
+                    // Extract the text without original randomized labels if any present
+                    let cleanText = opt.text.replace(/^[A-D]\.\s*/, "");
+                    return `${prefixes[idx]} ${cleanText}`;
+                });
+
+                // Re-assign the correct target answer index position
+                item.answer = optionsWithMetadata.findIndex(opt => opt.isCorrect);
+            });
+
+            return rawData;
+        }
+
         // Web Audio Interfaces
         function playSound(type) {
             if (isMuted) return;
@@ -493,8 +531,9 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
-        // Core App Flow Routing
+        // Core App Flow Control Layout Routing
         function startQuiz() {
+            quizData = prepareShuffledQuizData(); // Generate dynamic sequence on entry
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             currentQuestionIndex = 0;
@@ -663,6 +702,7 @@
             submitBtn.disabled = false;
         }
 
+        // Evaluation Summary Interface
         function showResults() {
             document.getElementById('quiz-screen').classList.add('hidden');
             document.getElementById('result-screen').classList.remove('hidden');
