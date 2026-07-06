@@ -356,8 +356,8 @@
     </div>
 
     <script>
-        // Quiz Schema compiled from input records
-        const quizData = [
+        // Master Quiz Schema 
+        const originalQuizData = [
             {
                 q: "Aarav needs to store a large video project but has run out of space on his laptop's hard drive. Which cloud computing benefit allows him to save space on his computer?",
                 options: [
@@ -463,7 +463,7 @@
                     "D) A type of computer processor"
                 ],
                 answer: 1,
-                hint: "This term serves as a classic network design symbol representing vast, distributed online infrastructures.",
+                hint: "This term serves as a region symbol representing vast, distributed online infrastructures.",
                 explanation: "Correct answer: B) A metaphor for the internet. The term 'cloud' acts as a visual metaphor for complex, distributed online data systems accessible via the web."
             },
             {
@@ -479,6 +479,9 @@
                 explanation: "Correct answer: B) It allows access from any device with an internet connection. Cloud storage provides global file access via secure authentication portals on any compatible device."
             }
         ];
+
+        // Active runtime data array containing processed permutations
+        let quizData = [];
 
         // Global State Tracker Scope
         let currentQuestionIndex = 0;
@@ -517,8 +520,37 @@
             document.getElementById('audio-text').innerText = isMuted ? "Unmute" : "Mute";
         }
 
+        // Fisher-Yates Randomization Engine
+        function prepareRandomizedQuizData() {
+            // Create a deep structural clone of original structures to safeguard references
+            let localClone = JSON.parse(JSON.stringify(originalQuizData));
+            
+            // 1. Shuffle the list of Questions
+            for (let i = localClone.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [localClone[i], localClone[j]] = [localClone[j], localClone[i]];
+            }
+
+            // 2. Shuffle choices within individual questions while mapping solution pointers
+            localClone.forEach(item => {
+                let optionsWithIndices = item.options.map((opt, idx) => ({ text: opt, originalIndex: idx }));
+                
+                for (let i = optionsWithIndices.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [optionsWithIndices[i], optionsWithIndices[j]] = [optionsWithIndices[j], optionsWithIndices[i]];
+                }
+                
+                // Overwrite item choices with updated mapping positions
+                item.options = optionsWithIndices.map(o => o.text);
+                item.answer = optionsWithIndices.findIndex(o => o.originalIndex === item.answer);
+            });
+
+            return localClone;
+        }
+
         // Quiz Process Controls
         function startQuiz() {
+            quizData = prepareRandomizedQuizData(); // Initialize distinct question configurations per attempt
             document.getElementById('intro-screen').classList.add('hidden');
             document.getElementById('quiz-screen').classList.remove('hidden');
             currentQuestionIndex = 0;
