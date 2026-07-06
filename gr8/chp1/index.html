@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Open-Source Software Quiz - Grade 8</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; min-height: 100vh; display: flex; justify-content: center; align-items: center; background: linear-gradient(135deg, #e0eafc, #cfdef3); overflow: hidden; }
+        
+        /* Bubble Background */
+        .bubble-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+        .bubble { position: absolute; bottom: -100px; background: rgba(255, 255, 255, 0.4); border-radius: 50%; animation: rise 10s infinite ease-in; }
+        @keyframes rise { 0% { transform: translateY(0); } 100% { transform: translateY(-110vh); } }
+
+        /* UI Containers */
+        #logo-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        #quiz-container, #intro-screen { background: rgba(255, 255, 255, 0.95); width: 95%; max-width: 600px; padding: 40px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); text-align: center; }
+        
+        .hidden { display: none !important; }
+        .option-btn { border: 2px solid #3498db; border-radius: 10px; padding: 15px; margin: 10px 0; background: white; cursor: pointer; display: block; width: 100%; font-weight: 600; transition: 0.3s; }
+        .option-btn:hover { background: #3498db; color: white; }
+        .hint-box { background: #ffcccc; padding: 10px; border-radius: 8px; margin-top: 15px; color: #333; font-weight: bold; }
+        .feedback-correct { border: 2px solid green; background: #d4edda; padding: 10px; border-radius: 8px; color: #155724; font-weight: bold; margin-top: 15px; }
+        #q-text { font-weight: bold; font-size: 1.2rem; margin-bottom: 20px; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div id="logo-screen"><img src="assets/innovine-logo.png" alt="Logo"></div>
+
+<div class="bubble-bg" id="bubbles"></div>
+
+<div id="intro-screen" class="hidden">
+    <h1>Open-Source Software Quiz</h1>
+    <div style="margin: 20px 0; text-align: left; background: #f9f9f9; padding: 15px; border-radius: 10px;">
+        <p><strong>Grade:</strong> 8 | <strong>Subject:</strong> ICT</p>
+        <p><strong>Topic:</strong>Open-Source Software</p> 
+        <p><strong>Questions:</strong> 10</p>
+    </div>
+    <button onclick="startQuiz()" style="padding: 15px 40px; font-size: 18px; cursor: pointer; background: #2c3e50; color: white; border: none; border-radius: 50px;">Start Quiz</button>
+</div>
+
+<div id="quiz-container" class="hidden">
+    <div id="game-area">
+        <div id="top-bar" style="display: flex; justify-content: space-between; font-weight: bold; margin-bottom: 20px;">
+            <div id="timer">45s</div>
+            <div id="score-display">Score: 0</div>
+        </div>
+        <div id="q-text"></div>
+        <div id="options"></div>
+        <div id="feedback"></div>
+    </div>
+</div>
+
+<script>
+   const questions = [
+    { 
+        q: "A programmer is writing a new software feature. They decide to use a specific type of text editor designed solely for managing program code syntax. What is this tool called?", 
+        a: "B) Source Code Editor", 
+        options: ["A) Open-Source Platform", "B) Source Code Editor", "C) Proprietary Interface", "D) Binary Compiler"], 
+        hint: "This tool is specialized for writing and managing the text of a program's code." 
+    },
+    { 
+        q: "A small non-profit organization needs software that they can modify to fit their specific operational needs without paying high licensing fees. Which category of software is most suitable for them?", 
+        a: "C) Open-Source Software", 
+        options: ["A) Closed-Source Software", "B) Proprietary Software", "C) Open-Source Software", "D) System Software"], 
+        hint: "Look for software where the source code is made available for modification." 
+    },
+    { 
+        q: "Company 'A' creates a program and keeps its source code strictly confidential. Company 'B' uses this program but cannot fix a minor bug they found. What type of software is Company 'B' using?", 
+        a: "B) Proprietary Software", 
+        options: ["A) Open-Source Software", "B) Proprietary Software", "C) Freeware", "D) Collaborative Software"], 
+        hint: "Software with confidential source code is generally classified as this type." 
+    },
+    { 
+        q: "A software developer notices that a program's company has gone out of business, yet the software continues to be updated and improved by users worldwide. Based on this, what can you infer about the software?", 
+        a: "B) It is open-source because the code remains accessible for community improvement.", 
+        options: ["A) It is closed-source because it is still functioning.", "B) It is open-source because the code remains accessible for community improvement.", "C) It is proprietary software because it has updates.", "D) It is a trial version of a paid application."], 
+        hint: "Consider why community-driven updates are only possible for specific types of software." 
+    },
+    { 
+        q: "If you are comparing Open-Source Software (OSS) and Closed-Source Software (CSS), which of these statements accurately highlights a major disadvantage of OSS?", 
+        a: "B) OSS may lack the personalized customer support found in paid proprietary software.", 
+        options: ["A) OSS always requires a high monthly subscription fee.", "B) OSS may lack the personalized customer support found in paid proprietary software.", "C) OSS prevents the user from studying how the program works.", "D) OSS is always incompatible with other applications."], 
+        hint: "Think about the difference between community support and professional paid support." 
+    },
+    { 
+        q: "Identify the 'Odd One Out' from the list: [Linux, Mozilla Firefox, VLC media player, MS Office].", 
+        a: "D) MS Office", 
+        options: ["A) Linux", "B) Mozilla Firefox", "C) VLC media player", "D) MS Office"], 
+        hint: "Three of these are examples of Open-Source Software; one is a well-known proprietary suite." 
+    },
+    { 
+        q: "A student uses an educational portal where they can contribute their own notes and edit existing knowledge to help others learn. What is the best classification for this type of resource?", 
+        a: "B) Open-source learning portal", 
+        options: ["A) Proprietary learning database", "B) Open-source learning portal", "C) Closed-source educational software", "D) Source code editor"], 
+        hint: "The ability for users to modify and contribute suggests an open, collaborative model." 
+    },
+    { 
+        q: "Why is the license the most significant factor in distinguishing Open-Source Software (OSS) from proprietary software?", 
+        a: "B) The license defines the legal rights the user has to access, modify, and share the underlying source code.", 
+        options: ["A) The license determines whether the software can be used on a computer.", "B) The license defines the legal rights the user has to access, modify, and share the underlying source code.", "C) The license determines the color of the software logo.", "D) The license requires the user to be a professional programmer."], 
+        hint: "The license agreement dictates the legal boundaries of what a user is permitted to do with the code." 
+    },
+    { 
+        q: "Which of the following scenarios best demonstrates the concept of 'adaptation' in Open-Source Software?", 
+        a: "B) A user modifies the source code of a media player to add support for a new file format.", 
+        options: ["A) Downloading a paid office suite and using it exactly as provided.", "B) A user modifies the source code of a media player to add support for a new file format.", "C) Buying a license for a proprietary design tool.", "D) Installing an operating system that forbids unauthorized changes."], 
+        hint: "Adaptation involves changing the software to fit new requirements." 
+    },
+    { 
+        q: "If you were to differentiate between Open-Source and Closed-Source software based on 'User Rights', which statement is correct?", 
+        a: "B) Only open-source software allows the user to study, modify, and redistribute the source code.", 
+        options: ["A) Both types give the user equal rights to modify the original code.", "B) Only open-source software allows the user to study, modify, and redistribute the source code.", "C) Proprietary software always gives more rights to the user than open-source software.", "D) Neither type provides rights to redistribute the software."], 
+        hint: "Think about the primary freedom associated with open-source licenses." 
+    }
+];
+
+    let currentQ = 0, score = 0, attempts = 0, timer, timeLeft = 45;
+    const correctSound = new Audio('assets/correct.mp3');
+    const wrongSound = new Audio('assets/wrong.mp3');
+
+    // Create bubbles
+    const bg = document.getElementById('bubbles');
+    for(let i=0; i<15; i++) {
+        let b = document.createElement('div');
+        b.className = 'bubble';
+        let size = Math.random() * 60 + 20 + 'px';
+        b.style.width = size; b.style.height = size;
+        b.style.left = Math.random() * 100 + '%';
+        b.style.animationDelay = Math.random() * 5 + 's';
+        bg.appendChild(b);
+    }
+
+    window.addEventListener('load', () => setTimeout(() => { document.getElementById('logo-screen').classList.add('hidden'); document.getElementById('intro-screen').classList.remove('hidden'); }, 3000));
+
+    function startQuiz() { document.getElementById('intro-screen').classList.add('hidden'); document.getElementById('quiz-container').classList.remove('hidden'); renderQuestion(); }
+
+    function renderQuestion() {
+        clearInterval(timer); attempts = 0; timeLeft = 45;
+        document.getElementById('timer').innerText = timeLeft + "s";
+        document.getElementById('feedback').className = ""; document.getElementById('feedback').innerText = "";
+        const q = questions[currentQ];
+        document.getElementById('q-text').innerHTML = (currentQ + 1) + ". " + q.q;
+        const optDiv = document.getElementById('options'); optDiv.innerHTML = "";
+        q.options.forEach(o => { const btn = document.createElement('button'); btn.className = "option-btn"; btn.innerText = o; btn.onclick = () => checkAnswer(o); optDiv.appendChild(btn); });
+        timer = setInterval(() => { timeLeft--; document.getElementById('timer').innerText = timeLeft + "s"; if(timeLeft <= 0) { clearInterval(timer); nextQuestion(); } }, 1000);
+    }
+
+    function checkAnswer(choice) {
+        const feedback = document.getElementById('feedback');
+        if(choice === questions[currentQ].a) {
+            score++; document.getElementById('score-display').innerText = "Score: " + score;
+            feedback.className = 'feedback-correct'; feedback.innerText = "Correct!";
+            correctSound.play(); confetti(); setTimeout(nextQuestion, 1000);
+        } else {
+            attempts++; wrongSound.play();
+            if(attempts < 2) { feedback.className = 'hint-box'; feedback.innerText = "Hint: " + questions[currentQ].hint; }
+            else { feedback.className = 'feedback-correct'; feedback.innerText = "Correct answer was: " + questions[currentQ].a; setTimeout(nextQuestion, 2000); }
+        }
+    }
+
+    function nextQuestion() {
+        currentQ++;
+        if(currentQ < questions.length) renderQuestion();
+        else { document.getElementById('game-area').innerHTML = `<h1>Quiz Finished!</h1><p>Score: ${score}/${questions.length}</p><button onclick="location.reload()" style="padding: 15px 30px; cursor: pointer;">Restart Quiz</button>`; }
+    }
+</script>
+</body>
+</html>
